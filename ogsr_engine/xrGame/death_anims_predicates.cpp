@@ -140,7 +140,7 @@ class type_motion0 : public type_motion
             return false;
 
         m = motion(front);
-        type_motion_diagnostic(" type_motion0: 1. = Инерционное движение вперед от попадания в голову ", front, ea, H, m);
+        type_motion_diagnostic("type_motion0: 1", front, ea, H, m);
         return true;
     }
 };
@@ -181,7 +181,7 @@ class type_motion2 : public type_motion
             return false;
         edirection dr = dir(ea, H, angle);
         m = motion(dr);
-        type_motion_diagnostic(" type_motion2: 3.	Шотган ", dr, ea, H, m);
+        type_motion_diagnostic("type_motion2: 3", dr, ea, H, m);
         return true;
     }
 };
@@ -201,7 +201,7 @@ class type_motion3 : public type_motion
         {
             edirection dr = dir(ea, H, angle);
             m = motion(dr);
-            type_motion_diagnostic(" type_motion3: 4.	Хедшот (по вероятности), кроме 5 (4)", dr, ea, H, m);
+            type_motion_diagnostic("type_motion3: 4", dr, ea, H, m);
             return true;
         }
         return false;
@@ -244,7 +244,7 @@ class type_motion4 : public type_motion
         {
             edirection dr = dir(ea, H, angle);
             m = motion(dr);
-            type_motion_diagnostic(" type_motion4: 5.	Снайперка в голову", dr, ea, H, m);
+            type_motion_diagnostic("type_motion4: 5", dr, ea, H, m);
             return true;
         }
         return false;
@@ -267,7 +267,7 @@ class type_motion5 : public type_motion
         {
             edirection dr = dir(ea, H, angle);
             m = motion(dr);
-            type_motion_diagnostic("type_motion5: 6.	Снайперка в тело", dr, ea, H, m);
+            type_motion_diagnostic("type_motion5: 6", dr, ea, H, m);
             return true;
         }
         return false;
@@ -286,7 +286,7 @@ class type_motion6 : public type_motion
         {
             edirection dr = dir(ea, H, angle);
             m = motion(dr);
-            type_motion_diagnostic("type_motion6: 7. Гранта", dr, ea, H, m);
+            type_motion_diagnostic("type_motion6: 7", dr, ea, H, m);
             return true;
         }
 
@@ -301,7 +301,7 @@ class type_motion6 : public type_motion
         {
             edirection dr = dir(ea, H, angle);
             m = motion(dr);
-            type_motion_diagnostic("type_motion6: 7. Гранта - осколок", dr, ea, H, m);
+            type_motion_diagnostic("type_motion6: 7", dr, ea, H, m);
             return true;
         }
 
