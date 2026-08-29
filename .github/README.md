@@ -8,8 +8,8 @@
 | _**Игра / Game**_ | Source code branch | Latest Release / Свежий релиз |
 | :---         |     :---:      |          ---: |
 | **_S.T.A.L.K.E.R.: Shadow of Chernobyl_** | [**main**](https://github.com/OGSR/OGSR-Engine/tree/main) | [**>>RELEASES<<**](https://github.com/OGSR/OGSR-Engine/releases) |
-| **_S.T.A.L.K.E.R.: Call of Pripyat_** | _Private, work in progress_ | [**>>RELEASES<<**](https://github.com/OGSR/OGSR-Engine/releases) |
-| **_S.T.A.L.K.E.R.: Clear Sky_** | _Private, work in progress_ | _...TBD..._ |
+| **_S.T.A.L.K.E.R.: Call of Pripyat_** | [**main_cop_cs**](https://github.com/OGSR/OGSR-Engine/tree/main_cop_cs) | [**>>RELEASES<<**](https://github.com/OGSR/OGSR-Engine/releases) |
+| **_S.T.A.L.K.E.R.: Clear Sky_** | [**main_cop_cs**](https://github.com/OGSR/OGSR-Engine/tree/main_cop_cs) | _...TBD..._ |
 
 <h3 align="center"> <a href="#english"><b>English</b></a>/<a href="#русский"><b>Русский</b></a></h3>
 
