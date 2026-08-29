@@ -1,0 +1,128 @@
+
+local hint_colors = {
+	["green"]  = { 255, 153, 255, 153 }, --{ 255, 0, 128, 0 },
+	["yellow"] = { 255, 237, 118, 14 }, --{ 255, 186, 149, 0 },
+	["red"]    = { 255, 238, 32, 77 }, --{ 255, 255, 0, 0 },
+}
+
+local opt_types = {
+    track = "InitTrackBar",
+    list  = "InitComboBox",
+    check = "InitCheck",
+    separator = "InitFrameLine"
+}
+
+local adv_vid_opt_params = { --имя статика, тип статика, нужен ли рестарт игры (0/1), цвет текста, текст всплывающей подсказки, заблокирована ли настройка (true/false, по дефолту false)
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_1"  },
+    { "fov",                     "track",     0, hint_colors.green , "video_settings_desc_61"         },
+    { "hud_fov",                 "track",     0, hint_colors.green , "video_settings_desc_62"         },
+    { "vis_dist",                "track",     0, hint_colors.yellow, "video_settings_desc_2"          },
+    { "geometry_lod",            "track",     0, hint_colors.yellow, "video_settings_desc_3"          },
+    { "mt_texload",              "check",     0, hint_colors.green                                    },
+    { "shadercache",             "check",     0, hint_colors.green                                    },
+    { "tessellation",            "check",     1, hint_colors.yellow, "video_settings_desc_52"         },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_5"  },
+    { "aa",                      "list",      0, hint_colors.green , "video_settings_desc_19"         },
+    { "cas",                     "track",     0, hint_colors.green , "video_settings_desc_20"         },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_2"  },
+    { "detail_density",          "track",     0, hint_colors.red,    "video_settings_desc_4"          },
+    { "detail_distance",         "track",     0, hint_colors.red,    "video_settings_desc_5"          },
+    { "detail_scale",            "track",     0, hint_colors.yellow                                   },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_3"  },
+    { "smap_size",               "list",      1, hint_colors.red,    "video_settings_desc_59"         },
+    { "sun_quality",             "list",      1, hint_colors.red                                      },
+    { "ao_mode",                 "list",      0, hint_colors.red,    "video_settings_desc_38"         },
+    { "ssao",                    "list",      0, hint_colors.red,    "video_settings_desc_37"         },
+    { "sun_details",             "check",     0, hint_colors.red,    "video_settings_desc_12"         },
+    { "actor_shadow",            "check",     0, hint_colors.green                                    },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_8"  },
+    { "sun_shafts",              "list",      0, hint_colors.yellow, "video_settings_desc_29"         },
+    { "lens_flare",              "check",     0, hint_colors.green                                    },
+    { "volumetric_light",        "check",     0, hint_colors.yellow, "video_settings_desc_50"         },
+    { "npc_torch",               "check",     0, hint_colors.yellow, "video_settings_desc_14"         },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_9"  },
+    { "dynamic_wet_surfaces",    "check",     0, hint_colors.yellow, "video_settings_desc_49"         },
+    { "sslr",                    "check",     1, hint_colors.red,    "video_settings_desc_51"         },
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_4"  },
+    { "steep_parallax",          "check",     0, hint_colors.yellow, "video_settings_desc_39"         },
+    { "terrain_parallax",        "check",     1, hint_colors.yellow, "video_settings_desc_24"         --[[, true]]}, --на модах с ориг текстурами лучше заблокировать эту опцию но релизы двига же типа для разрабов, потому я не решил пока как быть.
+
+    { "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_7"  },
+    --{ "separator",               "separator", 0, false,              "ui_mm_opt_caption_adv_video_6"  },
+	--TODO: Доф надо переделать в новом виде, когда переделаю - раскомментирую
+    --{ "dof_reload",              "check",     0, hint_colors.green, "video_settings_desc_41"          },
+    --{ "dof_zoom",                "check",     0, hint_colors.green, "video_settings_desc_42"          },
+    --{ "dof_zoom_param",          "track",     0, hint_colors.green                                    },
+    { "mblur",                   "check",     0, hint_colors.green , "video_settings_desc_1"          },
+    { "mblur_param",             "track",     0, hint_colors.green                                    },
+    --Для работы настроек шлема требуется управление со скриптов, надо же как то определять на каком костюме надо маски и капли, а на каком нет.
+	--Когда надо - надо со скрипта выставить консольки r2_mask_control и соотв. r2_rain_drops_control в on, когда не надо - в off
+	--Возможно по дефолту лучше заблокировать эти опции тут, но я не решил пока как быть
+    { "mask",                    "check",     0, hint_colors.green , ""                               --[[, true]]},
+    { "visor_refl",              "check",     0, hint_colors.green , ""                               --[[, true]]},
+    { "rain_drops",              "check",     0, hint_colors.green, "video_settings_desc_47"          --[[, true]]},
+    --
+    { "volumetric_smoke",        "check",     0, hint_colors.green                                    },
+}
+
+
+class "opt_video_adv" (CUIWindow)
+function opt_video_adv:__init() super()
+end
+
+function opt_video_adv:__finalize()
+end
+
+function opt_video_adv:InitControls(x, y, xml, handler)
+    self:SetWndPos(vector2():set(x,y))
+    --self:SetWndSize(vector2():set(738,416))
+    self:SetAutoDelete(true)
+
+    self.scroll_v = xml:InitScrollView("video_adv:scroll_v", self)
+    handler.scroll_v = self.scroll_v
+
+    for i = 1, #adv_vid_opt_params do
+        local _st = xml:InitStatic("video_adv:templ_item", self.scroll_v)
+
+        local opt, type, need_restart, color, hint, disabled = unpack(adv_vid_opt_params[i])
+
+        -- caption
+        local cap = xml:InitStatic("video_adv:cap_" .. opt, _st)
+
+        -- control
+        local stl_name = "video_adv:" .. type .. "_" .. opt
+        local ctl = xml[opt_types[type]](xml, stl_name, _st)
+
+        if type == "separator" then
+            cap:SetText(game.translate_string(hint))
+        else
+            if hint and hint ~= "" then
+                cap:SetHint(hint)
+            end
+            if disabled then
+                cap:Enable(false)
+                ctl:Enable(false)
+            elseif color then
+                cap:SetTextColor(unpack(color))
+            end
+        end
+
+        if need_restart == 1 then
+            handler:Register(ctl, stl_name)
+            handler:AddCallback(
+                stl_name,
+                type == "list" and ui_events.LIST_ITEM_SELECT or ui_events.BUTTON_CLICKED,
+                handler.show_need_restart_wnd, handler
+            )
+        end
+    end
+
+    local btn = xml:Init3tButton("video_adv:btn_to_simply", self)
+    handler:Register(btn, "btn_simply_graphic")
+end

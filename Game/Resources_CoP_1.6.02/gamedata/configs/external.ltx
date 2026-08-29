@@ -1,0 +1,71 @@
+[features]
+
+;------------------------Глобальные настройки оружейных фич---------------------------
+; Глобальные настройки сделаны для возможности простого включения оружейных фич
+; при установке движка в какие либо моды, чтобы не править там 100500 конфигов оружия.
+; У настроек из конфигов оружия приоритет выше.
+
+; Инерция при прицеливании в механический прицел
+default_allow_zoom_inertion = true
+
+; Инерция при прицеливании в присоединяемые нетекстурные прицелы (3д прицелы и тп)
+default_allow_scope_zoom_inertion = true
+
+; Изменение HUD FOV когда игрок стоит вплотную к стене.
+default_nearwall_on = true
+;-------------------------------------------------------------------------------------
+
+;Игнорировать ошибки парсинга xml (в ТЧ они встречаются даже в оригинальной игре)
+skip_shoc_xml_errors = true
+
+;Включить поддержку ANSI-символов кириллицы для юникодных шрифтов. Полезно тем, что можно юзать эти шрифты но не надо конвертировать все ресурсы игры в utf-8
+enable_ansi_aupport_for_mb_fonts = true
+
+;Включить строгий режим контроля за инфопоршнями (ТЧ-стайл)
+strict_infoportions_control = false
+
+;Включить обыск монстров как в ТЧ/ЧН, спавн частей так-же поддерживается
+monsters_inventory = false
+
+;Включает круглую миникарту. В случае ЗП, достаточно оставить включенной здесь.
+;Если хочется включить в ЧН, то лучше сделать это через zone_map.xml в статике "minimap", указав "rounded = 1" и,
+;если хочется использовать ЗП-систему координат миникаты (0.0-1.0), можно там же указать "use_cop_sizes = 1"
+cop_rounded_minimap = true
+
+;В случае ЗП должно быть включено, в случае ТЧ-ЧН выключено. Это не связано с круглой миникартой, а с чтением level_map
+cop_scale_bounds = true
+
+
+; Настройки для wpn_bobbing
+[wpn_bobbing_effector]
+controller_amplitude = 0.002
+limp_amplitude = 0.011
+limp_speed     = 4.6
+run_amplitude  = 0.0075
+run_speed      = 6.74
+walk_amplitude = 0.005
+walk_speed     = 6.26
+crouch_k = 0.75
+zoom_k   = 0.1
+scope_zoom_k = 0.1
+
+
+[hud_movement_layers]
+;types: 0 = aim_walk, 1 = aim_crouch, 2 = crouch, 3 = walk, 4 = run, 5 = sprint
+;type                    path                           speed   power
+movement_layer_0        = movement\aim_walk.anm,     1,         0.85
+movement_layer_1        = movement\aim_walk.anm,     0.75,     0.5
+movement_layer_2        = movement\newwalk.anm,      1,      0.1
+movement_layer_3        = movement\newwalk.anm,      1,      0.1
+movement_layer_4        = movement\newwalk.anm,      1.25,     0.125
+movement_layer_5        = movement\newrunreload.anm, 1,      0.15
+
+
+; Замена шейдеров в визуалах
+;[vis_shaders_replace]
+; шейдер тесселяции: models\model -> models\model_pn. Должен присутствовать в shaders.xr!
+;dynamics\weapons\wpn_hand = models\model,models\model_pn, models\weapons,models\model_pn
+;actors   = models\model,models\model_pn, models\weapons,models\model_pn, models\artefact,models\model_pn, models\artefact2,models\model_pn
+;monsters = models\model,models\model_pn
+
+

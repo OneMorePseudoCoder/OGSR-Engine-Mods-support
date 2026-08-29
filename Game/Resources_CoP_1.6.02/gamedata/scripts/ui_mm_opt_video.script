@@ -1,0 +1,77 @@
+local opt_types = {
+    track = "InitTrackBar",
+    list  = "InitComboBox",
+    check = "InitCheck",
+    separator = "InitFrameLine"
+}
+
+local vid_opt_params = {
+    { "separator",               "separator", 0, "ui_mm_opt_caption_video_1" },
+    { "preset",                  "list",  1 },
+    { "resolution",              "list",  0 },
+    { "fps_lock",                "list",  0 },
+    { "font_scale_x",            "track", 0 },
+    { "font_scale_y",            "track", 0 },
+
+    { "separator",               "separator", 0, "ui_mm_opt_caption_video_2" },
+    { "contrast",                "track", 0 },
+    { "gamma",                   "track", 0 },
+    { "brightness",              "track", 0 },
+
+    { "separator",               "separator", 0, "ui_mm_opt_caption_video_3" },
+    { "fullscreen",              "check", 0 },
+    { "vsync",                   "check", 0 },
+    { "always_active",           "check", 0 },
+    { "exclusive_input",         "check", 0 },
+}
+
+
+class "opt_video" (CUIWindow)
+function opt_video:__init() super()
+end
+
+function opt_video:__finalize()
+end
+
+function opt_video:InitControls(x, y, xml, handler)
+    self:SetWndPos(vector2():set(x,y))
+    --self:SetWndSize(vector2():set(738,416))
+    self:SetAutoDelete(true)
+
+    self.scroll_v = xml:InitScrollView("tab_video:scroll_v", self)
+    handler.scroll_v = self.scroll_v
+
+    for i = 1, #vid_opt_params do
+        local _st = xml:InitStatic("tab_video:templ_item", self.scroll_v)
+
+        local opt, type, need_restart, hint_caption = unpack(vid_opt_params[i])
+        
+        -- caption
+        local cap = xml:InitStatic("tab_video:cap_" .. opt, _st)
+        --cap:SetTextColor(255, 170, 170, 170)
+        --cap:SetFont(GetFontLetterica16Russian())
+
+        -- control
+        local ctl = xml[opt_types[type]](xml, "tab_video:" .. type .. "_" .. opt, _st)
+        
+        if type == "separator" then
+            cap:SetText(game.translate_string(hint_caption))
+        end
+        
+        if need_restart == 1 then
+            handler:Register(ctl, "tab_video:"..type.."_"..opt)
+            handler:AddCallback(
+                "tab_video:"..type.."_"..opt,
+                type == "list" and ui_events.LIST_ITEM_SELECT or ui_events.BUTTON_CLICKED,
+                handler.show_need_restart_wnd, handler
+            )
+        end
+    end
+    
+    --xml:InitStatic                    ("tab_video:cap_preset",            self)
+    --handler.combo_preset          = xml:InitComboBox("tab_video:list_presets",    self)
+    --handler:Register              (handler.combo_preset,              "combo_preset")
+    
+    local btn = xml:Init3tButton("tab_video:btn_advanced", self)
+    handler:Register(btn, "btn_advanced_graphic")
+end

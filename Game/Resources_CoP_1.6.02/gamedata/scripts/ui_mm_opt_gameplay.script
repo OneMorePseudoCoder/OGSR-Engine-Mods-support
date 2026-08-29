@@ -1,0 +1,69 @@
+local opt_types = {
+    track = "InitTrackBar",
+    list  = "InitComboBox",
+    check = "InitCheck",
+    separator = "InitFrameLine"
+}
+
+local vid_opt_params = {
+    { "separator",               "separator", 0, "ui_mm_opt_caption_gameplay_1" },
+    { "difficulty",                  "list",  0 },
+    { "important_save",              "check", 0 },
+
+    { "separator",               "separator", 0, "ui_mm_opt_caption_gameplay_2" },
+    { "crosshair",                "check",  0 },
+    { "dyn_crosshair",                "check", 0 },
+    { "tips",            "check",  0 },
+    { "dist",                   "check", 0 },
+
+    { "separator",               "separator", 0, "ui_mm_opt_caption_gameplay_3" },
+    { "crouch_toggle",              "check", 0 },
+    { "hud_draw",           "check", 0 },
+    { "weapon_bobbing",           "check", 0 },
+    { "switch_slot",           "check", 0 },
+}
+
+
+class "opt_gameplay" (CUIWindow)
+function opt_gameplay:__init() super()
+end
+
+function opt_gameplay:__finalize()
+end
+
+function opt_gameplay:InitControls(x, y, xml, handler)
+    self:SetWndPos(vector2():set(x,y))
+    --self:SetWndSize(vector2():set(738,416))
+    self:SetAutoDelete(true)
+
+    self.scroll_v = xml:InitScrollView("tab_gameplay:scroll_v", self)
+    handler.scroll_v = self.scroll_v
+
+    for i = 1, #vid_opt_params do
+        local _st = xml:InitStatic("tab_gameplay:templ_item", self.scroll_v)
+
+        local opt, type, need_restart, hint_caption = unpack(vid_opt_params[i])
+        
+        -- caption
+        local cap = xml:InitStatic("tab_gameplay:cap_" .. opt, _st)
+        --cap:SetTextColor(255, 170, 170, 170)
+        --cap:SetFont(GetFontLetterica16Russian())
+
+        -- control
+		local ctl_name = "tab_gameplay:" .. type .. "_" .. opt
+        local ctl = xml[opt_types[type]](xml, ctl_name, _st)
+        
+        if type == "separator" then
+            cap:SetText(game.translate_string(hint_caption))
+        end
+        
+        if need_restart == 1 then
+            handler:Register(ctl, ctl_name)
+            handler:AddCallback(
+                ctl_name,
+                type == "list" and ui_events.LIST_ITEM_SELECT or ui_events.BUTTON_CLICKED,
+                handler.show_need_restart_wnd, handler
+            )
+        end
+    end
+end

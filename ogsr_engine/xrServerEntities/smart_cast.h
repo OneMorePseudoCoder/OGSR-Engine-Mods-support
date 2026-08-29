@@ -1,0 +1,13 @@
+////////////////////////////////////////////////////////////////////////////
+//	Module 		: smart_cast.h
+//	Created 	: 17.09.2004
+//  Modified 	: 17.09.2004
+//	Author		: Dmitriy Iassenev
+//	Description : Smart dynamic cast
+////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include <fast_dynamic_cast/fast_dynamic_cast.h>
+
+#define smart_cast fast_dynamic_cast

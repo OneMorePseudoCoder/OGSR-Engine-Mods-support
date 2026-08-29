@@ -1,0 +1,11 @@
+#include "stdafx.h"
+#include "WeaponGroza.h"
+
+CWeaponGroza::CWeaponGroza() : CWeaponMagazinedWGrenade(SOUND_TYPE_WEAPON_SUBMACHINEGUN) {}
+
+CWeaponGroza::~CWeaponGroza() {}
+
+using namespace luabind;
+
+
+void CWeaponGroza::script_register(lua_State* L) { module(L)[class_<CWeaponGroza, CGameObject>("CWeaponGroza").def(constructor<>())]; }

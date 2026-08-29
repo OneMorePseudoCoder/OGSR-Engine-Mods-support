@@ -1,0 +1,783 @@
+<w>
+	<background width="1024" height="768">
+	    <auto_static x="102" width="819" height="768" stretch="1">
+		    <texture>ui_inGame2_opt_background</texture>
+	    </auto_static>
+      <auto_static x="253" y="250" width="269" height="176" stretch="1">
+        <texture x="1" y="1" width="335" height="174">ui\video_window</texture>
+      </auto_static>
+      <auto_static width="102" height="768" stretch="1">
+		    <texture>ui_inGame2_opt_left_widepanel</texture>
+	    </auto_static>
+	    <auto_static x="921" width="102" height="768" stretch="1">
+		    <texture>ui_inGame2_opt_right_widepanel</texture>
+	    </auto_static>
+	</background>
+
+	<main_dialog>
+		<dialog x="484" y="274" width="389" height="462" stretch="1">
+			<texture>ui_inGame2_opt_main_window</texture>
+	        <auto_static x="11" y="27" width="368" height="38" stretch="1">
+	            <texture>ui_inGame2_opt_buttons_frame</texture>
+	        </auto_static>
+		</dialog>
+
+		<btn_accept x="84" y="431" width="108" height="26" stretch="1">
+			<text font="letterica18" align="c">ui_mm_apply</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+            <text_color>
+                <e r="170" g="170" b="170"/>
+            </text_color>
+		</btn_accept>
+
+		<btn_cancel x="196" y="431" width="108" height="26" stretch="1">
+			<text font="letterica18" align="c">ui_mm_cancel</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+            <text_color>
+                <e r="170" g="170" b="170"/>
+            </text_color>
+		</btn_cancel>
+
+		<tab x="11" y="27" width="368" height="38">
+			<button x="1" y="2" width="105" height="25" id="video" stretch="1">
+				<texture>ui_inGame2_opt_button_1</texture>
+				<text font="letterica18" align="c">ui_mm_video</text>
+				<text_color>
+					<e r="200" g="200" b="200"/>
+				</text_color>
+			</button>
+
+			<button x="89" y="2" width="104" height="25" id="sound" stretch="1">
+				<texture>ui_inGame2_opt_button_1</texture>
+				<text font="letterica18" align="c">ui_mm_sound</text>
+				<text_color>
+					<e r="200" g="200" b="200"/>
+				</text_color>
+			</button>
+
+			<button x="176" y="2" width="105" height="25" id="gameplay" stretch="1">
+	            <texture>ui_inGame2_opt_button_1</texture>
+	            <text font="letterica18" align="c">ui_mm_gameplay</text>
+				<text_color>
+					<e r="200" g="200" b="200"/>
+				</text_color>
+			</button>
+
+			<button x="264" y="2" width="103" height="25" id="controls" stretch="1">
+	            <texture>ui_inGame2_opt_button_2</texture>
+	            <text font="letterica18" align="c">ui_mm_controls</text>
+				<text_color>
+					<e r="200" g="200" b="200"/>
+				</text_color>
+			</button>
+		</tab>
+	</main_dialog>
+
+	<tab_size x="22" y="63" width="354" height="344"/>
+    <tab_video>
+        <scroll_v x="-10" y="2" width="366" height="318"
+        right_ident="0" left_ident="0" top_indent="0" bottom_indent="0"
+        vert_interval="0" always_show_scroll="0"/>
+
+        <templ_item width="366" height="30"/>
+		
+		<cap_separator y="9" width="344" height="15">
+			<text x="10" r="210" g="210" b="210" font="letterica16" vert_align="c" align="l"/>
+		</cap_separator>
+        <separator_separator y="9" width="344" height="15">
+            <texture a="100">ui_inGame2_servers_list_button</texture>
+        </separator_separator>
+
+        <cap_renderer width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_renderer</text>
+        </cap_renderer>
+        <list_renderer x="160" width="182" height="21" list_length="5" always_show_scroll="0">
+            <options_item entry="renderer" group="mm_opt_video" depend="restart"/>
+            <list_font r="170" g="170" b="170" font="letterica16"/>
+		    <text_color>
+	            <e r="170" g="170" b="170"/>
+	            <d r="70" g="70" b="70"/>
+		    </text_color>
+        </list_renderer>
+
+        <cap_preset width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_quality_presets</text>
+        </cap_preset>
+        <list_preset x="160" width="182" height="21" list_length="5"  always_show_scroll="0">
+            <options_item entry="_preset" group="mm_opt_video_preset" depend="restart"/>
+            <list_font r="170" g="170" b="170" font="letterica16"/>
+		    <text_color>
+	            <e r="170" g="170" b="170"/>
+	            <d r="70" g="70" b="70"/>
+		    </text_color>
+        </list_preset>
+
+        <cap_resolution width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_resolution</text>
+        </cap_resolution>
+        <list_resolution x="160" width="182" height="21" list_length="7" always_show_scroll="1">
+            <options_item entry="vid_mode" group="mm_opt_video" depend="vid"/>
+            <list_font r="170" g="170" b="170" font="letterica16"/>
+		    <text_color>
+	            <e r="170" g="170" b="170"/>
+	            <d r="70" g="70" b="70"/>
+		    </text_color>
+        </list_resolution>
+
+		<cap_font_scale_x width="150" height="21">
+			<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_font_scale_x</text>
+		</cap_font_scale_x>
+		<track_font_scale_x x="160" width="162" height="21" invert="0" step="0.01" min="0.5" max="2">
+			<options_item entry="g_font_scale_x" group="mm_opt_gameplay"/>
+			<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+				<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+			</output_wnd>
+		</track_font_scale_x>
+
+		<cap_font_scale_y width="150" height="21">
+			<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_font_scale_y</text>
+		</cap_font_scale_y>
+		<track_font_scale_y x="160" width="162" height="21" invert="0" step="0.01" min="0.5" max="2">
+			<options_item entry="g_font_scale_y" group="mm_opt_gameplay"/>
+			<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+				<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+			</output_wnd>
+		</track_font_scale_y>
+
+        <cap_gamma width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_gamma</text>
+        </cap_gamma>
+        <track_gamma x="160" width="162" height="21">
+            <options_item entry="ssfx_gamma" group="mm_opt_video" depend="runtime"/>
+			<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+				<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+			</output_wnd>
+        </track_gamma>
+
+        <cap_contrast width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_contrast</text>
+        </cap_contrast>
+        <track_contrast x="160" width="162" height="21">
+            <options_item entry="ssfx_saturation" group="mm_opt_video" depend="runtime"/>
+			<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+				<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+			</output_wnd>
+        </track_contrast>
+
+        <cap_brightness width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_brightness</text>
+        </cap_brightness>
+        <track_brightness x="160" width="162" height="21">
+            <options_item entry="ssfx_exposure" group="mm_opt_video" depend="runtime"/>
+			<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+				<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+			</output_wnd>
+        </track_brightness>
+
+		<cap_fps_lock width="150" height="21">
+			<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_fps_lock</text>
+		</cap_fps_lock>
+		<list_fps_lock x="160" width="182" height="21" list_length="5" always_show_scroll="1">
+			<options_item entry="r_fps_lock" group="mm_opt_video" depend="runtime"/>
+			<text_color>
+				<e r="170" g="170" b="170"/>
+				<d r="70" g="70" b="70"/>
+			</text_color>
+			<list_font_s r="170" g="170" b="170"/>
+			<list_font r="170" g="170" b="170" font="letterica16"/>
+		</list_fps_lock>
+
+		<cap_always_active width="314" height="21">
+			<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_always_active</text>
+		</cap_always_active>
+		<check_always_active x="317" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+			<options_item entry="rs_always_active" group="mm_opt_video" depend="runtime"/>
+		</check_always_active>
+
+        <cap_fullscreen width="314" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_fullscreen</text>
+        </cap_fullscreen>
+        <check_fullscreen x="317" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="rs_fullscreen" group="mm_opt_video" depend="vid"/>
+        </check_fullscreen>
+
+		<cap_exclusive_input width="314" height="21">
+			<text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_exclusive_input</text>
+		</cap_exclusive_input>
+		<check_exclusive_input x="317" width="30" height="21" stretch="1">
+			<texture>ui_inGame2_checkbox</texture>
+			<options_item entry="input_exclusive_mode" group="mm_opt_gameplay"/>
+		</check_exclusive_input>
+		
+		<cap_vsync width="314" height="21">
+			<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_vsync</text>
+		</cap_vsync>
+		<check_vsync x="317" width="30" height="21" stretch="1">
+			<texture>ui_inGame2_checkbox</texture>
+			<options_item entry="rs_v_sync" group="mm_opt_video" />
+		</check_vsync>
+
+
+        <btn_advanced x="270" y="322" width="86" height="24" stretch="1">
+            <text r="170" g="170" b="170" align="c" font="letterica16">ui_mm_advanced</text>
+            <texture>ui_inGame2_button</texture>
+			<text_color>
+				<e r="210" g="210" b="210"/>
+			</text_color>
+        </btn_advanced>
+    </tab_video>
+
+    <video_adv>
+        <scroll_v x="-10" y="2" width="366" height="318"
+        right_ident="0" left_ident="0" top_indent="0" bottom_indent="0"
+        vert_interval="0" always_show_scroll="0"/>
+
+        <templ_item width="366" height="30"/>
+		
+		<cap_separator y="9" width="344" height="15">
+			<text x="10" r="210" g="210" b="210" font="letterica16" vert_align="c" align="l"/>
+		</cap_separator>
+        <separator_separator y="9" width="344" height="15">
+            <texture a="100">ui_inGame2_servers_list_button</texture>
+        </separator_separator>
+
+	<cap_fov width="150" height="21">
+		<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_fov</text>
+	</cap_fov>
+	<track_fov x="160" width="162" height="21" step="1">
+		<options_item entry="fov" group="mm_opt_video_adv" />
+		<output_wnd format="%.0f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+	</track_fov>
+	<cap_hud_fov width="150" height="21">
+		<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_hud_fov</text>
+	</cap_hud_fov>
+	<track_hud_fov x="160" width="162" height="21" step="0.1">
+		<options_item entry="hud_fov" group="mm_opt_video_adv" />
+		<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+	</track_hud_fov>
+    <cap_aa width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_aa</text>
+    </cap_aa>
+    <list_aa x="160" width="182" height="21" list_length="4" always_show_scroll="0">
+      <options_item entry="r_aa_mode" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_aa>
+	<cap_cas width="150" height="21">
+		<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_cas</text>
+	</cap_cas>
+	<track_cas x="160" width="162" height="21" step="0.01">
+		<options_item entry="r_aa_cas" group="mm_opt_video_adv" />
+		<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+	</track_cas>
+    <cap_vis_dist width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_vis_dist</text>
+    </cap_vis_dist>
+    <track_vis_dist x="160" width="162" height="21" step="0.1">
+      <options_item entry="rs_vis_distance" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_vis_dist>
+    <cap_geometry_lod width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_geometry_lod</text>
+    </cap_geometry_lod>
+    <track_geometry_lod x="160" width="162" height="21" step="0.1">
+      <options_item entry="r__geometry_lod" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.1f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_geometry_lod>
+    <cap_smap_size width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_smap_size</text>
+    </cap_smap_size>
+    <list_smap_size x="160" width="182" height="21" list_length="4">
+      <options_item entry="r__smap_cascade0_size" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_smap_size>
+    <cap_sun_quality width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_sun_quality</text>
+    </cap_sun_quality>
+    <list_sun_quality x="160" width="182" height="21" list_length="4">
+      <options_item entry="r2_sun_quality" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_sun_quality>
+    <cap_sun_shafts width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_sun_shafts</text>
+    </cap_sun_shafts>
+    <list_sun_shafts x="160" width="182" height="21" list_length="4">
+      <options_item entry="r_sunshafts_mode" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_sun_shafts>
+    <cap_actor_shadow width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_actor_shadow</text>
+    </cap_actor_shadow>
+    <check_actor_shadow x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="g_actor_shadow" group="mm_opt_video" />
+    </check_actor_shadow>
+    <cap_lens_flare width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_lens_flare</text>
+    </cap_lens_flare>
+    <check_lens_flare x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r_lens_flare" group="mm_opt_video" />
+    </check_lens_flare>
+    <cap_ao_mode width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_ao_mode</text>
+    </cap_ao_mode>
+    <list_ao_mode x="160" width="182" height="21" list_length="4">
+      <options_item entry="r_ao_mode" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_ao_mode>
+    <cap_ssao width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_ssao</text>
+    </cap_ssao>
+    <list_ssao x="160" width="182" height="21" list_length="4">
+      <options_item entry="r2_ssao" group="mm_opt_video" />
+      <text_color>
+        <e r="170" g="170" b="170" />
+        <d color="ui_gray" />
+      </text_color>
+      <list_font_s r="240" g="217" b="182" />
+      <list_font r="170" g="170" b="170" font="letterica16" />
+    </list_ssao>
+    <cap_dynamic_wet_surfaces width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_dynamic_wet_surfaces</text>
+    </cap_dynamic_wet_surfaces>
+    <check_dynamic_wet_surfaces x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r3_dynamic_wet_surfaces" group="mm_opt_video" />
+    </check_dynamic_wet_surfaces>
+    <cap_sslr width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_sslr</text>
+    </cap_sslr>
+    <check_sslr x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r_sslr_enable" group="mm_opt_video" />
+    </check_sslr>
+    <cap_tessellation width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_tessellation</text>
+    </cap_tessellation>
+    <check_tessellation x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r4_enable_tessellation" group="mm_opt_video" />
+    </check_tessellation>
+    <cap_mt_texload width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_mt_texload</text>
+    </cap_mt_texload>
+    <check_mt_texload x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r_mt_texload" group="mm_opt_video" />
+    </check_mt_texload>
+    <cap_shadercache width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_shadercache</text>
+    </cap_shadercache>
+    <check_shadercache x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r_shader_cache" group="mm_opt_video" />
+    </check_shadercache>
+    <cap_detail_density width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_detail_density</text>
+    </cap_detail_density>
+    <track_detail_density x="160" width="162" height="21" step="0.02" invert="1">
+      <options_item entry="r__detail_density" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_detail_density>
+	<cap_detail_distance width="150" height="21">
+		<text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_detail_distance</text>
+	</cap_detail_distance>
+	<track_detail_distance x="160" width="162" height="21" invert="0" step="1" is_integer="1">
+		<options_item entry="r__detail_radius" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.d" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+	</track_detail_distance>
+    <cap_detail_scale width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_detail_scale</text>
+    </cap_detail_scale>
+    <track_detail_scale x="160" width="162" height="21" step="0.01">
+      <options_item entry="r__detail_scale" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_detail_scale>
+    <cap_sun_details width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_sun_details</text>
+    </cap_sun_details>
+    <check_sun_details x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_sun_details" group="mm_opt_video" />
+    </check_sun_details>
+    <cap_steep_parallax width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_steep_parallax</text>
+    </cap_steep_parallax>
+    <check_steep_parallax x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_steep_parallax" group="mm_opt_video" />
+    </check_steep_parallax>
+    <cap_terrain_parallax width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_terrain_parallax</text>
+    </cap_terrain_parallax>
+    <check_terrain_parallax x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r_terrain_parallax_enable" group="mm_opt_video" />
+    </check_terrain_parallax>
+    <cap_volumetric_light width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_volumetric_light</text>
+    </cap_volumetric_light>
+    <check_volumetric_light x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_volumetric_lights" group="mm_opt_video" />
+    </check_volumetric_light>
+    <cap_npc_torch width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_npc_torch</text>
+    </cap_npc_torch>
+    <check_npc_torch x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="ai_use_torch_dynamic_lights" group="mm_opt_video" />
+    </check_npc_torch>
+    <cap_dof_reload width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_dof_reload</text>
+    </cap_dof_reload>
+    <check_dof_reload x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="g_dof_reload" group="mm_opt_video" />
+    </check_dof_reload>
+    <cap_dof_zoom width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_dof_zoom</text>
+    </cap_dof_zoom>
+    <check_dof_zoom x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="g_dof_zoom" group="mm_opt_video" />
+    </check_dof_zoom>
+    <cap_dof_zoom_param width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_dof_zoom_param</text>
+    </cap_dof_zoom_param>
+    <track_dof_zoom_param x="160" width="162" height="21" step="0.01">
+      <options_item entry="ssfx_wpn_dof_2" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_dof_zoom_param>
+    <cap_mblur width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_mblur</text>
+    </cap_mblur>
+    <check_mblur x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_mblur_enable" group="mm_opt_video" />
+    </check_mblur>
+    <cap_mblur_param width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_mblur_param</text>
+    </cap_mblur_param>
+    <track_mblur_param x="160" width="162" height="21" step="0.01">
+      <options_item entry="r2_mblur" group="mm_opt_video_adv" depend="vid" />
+		<output_wnd format="%.2f" x="162" width="20" height="21" stretch="1">
+			<text vert_align="c" align="r" r="170" g="170" b="170" font="letterica16"/>
+		</output_wnd>
+    </track_mblur_param>
+    <cap_mask width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_mask</text>
+    </cap_mask>
+    <check_mask x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_mask" group="mm_opt_video" />
+    </check_mask>
+    <cap_visor_refl width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_visor_refl</text>
+    </cap_visor_refl>
+    <check_visor_refl x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_visor_refl" group="mm_opt_video" />
+    </check_visor_refl>
+    <cap_rain_drops width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_rain_drops</text>
+    </cap_rain_drops>
+    <check_rain_drops x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r2_rain_drops" group="mm_opt_video" />
+    </check_rain_drops>
+    <cap_volumetric_smoke width="150" height="21">
+      <text font="letterica16" r="170" g="170" b="170" align="r" vert_align="c">ui_mm_volumetric_smoke</text>
+    </cap_volumetric_smoke>
+    <check_volumetric_smoke x="152" width="30" height="21" stretch="1">
+	  <texture>ui_inGame2_checkbox</texture>
+      <options_item entry="r3_volumetric_smoke" group="mm_opt_video" />
+    </check_volumetric_smoke>
+
+        <btn_to_simply x="270" y="322" width="86" height="24" stretch="1">
+            <text align="c" font="letterica16">ui_mm_simply</text>
+            <texture>ui_inGame2_button</texture>
+			<text_color>
+				<e r="210" g="210" b="210"/>
+			</text_color>
+        </btn_to_simply>
+    </video_adv>
+
+    <tab_sound>
+        <cap_mastervolume x="12" y="3" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_master_volume</text>
+        </cap_mastervolume>
+        <track_mastervolume x="140" y="6" width="188" height="16">
+            <options_item entry="snd_volume_eff" group="mm_opt_sound"/>
+        </track_mastervolume>
+
+        <cap_musicvolume x="12" y="33" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_music_volume</text>
+        </cap_musicvolume>
+        <track_musicvolume x="140" y="36" width="188" height="16">
+            <options_item entry="snd_volume_music" group="mm_opt_sound"/>
+        </track_musicvolume>
+
+        <cap_snd_device x="12" y="63" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_snd_device</text>
+        </cap_snd_device>
+        <list_snd_device x="140" y="65" width="188" height="20" always_show_scroll="1">
+            <options_item entry="snd_device" group="mm_opt_sound" depend="restart"/>
+            <list_font r="170" g="170" b="170" font="letterica16"/>
+		    <text_color>
+	            <e r="170" g="170" b="170"/>
+	            <d r="70" g="70" b="70"/>
+		    </text_color>
+        </list_snd_device>
+
+        <cap_check_eax x="12" y="93" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_eax</text>
+        </cap_check_eax>
+        <check_eax x="129" y="90" width="35" stretch="1" height="29">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="snd_efx" group="mm_opt_sound" depend="snd"/>
+        </check_eax>
+
+        <cap_check_dynamic_music x="12" y="123" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_dynamic_music</text>
+        </cap_check_dynamic_music>
+        <check_dynamic_music x="129" y="120" width="35" stretch="1" height="29">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="g_dynamic_music" group="mm_opt_sound" depend="snd"/>
+        </check_dynamic_music>
+    </tab_sound>
+    <tab_gameplay>
+        <scroll_v x="-10" y="2" width="366" height="318"
+        right_ident="0" left_ident="0" top_indent="0" bottom_indent="0"
+        vert_interval="0" always_show_scroll="0"/>
+
+        <templ_item width="366" height="30"/>
+		
+		<cap_separator y="9" width="344" height="15">
+			<text x="10" r="210" g="210" b="210" font="letterica16" vert_align="c" align="l"/>
+		</cap_separator>
+        <separator_separator y="9" width="344" height="15">
+            <texture a="100">ui_inGame2_servers_list_button</texture>
+        </separator_separator>
+		
+        <cap_difficulty width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_difficulty</text>
+        </cap_difficulty>
+        <list_difficulty x="160" width="182" height="21">
+            <options_item entry="g_game_difficulty" group="mm_opt_gameplay"/>
+            <list_font r="170" g="170" b="170" font="letterica16"/>
+		    <text_color>
+	            <e r="170" g="170" b="170"/>
+	            <d r="70" g="70" b="70"/>
+		    </text_color>
+        </list_difficulty>
+
+        <cap_crosshair width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_show_crosshair</text>
+        </cap_crosshair>
+        <check_crosshair x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="hud_crosshair" group="mm_opt_gameplay"/>
+        </check_crosshair>
+
+        <cap_dyn_crosshair width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_dyn_crosshair</text>
+        </cap_dyn_crosshair>
+        <check_dyn_crosshair x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="cl_dynamiccrosshair" group="mm_opt_gameplay"/>
+        </check_dyn_crosshair>
+
+        <cap_dist width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_crosshair_distance</text>
+        </cap_dist>
+        <check_dist x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="hud_crosshair_dist" group="mm_opt_gameplay"/>
+        </check_dist>
+
+        <cap_tips width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_tips</text>
+        </cap_tips>
+        <check_tips x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="hud_info" group="mm_opt_gameplay"/>
+        </check_tips>
+
+        <cap_crouch_toggle width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_crouch_toggle</text>
+        </cap_crouch_toggle>
+        <check_crouch_toggle x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="g_crouch_toggle" group="mm_opt_gameplay"/>
+        </check_crouch_toggle>
+
+        <cap_important_save width="150" height="21">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_important_save</text>
+        </cap_important_save>
+        <check_important_save x="152" width="30" height="21" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="g_important_save" group="mm_opt_gameplay"/>
+        </check_important_save>
+
+		<cap_hud_draw width="150" height="21">
+			<text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_st_disable_hud</text>
+		</cap_hud_draw>
+		<check_hud_draw x="152" width="30" height="21" stretch="1">
+			<texture>ui_inGame2_checkbox</texture>
+			<options_item entry="hud_draw" group="mm_opt_gameplay"/>
+		</check_hud_draw>
+
+		<cap_weapon_bobbing width="150" height="21">
+			<text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_st_weapon_bobbing</text>
+		</cap_weapon_bobbing>
+		<check_weapon_bobbing x="152" width="30" height="21" stretch="1">
+			<texture>ui_inGame2_checkbox</texture>
+			<options_item entry="g_weapon_bobbing" group="mm_opt_gameplay"/>
+		</check_weapon_bobbing>
+
+		<cap_switch_slot width="150" height="21">
+			<text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_switch_slot</text>
+		</cap_switch_slot>
+		<check_switch_slot x="152" width="30" height="21" stretch="1">
+			<texture>ui_inGame2_checkbox</texture>
+			<options_item entry="g_mouse_wheel_switch_slot" group="mm_opt_gameplay"/>
+		</check_switch_slot>
+
+    </tab_gameplay>
+    <tab_controls>
+        <cap_mousesens x="12" y="3" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_mouse_sense</text>
+        </cap_mousesens>
+        <track_mousesens x="140" y="6" width="188" height="16" step="0.01">
+            <options_item entry="mouse_sens" group="mm_opt_controls"/>
+        </track_mousesens>
+        <cap_check_mouseinvert x="12" y="33" width="108" height="24">
+            <text r="170" g="170" b="170" font="letterica16" align="r" vert_align="c">ui_mm_invert_mouse</text>
+        </cap_check_mouseinvert>
+        <check_mouseinvert x="129" y="30" width="35" stretch="1" height="29">
+	        <texture>ui_inGame2_checkbox</texture>
+            <options_item entry="mouse_invert" group="mm_opt_controls"/>
+        </check_mouseinvert>
+
+        <cap_keyboardsetup y="65" width="344" height="15">
+            <texture a="150">ui_inGame2_servers_list_button</texture>
+            <auto_static x="8" width="108" height="15">
+                <text r="170" g="170" b="170" font="letterica16" vert_align="c">ui_mm_keyboard_setup</text>
+            </auto_static>
+        </cap_keyboardsetup>
+
+        <key_binding y="85" width="344" height="240">
+            <header_1 width="176" height="15">
+                <texture a="150">ui_inGame2_servers_list_button</texture>
+                <auto_static x="2" width="176" height="15">
+                    <text r="170" g="170" b="170" font="arial_14" x="2" y="1" align="l" vert_align="c" complex_mode="0">ui_mm_action</text>
+                </auto_static>
+            </header_1>
+            <header_2 x="176" width="84" height="15">
+                <texture a="150">ui_inGame2_servers_list_button</texture>
+                <auto_static x="2" width="84" height="15">
+                    <text r="170" g="170" b="170" font="arial_14" x="2" y="1" align="l" vert_align="c" complex_mode="0">ui_mm_key</text>
+                </auto_static>
+            </header_2>
+            <auto_frameline x="260" width="84" height="15">
+                <texture>ui_inGame2_servers_list_button</texture>
+            </auto_frameline>
+            <header_3 x="260" width="68" height="15">
+                <texture a="150">ui_inGame2_empty_frameline_15</texture>
+                <auto_static x="2" width="68" height="15">
+                    <text r="170" g="170" b="170" font="arial_14" x="2" y="1" align="l" vert_align="c" complex_mode="0">ui_mm_alternative</text>
+                </auto_static>
+            </header_3>
+
+            <frame y="15" width="343" height="215">
+                <texture>ui_inGame2_servers_list_frame</texture>
+            </frame>
+
+            <scroll_view x="2" y="17" width="341" height="211" always_show_scroll="1" vert_interval="3">
+                <item_group width="160" height="25">
+                    <text r="230" g="230" b="230" font="letterica18"/>
+                </item_group>
+
+                <item_key width="331" height="18">
+                    <text r="170" g="170" b="170" font="letterica16"/>
+                </item_key>
+            </scroll_view>
+        </key_binding>
+
+        <btn_default x="270" y="322" width="86" height="24" stretch="1">
+            <text align="c" font="letterica16">ui_mm_default</text>
+            <texture>ui_inGame2_button</texture>
+			<text_color>
+				<e r="210" g="210" b="210"/>
+			</text_color>
+        </btn_default>
+    </tab_controls>
+
+    <download_static x="251" y="717" width="482" height="51" stretch="1">
+        <texture>ui_patch_back</texture>
+    </download_static>
+
+    <download_text x="262" y="730" width="384" height="30">
+        <text r="170" g="170" b="170" align="c" font="letterica16" complex_mode="0">mm_mp_progress</text>
+    </download_text>
+
+    <progress_download x="280" y="754" width="322" height="10" horz="1" min="0" max="100">
+        <progress>
+            <texture>ui_patch_progress</texture>
+        </progress>
+    </progress_download>
+
+    <btn_cancel_download x="624" y="732" width="88" height="29" stretch="1">
+        <text align="c" font="letterica16">mm_mp_cancel</text>
+        <text_color>
+            <e r="170" g="170" b="170"/>
+        </text_color>
+        <texture>ui_button_ordinary</texture>
+    </btn_cancel_download>
+</w>
