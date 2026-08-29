@@ -15,20 +15,13 @@ public:
         shared_str ParentNames{};
 
         string_unordered_map<shared_str, shared_str> Data;
-        
-        xr_vector<std::pair<shared_str, shared_str>> Ordered_Data;
-        //xr_map<shared_str, shared_str> Ordered_Data; //Для ЗП обязательно надо чтобы был xr_map для сортировки по алфавату, в ТЧ же вариант с xr_vector работает много лет без проблем, потому не хочу менять пока.
+        xr_map<shared_str, shared_str> Ordered_Data;
 
         BOOL line_exist(LPCSTR L) const { return Data.contains(L); }
         BOOL line_exist(LPCSTR, LPCSTR*) const;
         u32 line_count() const;
 
         LPCSTR r_string(LPCSTR) const;
-        u32 r_u32(LPCSTR) const;
-        float r_float(LPCSTR) const;
-
-        Ivector2 r_ivector2(LPCSTR) const;
-        Fvector3 r_fvector3(LPCSTR) const;
     };
     using Root = string_unordered_map<shared_str, Sect*>;
     using RootItem = std::pair<shared_str, Sect*>;

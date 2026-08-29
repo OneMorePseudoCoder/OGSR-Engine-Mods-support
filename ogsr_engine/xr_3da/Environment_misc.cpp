@@ -8,9 +8,9 @@
 #include "IGame_Level.h"
 #include "igame_persistent.h"
 
-#include "../COMMON_AI/object_broker.h"
-#include "../COMMON_AI/LevelGameDef.h"
-#include "../xrGame/ShapeData.h"
+#include "../xrServerEntities/object_broker.h"
+#include "../xrServerEntities/LevelGameDef.h"
+#include "../xrServerEntities/ShapeData.h"
 
 ENGINE_API float ps_r_sunshafts_intensity = 0.0f;
 ENGINE_API float puddles_drying = 0.2f;

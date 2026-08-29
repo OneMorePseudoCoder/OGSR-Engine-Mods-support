@@ -206,12 +206,6 @@
     <ClInclude Include="ILoadingScreen.h" />
     <ClInclude Include="line_editor.h" />
     <ClInclude Include="line_edit_control.h" />
-    <ClInclude Include="NET_Server_Trash\client_id.h" />
-    <ClInclude Include="NET_Server_Trash\NET_Client.h" />
-    <ClInclude Include="NET_Server_Trash\NET_Messages.h" />
-    <ClInclude Include="NET_Server_Trash\NET_Server.h" />
-    <ClInclude Include="NET_Server_Trash\NET_Shared.h" />
-    <ClInclude Include="NET_Server_Trash\NET_utils.h" />
     <ClInclude Include="os_clipboard.h" />
     <ClInclude Include="SkeletonMotionDefs.h" />
     <ClInclude Include="splash.h" />
@@ -287,8 +281,6 @@
     <ClCompile Include="GameMtlLib_Engine.cpp" />
     <ClCompile Include="line_editor.cpp" />
     <ClCompile Include="line_edit_control.cpp" />
-    <ClCompile Include="NET_Server_Trash\NET_Client.cpp" />
-    <ClCompile Include="NET_Server_Trash\NET_Server.cpp" />
     <ClCompile Include="os_clipboard.cpp" />
     <ClCompile Include="ReShadeCompat.cpp" />
     <ClCompile Include="splash.cpp" />

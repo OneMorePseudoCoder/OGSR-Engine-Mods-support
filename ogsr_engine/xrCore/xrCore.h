@@ -186,7 +186,7 @@ public:
     struct Feature
     {
         static constexpr u64 equipped_untradable = 1ull << 0, highlight_equipped = 1ull << 1, af_radiation_immunity_mod = 1ull << 2, condition_jump_weight_mod = 1ull << 3,
-                             forcibly_equivalent_slots = 1ull << 4, slots_extend_menu = 1ull << 5, dynamic_sun_movement = 1ull << 6, // = 1ull << 7,
+                             forcibly_equivalent_slots = 1ull << 4, slots_extend_menu = 1ull << 5, dynamic_sun_movement = 1ull << 6, /* = 1ull << 7,*/
                              show_inv_item_condition = 1ull << 8, remove_alt_keybinding = 1ull << 9, binoc_firing = 1ull << 10, busy_actor_restrictions = 1ull << 11,
             stop_anim_playing = 1ull << 12, corpses_collision = 1ull << 13, more_hide_weapon = 1ull << 14, keep_inprogress_tasks_only = 1ull << 15,
                              show_dialog_numbers = 1ull << 16, objects_radioactive = 1ull << 17, af_zero_condition = 1ull << 18, af_satiety = 1ull << 19,
@@ -196,7 +196,8 @@ public:
                              dont_switch_active_task_by_prio = 1ull << 32,
             colorize_untradable = 1ull << 33, select_mode_1342 = 1ull << 34, old_outfit_slot_style = 1ull << 35, npc_simplified_shooting = 1ull << 36, autoreload_wpn = 1ull << 37,
                              use_trade_deficit_factor = 1ull << 38, show_objectives_ondemand = 1ull << 39, pickup_check_overlaped = 1ull << 40, disable_dialog_break = 1ull << 41,
-                             actor_thirst = 1ull << 42, no_progress_bar_animation = 1ull << 43;
+                             actor_thirst = 1ull << 42, no_progress_bar_animation = 1ull << 43, strict_infoportions_control = 1ull << 44, monsters_inventory = 1ull << 45,
+                             cop_rounded_minimap = 1ull << 46, cop_scale_bounds = 1ull << 47;
     };
 
     void _initialize(LPCSTR ApplicationName, LogCallback cb = 0, BOOL init_fs = TRUE, LPCSTR fs_fname = 0);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "iinputreceiver.h"
-
 ENGINE_API extern Flags32 psHUD_Flags;
 
 enum HUD_Flags : u32
@@ -32,7 +30,7 @@ enum HUD_Flags : u32
 
 class CUI;
 
-class ENGINE_API CCustomHUD : public DLL_Pure, public IEventReceiver
+class ENGINE_API CCustomHUD : public DLL_Pure, public IEventReceiver, public pureScreenResolutionChanged
 {
 public:
     CCustomHUD();
@@ -46,7 +44,7 @@ public:
     virtual void OnFrame() { }
     virtual void OnEvent(EVENT E, u64 P1, u64 P2) { ; }
 
-    virtual IC CUI* GetUI() = 0;
+    virtual CUI* GetUI() { return nullptr; }
 
     virtual void OnScreenRatioChanged() {}
     virtual void OnScreenResolutionChanged() {}

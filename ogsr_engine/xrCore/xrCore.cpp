@@ -70,7 +70,7 @@ void xrCore::_initialize(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 
         FS._initialize(flags, fs_fname);
 
-        Msg("[OGSR Engine (%s)] build date: [" __DATE__ " " __TIME__ "]",
+        Msg("[OGSR Engine (CoP Edition) (%s)] build date: [" __DATE__ " " __TIME__ "]",
             GetBuildConfiguration());
         if (strlen(APPVEYOR_BUILD_VERSION))
             Log("[AppVeyor] build version: [" APPVEYOR_BUILD_VERSION
@@ -133,7 +133,7 @@ const char* xrCore::GetEngineVersion()
     if (strlen(APPVEYOR_BUILD_VERSION))
         std::snprintf(buff, sizeof(buff), APPVEYOR_BUILD_VERSION " (%s) from repo: [" APPVEYOR_REPO_NAME "]", GetBuildConfiguration());
     else
-        std::snprintf(buff, sizeof(buff), "[OGSR Engine %s (build: " __DATE__ " " __TIME__ ")]", GetBuildConfiguration());
+        std::snprintf(buff, sizeof(buff), "[OGSR Engine (CoP Edition) %s (build: " __DATE__ " " __TIME__ ")]", GetBuildConfiguration());
     return buff;
 }
 

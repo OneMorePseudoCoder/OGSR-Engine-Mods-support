@@ -176,9 +176,9 @@ Flags64 ps_r2_ls_flags = {
 //    | R2FLAGEXT_SSFX_SSS
 //    | R2FLAGEXT_SMAP_LOW_LOD
     | R2FLAGEXT_DISABLE_SMAPVIS
-    | R2FLAG_SMAP_2SIDE
-    | R2FLAGEXT_USE_ACES
+ //   | R2FLAG_SMAP_2SIDE //В ЗП не нужно вроде б, только фпс есть будет
     | R2FLAGEXT_LENS_FLARE
+    | R2FLAGEXT_USE_ACES
 };
 
 BOOL ps_no_scale_on_fade = 0; // Alundaio

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#pragma todo("Хз надо ли тут мержить изменения чн-->зп, вроде б и так норм.")
+
 #include "xr_input.h"
 #include "IInputReceiver.h"
 

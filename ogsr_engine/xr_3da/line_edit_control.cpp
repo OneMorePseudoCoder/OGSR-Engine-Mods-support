@@ -9,7 +9,7 @@
 #include "line_edit_control.h"
 
 #include "os_clipboard.h"
-#include "../COMMON_AI/object_broker.h"
+#include "../xrServerEntities/object_broker.h"
 #include "xr_input.h"
 #include "../xrCore/buffer_vector.h"
 

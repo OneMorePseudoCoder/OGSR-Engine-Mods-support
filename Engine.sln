@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.6.11806.211 stable
+VisualStudioVersion = 18.6.11806.211
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvorbis_static", "3rd_party\Src\Xiph\libvorbis\win32\VS2010\libvorbis\libvorbis_static.vcxproj", "{0F3163C6-FAE6-4FBD-BF88-037EB0420DAF}"
 EndProject
@@ -92,6 +92,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mimalloc-lib", "3rd_party\Src\mimalloc\mimalloc-lib.vcxproj", "{ABB5EAE7-B3E6-432E-B636-333449892EA6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiscordRPC", "3rd_party\Src\DiscordRPC\DiscordRPC.vcxproj", "{9531CFEA-3446-31AB-8BF9-1711171811D7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrNetServer", "ogsr_engine\xrNetServer\xrNetServer.vcxproj", "{435BAC9A-B225-457D-AB40-C9BD0CC8838C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrPhysics", "ogsr_engine\xrPhysics\xrPhysics.vcxproj", "{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FidelityFX-SDK", "FidelityFX-SDK", "{1724B883-80C8-4A17-A702-1056764F02A0}"
 EndProject
@@ -193,6 +197,14 @@ Global
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Debug|x64.Build.0 = Debug|x64
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Release|x64.ActiveCfg = Release|x64
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Release|x64.Build.0 = Release|x64
+		{435BAC9A-B225-457D-AB40-C9BD0CC8838C}.Debug|x64.ActiveCfg = Debug|x64
+		{435BAC9A-B225-457D-AB40-C9BD0CC8838C}.Debug|x64.Build.0 = Debug|x64
+		{435BAC9A-B225-457D-AB40-C9BD0CC8838C}.Release|x64.ActiveCfg = Release|x64
+		{435BAC9A-B225-457D-AB40-C9BD0CC8838C}.Release|x64.Build.0 = Release|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Debug|x64.ActiveCfg = Debug|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Debug|x64.Build.0 = Debug|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Release|x64.ActiveCfg = Release|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Release|x64.Build.0 = Release|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Debug|x64.ActiveCfg = Debug|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Debug|x64.Build.0 = Debug|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Release|x64.ActiveCfg = Release|x64

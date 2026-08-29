@@ -49,21 +49,21 @@ jobs:
         set APPVEYOR_BUILD_VERSION=3.${{ github.run_number }}
         set CONFIGURATION=${{ matrix.Configuration }}
         set PLATFORM=${{ matrix.Platform }}
-        set OGSR_ARTIFACT_NAME=OGSR_Engine_SHOC_EDITION_%PLATFORM%_%APPVEYOR_BUILD_VERSION%_%CONFIGURATION%.7z
+        set OGSR_ARTIFACT_NAME=OGSR_Engine_COP_EDITION_%PLATFORM%_%APPVEYOR_BUILD_VERSION%_%CONFIGURATION%.7z
         cd bin_%PLATFORM%
         
-        md ..\Game\Resources_SoC_1.0006\bin_%PLATFORM%
+        md ..\Game\Resources_CoP_1.6.02\bin_%PLATFORM%
         
-        copy *.* ..\Game\Resources_SoC_1.0006\bin_%PLATFORM%
+        copy *.* ..\Game\Resources_CoP_1.6.02\bin_%PLATFORM%
         
-        cd ..\Game\Resources_SoC_1.0006
+        cd ..\Game\Resources_CoP_1.6.02
         
         7z a -t7z -m0=LZMA2:d=96m:fb=273 -mx=9 -mmt=2 ..\..\%OGSR_ARTIFACT_NAME% .\
     - name: Upload OGSR artifact
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: OGSR_Engine_SHOC_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
-        path: .\OGSR_Engine_SHOC_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
+        name: OGSR_Engine_COP_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
+        path: .\OGSR_Engine_COP_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
 
     - name: Upload release asset
       if: github.event_name == 'release'
@@ -72,6 +72,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: .\OGSR_Engine_SHOC_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
-        asset_name: OGSR_Engine_SHOC_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
+        asset_path: .\OGSR_Engine_COP_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
+        asset_name: OGSR_Engine_COP_EDITION_${{ matrix.Platform }}_3.${{ github.run_number }}_${{ matrix.Configuration }}.7z
         asset_content_type: application/x-7z-compressed

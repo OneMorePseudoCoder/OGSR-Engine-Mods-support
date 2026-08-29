@@ -7,6 +7,8 @@
 #include "../../xr_3da/igame_persistent.h"
 #include "../../xr_3da/environment.h"
 
+#include "../../xrGame/date_time.h"
+
 #include "dxRenderDeviceRender.h"
 
 // -- capture R_constant !!!
@@ -411,6 +413,63 @@ static class cl_actor_params2 final : public R_constant_setup
         cmd_list.set_c(C, P.x, P.y, P.z, static_cast<float>(ps_r2_ls_flags_ext.test(R2FLAGEXT_LENS_FLARE) && r_lens_flare_mode == new_shader_flare));
     }
 } binder_actor_params2;
+
+static class cl_m_timearrow : public R_constant_setup
+{
+    void setup(CBackend& cmd_list, R_constant* C) override
+    {
+        u32 hour{}, mins{}, secs{}, milisecs{};
+        g_pGameLevel->GetGameTimeForShaders(hour, mins, secs, milisecs);
+
+        R_ASSERT((hour < 24), "Invalid hours value", "binder_timearrow_setup");
+        R_ASSERT((secs < 60), "Invalid seconds value", "binder_timearrow_setup");
+        R_ASSERT((mins < 60), "Invalid minutes value", "binder_timearrow_setup");
+
+        float s_f = secs / 60.f;
+        float m_f = (s_f + float(mins)) / 60.f;
+        float m_angle = PI_MUL_2 * m_f;
+
+        float h_f = (m_f + float(hour)) / 12.f;
+        float h_angle = PI_MUL_2 * h_f;
+
+        cmd_list.set_c(C, sin(h_angle), cos(h_angle), sin(m_angle), cos(m_angle));
+    }
+} binder_m_timearrow;
+
+static class cl_m_timearrow2 : public R_constant_setup
+{
+    void setup(CBackend& cmd_list, R_constant* C) override
+    {
+        u32 hour{}, mins{}, secs{}, milisecs{};
+        g_pGameLevel->GetGameTimeForShaders(hour, mins, secs, milisecs);
+
+        R_ASSERT((secs < 60), "Invalid seconds value", "binder_timearrow2_setup");
+
+        float s_f = secs / 60.f;
+        float sec_angle = PI_MUL_2 * s_f;
+
+        float compass_angle, temp;
+        Device.vCameraDirection.getHP(compass_angle, temp);
+
+        cmd_list.set_c(C, sin(sec_angle), cos(sec_angle), sin(compass_angle), cos(compass_angle));
+    }
+} binder_m_timearrow2;
+
+static class cl_digiclock : public R_constant_setup
+{
+    void setup(CBackend& cmd_list, R_constant* C) override
+    {
+        u32 hours{}, mins{}, secs{}, milisecs{};
+        g_pGameLevel->GetGameTimeForShaders(hours, mins, secs, milisecs);
+
+        float hh = (hours / 10) / 10.0f;
+        float hl = (hours % 10) / 10.0f;
+        float mh = (mins / 10) / 10.0f;
+        float ml = (mins % 10) / 10.0f;
+
+        cmd_list.set_c(C, hh, hl, mh, ml);
+    }
+} binder_digiclock;
 
 static class cl_flare_params final : public R_constant_setup
 {
@@ -831,6 +890,10 @@ void CBlender_Compile::SetMapping() const
 
     r_Constant("m_actor_params", &binder_actor_params);
     r_Constant("m_actor_position", &binder_actor_params2);
+
+    r_Constant("m_timearrow", &binder_m_timearrow);
+    r_Constant("m_timearrow2", &binder_m_timearrow2);
+    r_Constant("m_digiclock", &binder_digiclock);
 
     r_Constant("m_flare_params", &binder_flare_params);
 

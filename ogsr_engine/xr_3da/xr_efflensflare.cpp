@@ -2,7 +2,7 @@
 
 #include "../Include/xrRender/Kinematics.h"
 #include "../xrCDB/cl_intersect.h"
-#include "../COMMON_AI/object_broker.h"
+#include "../xrServerEntities/object_broker.h"
 
 #include "xr_efflensflare.h"
 #include "igame_persistent.h"

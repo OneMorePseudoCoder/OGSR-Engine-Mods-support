@@ -12,6 +12,7 @@ class ENGINE_API CTheoraSurface
     u32 tm_play;
     u32 tm_total;
     BOOL ready;
+    int prefetch;
 
 public:
     BOOL playing;

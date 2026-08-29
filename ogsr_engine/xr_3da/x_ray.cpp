@@ -22,7 +22,7 @@
 #define CORE_FEATURE_SET(feature, section) Core.Features.set(xrCore::Feature::feature, READ_IF_EXISTS(pSettings, r_bool, section, #feature, false))
 
 ENGINE_API CApplication* pApp{};
-ENGINE_API bool IS_OGSR_GA{};
+//ENGINE_API bool IS_OGSR_GA{};
 ENGINE_API CInifile* pGameIni{};
 int max_load_stage{};
 
@@ -48,7 +48,7 @@ void InitSettings()
     pGameIni = xr_new<CInifile>(fname, TRUE);
     CHECK_OR_EXIT(!pGameIni->sections_ordered().empty(), make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
 
-    IS_OGSR_GA = strstr(READ_IF_EXISTS(pSettings, r_string, "mod_ver", "mod_ver", "nullptr"), "OGSR");
+    //IS_OGSR_GA = strstr(READ_IF_EXISTS(pSettings, r_string, "mod_ver", "mod_ver", "nullptr"), "OGSR");
 
     // load custom shader params declarations
 
@@ -122,6 +122,7 @@ void InitConsole()
     CORE_FEATURE_SET(forcibly_equivalent_slots, "features");
     CORE_FEATURE_SET(slots_extend_menu, "features");
     CORE_FEATURE_SET(dynamic_sun_movement, "features");
+    // CORE_FEATURE_SET(wpn_bobbing, "features");
     CORE_FEATURE_SET(show_inv_item_condition, "features");
     CORE_FEATURE_SET(remove_alt_keybinding, "features");
     CORE_FEATURE_SET(binoc_firing, "features");
@@ -155,6 +156,10 @@ void InitConsole()
     CORE_FEATURE_SET(disable_dialog_break, "features");
     CORE_FEATURE_SET(busy_actor_restrictions, "features");
     CORE_FEATURE_SET(dont_switch_active_task_by_prio, "features");
+    CORE_FEATURE_SET(strict_infoportions_control, "features");
+    CORE_FEATURE_SET(monsters_inventory, "features");
+    CORE_FEATURE_SET(cop_rounded_minimap, "features");
+    CORE_FEATURE_SET(cop_scale_bounds, "features");
 }
 
 void InitInput() { pInput = xr_new<CInput>(); }
@@ -465,7 +470,7 @@ CApplication::CApplication() : loadingScreen(nullptr)
     eDisconnect = Engine.Event.Handler_Attach("KERNEL:disconnect", this);
 
     // levels
-    Level_Current = 0;
+    Level_Current = u32(-1);
     Level_Scan();
 
     // Register us
@@ -501,6 +506,7 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
     {
         LPSTR op_server = LPSTR(P1);
         LPSTR op_client = LPSTR(P2);
+        Level_Current = u32(-1);
         R_ASSERT(0 == g_pGameLevel);
         R_ASSERT(g_pGamePersistent);
 
@@ -692,7 +698,7 @@ void CApplication::Level_Scan()
 }
 
 // Taken from OpenXray/xray-16 and refactored
-void generate_logo_path(string_path& path, pcstr level_name, int num = -1)
+static void gen_logo_name(string_path& path, pcstr level_name, int num = -1)
 {
     strconcat(sizeof(path), path, "intro\\intro_", level_name);
 
@@ -711,9 +717,9 @@ void generate_logo_path(string_path& path, pcstr level_name, int num = -1)
 // Taken from OpenXray/xray-16 and refactored
 // Return true if logo exists
 // Always sets the path even if logo doesn't exist
-bool validate_logo_path(string_path& path, pcstr level_name, int num = -1)
+static bool set_logo_path(string_path& path, pcstr level_name, int num = -1)
 {
-    generate_logo_path(path, level_name, num);
+    gen_logo_name(path, level_name, num);
     string_path temp;
     return FS.exist(temp, "$game_textures$", path, ".dds") || FS.exist(temp, "$level$", path, ".dds");
 }
@@ -736,7 +742,7 @@ void CApplication::Level_Set(u32 L)
     int count = 0;
     while (true)
     {
-        if (validate_logo_path(path, level_name, count))
+        if (set_logo_path(path, level_name, count))
             count++;
         else
             break;
@@ -744,12 +750,12 @@ void CApplication::Level_Set(u32 L)
 
     if (count)
     {
-        const int curr = ::Random.randI(count);
-        generate_logo_path(path, level_name, curr);
+        const int num = ::Random.randI(count);
+        gen_logo_name(path, level_name, num);
     }
-    else if (!validate_logo_path(path, level_name))
+    else if (!set_logo_path(path, level_name))
     {
-        if (!validate_logo_path(path, "no_start_picture"))
+        if (!set_logo_path(path, "no_start_picture"))
             path[0] = 0;
     }
 
@@ -796,10 +802,9 @@ void CApplication::load_draw_internal() const
 
 bool CApplication::CheckCsCopMode()
 {
-#pragma todo("Simp: на будущее, активировать эту функцию когда будет надо!")
-    if constexpr (true)
-        return false;
-
+//SIMP:
+    return true;
+    /*
     // Определять, что мы запускаем ЧН/ЗП будем по названию папки конфигов. Решение так себе, но ничего лучше пока не придумал.
     static const char* cfg_path{FS.get_path("$game_config$")->m_Path};
     static const char* cfg_dir_name{cfg_path + (strlen(cfg_path) - (strlen("configs") + 1))};
@@ -813,6 +818,7 @@ bool CApplication::CheckCsCopMode()
     }
 
     return res;
+    */
 }
 
 #pragma todo("Simp: нужно ли это? сомневаюсь.")

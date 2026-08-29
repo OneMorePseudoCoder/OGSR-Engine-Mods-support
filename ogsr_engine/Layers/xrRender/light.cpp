@@ -211,7 +211,7 @@ vis_data& light::get_homdata()
     return hom;
 };
 
-const Fvector& light::spatial_sector_point() const { return position; }
+const Fvector& light::spatial_sector_point() { return position; }
 
 //////////////////////////////////////////////////////////////////////////
 

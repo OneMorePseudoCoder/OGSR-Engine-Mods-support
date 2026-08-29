@@ -188,8 +188,8 @@ void dx103DFluidObstacles::ProcessDynamicObstacles(CBackend& cmd_list, const dx1
         if (!pCollision)
             continue;
 
-        IPhysicsShell* pShell = pCollision->physics_shell();
-        IPhysicsElement* pElement = pCollision->physics_character();
+        const IPhysicsShell* pShell = pCollision->physics_shell();
+        const IPhysicsElement* pElement = pCollision->physics_character();
         if (pShell)
         {
             //	Push shell here
@@ -226,18 +226,16 @@ void dx103DFluidObstacles::ProcessDynamicObstacles(CBackend& cmd_list, const dx1
 }
 
 //	TODO: DX10: Do it using instancing.
-void dx103DFluidObstacles::RenderPhysicsShell(CBackend& cmd_list, IPhysicsShell* pShell, const Fmatrix& WorldToFluid, float timestep)
+void dx103DFluidObstacles::RenderPhysicsShell(CBackend& cmd_list, const IPhysicsShell* pShell, const Fmatrix& WorldToFluid, float timestep)
 {
     const u16 iObstNum = pShell->get_ElementsNumber();
     for (u16 i = 0; i < iObstNum; ++i)
     {
-        IPhysicsElement& Element = pShell->IElement(i);
-
-        RenderPhysicsElement(cmd_list, Element, WorldToFluid, timestep);
+        RenderPhysicsElement(cmd_list, pShell->Element(i), WorldToFluid, timestep);
     }
 }
 
-void dx103DFluidObstacles::RenderPhysicsElement(CBackend& cmd_list, IPhysicsElement& Element, const Fmatrix& WorldToFluid, float timestep)
+void dx103DFluidObstacles::RenderPhysicsElement(CBackend& cmd_list, const IPhysicsElement& Element, const Fmatrix& WorldToFluid, float timestep)
 {
     //	Shader must be already set up!
     const Fvector3& MassCenter3 = Element.mass_Center();
@@ -282,11 +280,11 @@ void dx103DFluidObstacles::RenderPhysicsElement(CBackend& cmd_list, IPhysicsElem
     for (u16 i = 0; i < iShapeNum; ++i)
     {
         if (Element.geometry(i)->collide_fluids())
-            RenderDynamicOOBB(cmd_list, * Element.geometry(i), WorldToFluid, timestep);
+            RenderDynamicOOBB(cmd_list, Element.geometry(i), WorldToFluid, timestep);
     }
 }
 
-void dx103DFluidObstacles::RenderDynamicOOBB(CBackend& cmd_list, IPhysicsGeometry& Geometry, const Fmatrix& WorldToFluid, float timestep)
+void dx103DFluidObstacles::RenderDynamicOOBB(CBackend& cmd_list, const IPhysicsGeometry* Geometry, const Fmatrix& WorldToFluid, float timestep)
 {
     PIX_EVENT_CTX(cmd_list, RenderDynamicObstacle);
 
@@ -295,7 +293,7 @@ void dx103DFluidObstacles::RenderDynamicOOBB(CBackend& cmd_list, IPhysicsGeometr
 
     Fvector3 BoxSize;
     Fmatrix OOBBTransform;
-    Geometry.get_Box(OOBBTransform, BoxSize);
+    Geometry->get_Box(OOBBTransform, BoxSize);
 
     Transform.mul(WorldToFluid, OOBBTransform);
 

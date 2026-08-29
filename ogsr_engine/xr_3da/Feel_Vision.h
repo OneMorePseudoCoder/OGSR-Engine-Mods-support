@@ -27,6 +27,7 @@ private:
 
     xr_vector<ISpatial*> r_spatial;
     collide::rq_results RQR;
+    CObject const* m_owner;
 
     CFrustum Frustum;
     std::shared_mutex lock_query, lock_visible;
@@ -36,7 +37,7 @@ private:
     void o_trace(Fvector& P, float dt, float vis_threshold);
 
 public:
-    Vision();
+    Vision(CObject const* owner);
     virtual ~Vision();
 
     struct feel_visible_Item
@@ -52,7 +53,7 @@ public:
         Fvector cp_LR_dst{};
 
         Fvector cp_LAST{}; // last point found to be visible
-
+        u16 bone_id{};
         float trans{};
     };
     xr_vector<feel_visible_Item> feel_visible;

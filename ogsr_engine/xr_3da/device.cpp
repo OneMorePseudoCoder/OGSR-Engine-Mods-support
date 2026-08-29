@@ -12,7 +12,7 @@
 #include <mmsystem.h>
 #include "XR_IOConsole.h"
 #include "xr_ioc_cmd.h"
-#include "../xrGame/embedded_editor/embedded_editor_main.h"
+#include "../xrGame/ingame_editors/embedded_editor_main.h"
 
 //#define LOG_SECOND_THREAD_STATS
 

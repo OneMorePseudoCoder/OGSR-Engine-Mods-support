@@ -52,7 +52,7 @@ class shared_str
             p_ = nullptr;
     }
 
-private:
+public:
     void _set(const char* rhs)
     {
         str_value* v = g_pStringContainer->dock(rhs);
@@ -71,7 +71,6 @@ private:
     }
     const str_value* _get() const { return p_; }
 
-public:
     // construction
     shared_str() = default;
     shared_str(const char* rhs)

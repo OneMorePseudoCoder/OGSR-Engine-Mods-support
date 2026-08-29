@@ -94,34 +94,6 @@ LPCSTR CInifile::Sect::r_string(LPCSTR L) const
     return 0;
 }
 
-float CInifile::Sect::r_float(LPCSTR L) const
-{
-    LPCSTR C = r_string(L);
-    return float(atof(C));
-}
-
-u32 CInifile::Sect::r_u32(LPCSTR L) const
-{
-    LPCSTR C = r_string(L);
-    return u32(atoi(C));
-}
-
-Fvector3 CInifile::Sect::r_fvector3(LPCSTR L) const
-{
-    LPCSTR C = r_string(L);
-    Fvector3 V{};
-    sscanf(C, "%f,%f,%f", &V.x, &V.y, &V.z);
-    return V;
-}
-
-Ivector2 CInifile::Sect::r_ivector2(LPCSTR L) const
-{
-    LPCSTR C = r_string(L);
-    Ivector2 V{};
-    sscanf(C, "%d,%d", &V.x, &V.y);
-    return V;
-}
-
 u32 CInifile::Sect::line_count() const { return u32(Data.size()); }
 
 CInifile::CInifile(IReader* F, LPCSTR path)
@@ -178,7 +150,7 @@ static void insert_item(CInifile::Sect* tgt, const decltype(CInifile::Sect::Orde
     else
     {
         tgt->Data.emplace(I.first, I.second);
-        tgt->Ordered_Data.emplace_back(I); // tgt->Ordered_Data.insert(I); //поменять тут если перейду в ТЧ на xr_map
+        tgt->Ordered_Data.insert(I);
     }
 }
 

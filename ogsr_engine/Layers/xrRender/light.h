@@ -145,7 +145,7 @@ public:
     virtual bool get_moveable() override { return flags.bMoveable || flags.bHudMode; }
 
     virtual void spatial_move();
-    virtual const Fvector& spatial_sector_point() const override;
+    virtual const Fvector& spatial_sector_point() override;
 
     virtual IRender_Light* dcast_Light() { return this; }
 
