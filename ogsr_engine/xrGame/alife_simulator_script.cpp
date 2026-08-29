@@ -43,7 +43,6 @@ bool valid_object_id(const CALifeSimulator* self, ALife::_OBJECT_ID object_id)
     return (object_id != 0xffff);
 }
 
-#ifdef DEBUG
 CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, LPCSTR name)
 {
     VERIFY(self);
@@ -57,7 +56,6 @@ CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, LPCSTR name)
 
     return (0);
 }
-#endif // #ifdef DEBUG
 
 CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, ALife::_OBJECT_ID id, bool no_assert)
 {
@@ -297,17 +295,6 @@ bool dont_has_info(const CALifeSimulator* self, const ALife::_OBJECT_ID& id, LPC
     return (!has_info(self, id, info_id));
 }
 
-// void disable_info_portion						(const CALifeSimulator *self, const ALife::_OBJECT_ID &id)
-//{
-//	THROW								(self);
-// }
-
-// void give_info_portion							(const CALifeSimulator *self, const ALife::_OBJECT_ID &id)
-//{
-//	THROW								(self);
-// }
-
-
 void CALifeSimulator::script_register(lua_State* L)
 {
     module(L)[class_<CALifeSimulator>("alife_simulator")
@@ -316,6 +303,7 @@ void CALifeSimulator::script_register(lua_State* L)
                   .def("level_name", &get_level_name)
                   .def("object", (CSE_ALifeDynamicObject * (*)(const CALifeSimulator*, ALife::_OBJECT_ID))(alife_object))
                   .def("object", (CSE_ALifeDynamicObject * (*)(const CALifeSimulator*, ALife::_OBJECT_ID, bool))(alife_object))
+				  .def("object", (CSE_ALifeDynamicObject * (*) (const CALifeSimulator*, LPCSTR))(alife_object))
                   .def("story_object", (CSE_ALifeDynamicObject * (*)(const CALifeSimulator*, ALife::_STORY_ID))(alife_story_object))
                   .def("set_switch_online", (void (CALifeSimulator::*)(ALife::_OBJECT_ID, bool))(&CALifeSimulator::set_switch_online))
                   .def("set_switch_offline", (void (CALifeSimulator::*)(ALife::_OBJECT_ID, bool))(&CALifeSimulator::set_switch_offline))
