@@ -516,8 +516,6 @@ void CActor::Hit(SHit* pHDS)
             HitMark(HDS.damage(), HDS.dir, HDS.who, HDS.bone(), HDS.p_in_bone_space, HDS.impulse, HDS.hit_type);
     }
 
-    float hit_power = HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
-
     if (GodMode())
     {
         HDS.power = 0.0f;
@@ -526,8 +524,13 @@ void CActor::Hit(SHit* pHDS)
     }
     else
     {
-        HDS.power = hit_power;
+        HDS.power = HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
         HDS.add_wound = true;
+		if (g_Alive())
+		{
+			/* AVO: send script callback*/
+			callback(GameObject::eHit)(this->lua_game_object(), HDS.damage(), HDS.direction(), smart_cast<const CGameObject*>(HDS.who)->lua_game_object(), HDS.boneID);
+		}
         inherited::Hit(&HDS);
     }
 }
@@ -535,8 +538,7 @@ void CActor::Hit(SHit* pHDS)
 void CActor::HitMark(float P, Fvector dir, CObject* who_object, s16 element, Fvector position_in_bone_space, float impulse, ALife::EHitType hit_type_)
 {
     // hit marker
-    if (/*(hit_type==ALife::eHitTypeFireWound||hit_type==ALife::eHitTypeWound_2) && */
-        g_Alive() && Local() && (Level().CurrentEntity() == this))
+    if (g_Alive() && Local() && (Level().CurrentEntity() == this))
     {
         HUD().HitMarked(0, P, dir);
 
