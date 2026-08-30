@@ -24,6 +24,7 @@
 #include "UIHint.h"
 #include "UIBtnHint.h"
 #include "UITaskWnd.h"
+#include "UIFactionWarWnd.h"
 #include "UIRankingWnd.h"
 #include "UILogsWnd.h"
 #include "UIEncyclopediaWnd.h"
@@ -37,6 +38,7 @@ void RearrangeTabButtons(CUITabControl* pTab);
 CUIPdaWnd::CUIPdaWnd()
 {
     pUITaskWnd = nullptr;
+    pUIFactionWarWnd = nullptr;
     pUIRankingWnd = nullptr;
     pUILogsWnd = nullptr;
     pUIEncyclopediaWnd = nullptr;
@@ -47,6 +49,7 @@ CUIPdaWnd::CUIPdaWnd()
 CUIPdaWnd::~CUIPdaWnd()
 {
     delete_data(pUITaskWnd);
+    delete_data(pUIFactionWarWnd);
     delete_data(pUIRankingWnd);
     delete_data(pUILogsWnd);
     delete_data(pUIEncyclopediaWnd);
@@ -81,9 +84,9 @@ void CUIPdaWnd::Init()
     pUITaskWnd->hint_wnd = m_hint_wnd;
     pUITaskWnd->Init();
 
-    //-	pUIFactionWarWnd				= xr_new<CUIFactionWarWnd>();
-    //-	pUIFactionWarWnd->hint_wnd		= m_hint_wnd;
-    //-	pUIFactionWarWnd->Init			();
+    pUIFactionWarWnd = xr_new<CUIFactionWarWnd>();
+    pUIFactionWarWnd->hint_wnd = m_hint_wnd;
+    pUIFactionWarWnd->Init();
 
     pUIRankingWnd = xr_new<CUIRankingWnd>();
     pUIRankingWnd->Init();
@@ -181,6 +184,10 @@ void CUIPdaWnd::SetActiveSubdialog(const shared_str& section)
     {
         m_pActiveDialog = pUITaskWnd;
     }
+    else if (section == "eptFractionWar")
+    {
+   		m_pActiveDialog = pUIFactionWarWnd;
+    }
     else if (section == "eptRanking")
     {
         m_pActiveDialog = pUIRankingWnd;
@@ -255,6 +262,10 @@ void CUIPdaWnd::DrawHint()
     {
         pUITaskWnd->DrawHint();
     }
+    else if (m_pActiveDialog == pUIFactionWarWnd)
+    {
+		pUIFactionWarWnd->Draw();
+    }
     else if (m_pActiveDialog == pUIRankingWnd)
     {
         pUIRankingWnd->DrawHint();
@@ -286,6 +297,8 @@ void CUIPdaWnd::Reset()
 
     if (pUITaskWnd)
         pUITaskWnd->ResetAll();
+    if (pUIFactionWarWnd)	
+		pUIFactionWarWnd->ResetAll();
     if (pUIRankingWnd)
         pUIRankingWnd->ResetAll();
     if (pUILogsWnd)

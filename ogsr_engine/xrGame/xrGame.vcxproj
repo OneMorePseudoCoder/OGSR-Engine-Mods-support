@@ -1416,6 +1416,8 @@
     <ClInclude Include="ui\ArtefactDetectorUI.h" />
     <ClInclude Include="ui\FactionState.h" />
     <ClInclude Include="ui\FactionState_inline.h" />
+    <ClInclude Include="ui\FractionState.h" />
+    <ClInclude Include="ui\FractionState_inline.h" />
     <ClInclude Include="ui\map_hint.h" />
     <ClInclude Include="ui\MMSound.h" />
     <ClInclude Include="ui\UI3tButton.h" />
@@ -2423,6 +2425,7 @@
     <ClCompile Include="UIZoneMap.cpp" />
     <ClCompile Include="ui\ArtefactDetectorUI.cpp" />
     <ClCompile Include="ui\FactionState.cpp" />
+    <ClCompile Include="ui\FractionState.cpp" />
     <ClCompile Include="ui\map_hint.cpp" />
     <ClCompile Include="ui\MMSound.cpp" />
     <ClCompile Include="ui\UI3tButton.cpp" />

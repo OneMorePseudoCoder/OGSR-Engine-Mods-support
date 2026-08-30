@@ -14,6 +14,7 @@ class CUIFrameWindow;
 class UIHint;
 
 class CUITaskWnd;
+class CUIFactionWarWnd;
 class CUIRankingWnd;
 class CUILogsWnd;
 class CUIEncyclopediaWnd;
@@ -63,6 +64,7 @@ protected:
 
 public:
     CUITaskWnd* pUITaskWnd;
+    CUIFactionWarWnd* pUIFactionWarWnd;
     CUIRankingWnd* pUIRankingWnd;
     CUILogsWnd* pUILogsWnd;
     CUIEncyclopediaWnd* pUIEncyclopediaWnd;
