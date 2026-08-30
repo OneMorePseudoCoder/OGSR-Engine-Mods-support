@@ -56,6 +56,9 @@ void CScriptGameObject::script_register(lua_State* L)
                     value("action_sound", int(GameObject::eActionTypeSound)), value("action_particle", int(GameObject::eActionTypeParticle)),
                     value("action_object", int(GameObject::eActionTypeObject)), value("actor_sleep", int(GameObject::eActorSleep)),
                     value("helicopter_on_point", int(GameObject::eHelicopterOnPoint)), value("helicopter_on_hit", int(GameObject::eHelicopterOnHit)),
+					/* avo: custom callbacks */
+					value("key_press", int(GameObject::eKeyPress)), value("key_release", int(GameObject::eKeyRelease)), value("key_hold", int(GameObject::eKeyHold)), value("mouse_move", int(GameObject::eMouseMove)), value("mouse_wheel", int(GameObject::eMouseWheel)),
+					/* avo: end */
                     value("on_item_take", int(GameObject::eOnItemTake)), value("on_item_drop", int(GameObject::eOnItemDrop)),
                     value("script_animation", int(GameObject::eScriptAnimation)), value("task_state", int(GameObject::eTaskStateChange)),
                     value("take_item_from_box", int(GameObject::eInvBoxItemTake)), value("weapon_no_ammo", int(GameObject::eWeaponNoAmmoAvailable)),

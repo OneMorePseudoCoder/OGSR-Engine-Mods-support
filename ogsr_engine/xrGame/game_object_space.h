@@ -45,6 +45,14 @@ enum ECallbackType
     eOnItemTake,
     eOnItemDrop,
 
+	/* avo: custom callbacks */
+	eKeyPress,
+	eKeyRelease,
+	eKeyHold,
+	eMouseMove,
+	eMouseWheel,
+	/* avo: end */
+
     eOnItemToBelt,
     eOnItemToRuck,
     eOnItemToSlot,
