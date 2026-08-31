@@ -167,14 +167,16 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 
     switch (t_old)
     {
-    case iActorSlot: {
+    case iActorSlot: 
+	{
         if (m_currMenuMode == mmDeadBodySearch)
             ToDeadBodyBag(itm, false);
         else
             ToBag(itm, false);
         break;
     }
-    case iActorBag: {
+    case iActorBag: 
+	{
         if (m_currMenuMode == mmTrade)
         {
             ToActorTrade(itm, false);
@@ -194,7 +196,11 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
             break;
         }
         PIItem iitem_to_place = (PIItem)itm->m_pData;
-        if (!ToSlot(itm, false, iitem_to_place->BaseSlot()))
+		if (!m_pActorInvOwner->inventory().SlotIsPersistent(iitem_to_place->BaseSlot()) && m_pActorInvOwner->inventory().ItemFromSlot(iitem_to_place->BaseSlot()) == iitem_to_place)
+		{
+			ToBag(itm, false);
+		}
+        else if (!ToSlot(itm, false, iitem_to_place->BaseSlot()))
         {
             if (!ToBelt(itm, false))
             {
@@ -203,27 +209,33 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
         }
         break;
     }
-    case iActorBelt: {
+    case iActorBelt: 
+	{
         ToBag(itm, false);
         break;
     }
-    case iActorTrade: {
+    case iActorTrade: 
+	{
         ToBag(itm, false);
         break;
     }
-    case iPartnerTradeBag: {
+    case iPartnerTradeBag: 
+	{
         ToPartnerTrade(itm, false);
         break;
     }
-    case iPartnerTrade: {
+    case iPartnerTrade: 
+	{
         ToPartnerTradeBag(itm, false);
         break;
     }
-    case iDeadBodyBag: {
+    case iDeadBodyBag: 
+	{
         ToBag(itm, false);
         break;
     }
-    case iQuickSlot: {
+    case iQuickSlot: 
+	{
         ToQuickSlot(itm);
     }
     break;

@@ -457,6 +457,7 @@ void CUIActorMenu::clear_highlight_lists()
     }
     m_highlight_clear = true;
 }
+
 void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 {
     PIItem item = (PIItem)cell_item->m_pData;
@@ -483,6 +484,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
         	m_InvSlot3Highlight->Show(true);
         return;
     }
+
     if (helmet && slot_id == HELMET_SLOT && m_HelmetSlotHighlight)
     {
         m_HelmetSlotHighlight->Show(true);
@@ -494,6 +496,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
         m_OutfitSlotHighlight->Show(true);
         return;
     }
+
     if (detector && slot_id == DETECTOR_SLOT && m_DetectorSlotHighlight)
     {
         m_DetectorSlotHighlight->Show(true);

@@ -11,6 +11,10 @@
 #include "../Include/xrRender/UIShader.h"
 #include "../xr_3da/xr_input.h"
 
+//Alundaio
+#include "../Inventory.h" 
+//-Alundaio
+
 CUIDragItem* CUIDragDropListEx::m_drag_item = nullptr;
 
 void CUICell::Clear()
@@ -480,13 +484,9 @@ void CUIDragDropListEx::SetCellsHorizAlignment(xr_string alignment)
 
 Ivector2 CUIDragDropListEx::PickCell(const Fvector2& abs_pos) { return m_container->PickCell(abs_pos); };
 
-CUICell& CUIDragDropListEx::GetCellIdx(size_t idx)
-{
-    return m_container->GetCellIdx(idx);
-}
+CUICell& CUIDragDropListEx::GetCellIdx(size_t idx) { return m_container->GetCellIdx(idx); }
 
 CUICell& CUIDragDropListEx::GetCellAt(const Ivector2& pos) { return m_container->GetCellAt(pos); };
-// =================================================================================================
 
 CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
@@ -500,6 +500,12 @@ bool CUICellContainer::AddSimilar(CUICellItem* itm)
 {
     if (!m_pParentDragDropList->IsGrouping())
         return false;
+
+	//Alundaio: Don't stack equipped items
+	PIItem	iitem = (PIItem)itm->m_pData;
+	if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
+		return false;
+	//-Alundaio
 
     CUICellItem* i = FindSimilar(itm);
     if (i == nullptr || i == itm || itm->ChildsCount() > 0)
@@ -520,6 +526,11 @@ CUICellItem* CUICellContainer::FindSimilar(CUICellItem* itm)
 #else
         auto i = (CUICellItem*)it;
 #endif
+		//Alundaio: Don't stack equipped items
+		PIItem	iitem = (PIItem)i->m_pData;
+		if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
+			continue;
+		//-Alundaio
 
         if (i == itm)
             continue;
@@ -857,7 +868,7 @@ void CUICellContainer::Draw()
     //	u32 cell_i = 0;
     for (int x = 0; x <= tgt_cells.width(); ++x)
     {
-        for (int y = 0; y <= tgt_cells.height(); ++y /*, ++cell_i*/)
+        for (int y = 0; y <= tgt_cells.height(); ++y)
         {
             Fvector2 rect_offset;
             rect_offset.set((drawLT.x + f_len.x * x + sp_len.x * x), (drawLT.y + f_len.y * y + sp_len.y * y));
@@ -883,23 +894,27 @@ void CUICellContainer::Draw()
                     select_mode = 3;
                 }
             }
-
+			else 
+			{
+				//Alundaio: Highlight equipped items
+				PIItem iitem = (PIItem)ui_cell.m_item->m_pData;
+				if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
+					select_mode = 2;
+				//-Alundaio:
+			}
+	
             Fvector2 tp;
             GetTexUVLT(tp, tgt_cells.x1 + x, tgt_cells.y1 + y, select_mode);
 
-            // for (u32 k=0; k<6; ++k,++pv)
             for (u32 k = 0; k < 6; ++k)
             {
                 const Fvector2& p = pts[k];
                 const Fvector2& uv = uvs[k];
-                // pv->set			(iFloor(drawLT.x + p.x*(f_len.x) + f_len.x*x)-0.5f,
-                //				 iFloor(drawLT.y + p.y*(f_len.y) + f_len.y*y)-0.5f,
-                //				 0xFFFFFFFF,tp.x+uv.x,tp.y+uv.y);
-                UIRender->PushPoint(iFloor(rect_offset.x + p.x * (f_len.x)) - 0.5f, iFloor(rect_offset.y + p.y * (f_len.y)) - 0.5f, 0, m_pParentDragDropList->back_color,
-                                    tp.x + uv.x, tp.y + uv.y);
-            } // for k
-        } // for y
-    } // for x
+                UIRender->PushPoint(iFloor(rect_offset.x + p.x * (f_len.x)) - 0.5f, iFloor(rect_offset.y + p.y * (f_len.y)) - 0.5f, 0, m_pParentDragDropList->back_color, tp.x + uv.x, tp.y + uv.y);
+            }
+        }
+    }
+
     UI().PushScissor(clientArea);
 
     UIRender->SetShader(*hShader);

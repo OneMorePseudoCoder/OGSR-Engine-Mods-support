@@ -13,6 +13,7 @@
 #include "UICellItem.h"
 #include "../ai_space.h"
 #include "../../xrServerEntities/script_engine.h"
+#include "eatable_item.h"
 
 using namespace luabind;
 
@@ -23,21 +24,29 @@ void CUIActorMenu::TryRepairItem(CUIWindow* w, void* d)
     {
         return;
     }
+
     if (item->GetCondition() > 0.99f)
     {
         return;
     }
+
     LPCSTR item_name = item->m_section_id.c_str();
+	CEatableItem* EItm = smart_cast<CEatableItem*>(item);
+	if (EItm)
+	{
+		bool allow_repair = !!READ_IF_EXISTS(pSettings, r_bool, item_name, "allow_repair", false);
+		if (!allow_repair)
+			return;
+	}
+
     LPCSTR partner = m_pPartnerInvOwner->CharacterInfo().Profile().c_str();
 
     luabind::functor<bool> funct;
-    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.can_repair_item", funct),
-              make_string("Failed to get functor <inventory_upgrades.can_repair_item>, item = %s", item_name));
+    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.can_repair_item", funct), make_string("Failed to get functor <inventory_upgrades.can_repair_item>, item = %s", item_name));
     bool can_repair = funct(item_name, item->GetCondition(), partner);
 
     luabind::functor<LPCSTR> funct2;
-    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.question_repair_item", funct2),
-              make_string("Failed to get functor <inventory_upgrades.question_repair_item>, item = %s", item_name));
+    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.question_repair_item", funct2), make_string("Failed to get functor <inventory_upgrades.question_repair_item>, item = %s", item_name));
     LPCSTR question = funct2(item_name, item->GetCondition(), can_repair, partner);
 
     if (can_repair)
@@ -77,8 +86,7 @@ bool CUIActorMenu::CanUpgradeItem(PIItem item)
     LPCSTR partner = m_pPartnerInvOwner->CharacterInfo().Profile().c_str();
 
     luabind::functor<bool> funct;
-    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.can_upgrade_item", funct),
-              make_string("Failed to get functor <inventory_upgrades.can_upgrade_item>, item = %s, mechanic = %s", item_name, partner));
+    R_ASSERT2(ai().script_engine().functor("inventory_upgrades.can_upgrade_item", funct), make_string("Failed to get functor <inventory_upgrades.can_upgrade_item>, item = %s, mechanic = %s", item_name, partner));
 
     return funct(item_name, partner);
 }

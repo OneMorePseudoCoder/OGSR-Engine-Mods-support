@@ -373,7 +373,6 @@ void CUIActorMenu::DetachAddon(LPCSTR addon_name, PIItem itm)
 
 void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 {
-    //VERIFY(KNIFE_SLOT <= slot_idx && slot_idx <= LAST_SLOT);
     PIItem item = m_pActorInvOwner->inventory().ItemFromSlot(slot_idx);
     if (!item)
     {
@@ -388,14 +387,6 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
     curr_list->SetItem(cell_item);
     if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
         ColorizeItem(cell_item, !CanMoveToPartner(item));
-
-    // CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(item);
-    // if(outfit)
-    //	outfit->ReloadBonesProtection();
-
-    // CHelmet* helmet = smart_cast<CHelmet*>(item);
-    // if(helmet)
-    //	helmet->ReloadBonesProtection();
 }
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
@@ -468,9 +459,7 @@ bool CUIActorMenu::TryActiveSlot(CUICellItem* itm)
         SendEvent_ActivateSlot(slot, m_pActorInvOwner->object_id());
         return true;
     }
-    if (slot == DETECTOR_SLOT)
-    {
-    }
+
     return false;
 }
 
@@ -491,11 +480,10 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
     {
         CUIDragDropListEx* new_owner = GetSlotList(slot_id);
 
-        if (slot_id == GRENADE_SLOT || !new_owner)
-        {
-            return true; // fake, sorry (((
-        }
-        else if (slot_id == OUTFIT_SLOT)
+		if (!new_owner)
+			return true;
+
+        if (slot_id == OUTFIT_SLOT)
         {
             CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(iitem);
             if (pOutfit && !pOutfit->bIsHelmetAvaliable)
@@ -526,7 +514,6 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 
         SendEvent_ActivateSlot(slot_id, m_pActorInvOwner->object_id());
 
-        // ColorizeItem						( itm, false );
         if (slot_id == OUTFIT_SLOT)
         {
             MoveArtefactsToBag();
@@ -547,12 +534,11 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
         if (slot_id == INV_SLOT_3 && m_pActorInvOwner->inventory().CanPutInSlot(iitem, INV_SLOT_2))
             return ToSlot(itm, force_place, INV_SLOT_2);
 
-		CUIDragDropListEx* slot_list		= GetSlotList(slot_id);
+		CUIDragDropListEx* slot_list = GetSlotList(slot_id);
 		if (!slot_list)
 			return false;
 
-		PIItem	_iitem = m_pActorInvOwner->inventory().ItemFromSlot(slot_id);
-
+		PIItem _iitem = m_pActorInvOwner->inventory().ItemFromSlot(slot_id);
 		CUIDragDropListEx* invlist = GetListByType(iActorBag);
 		if (invlist != slot_list)
 		{
@@ -691,10 +677,7 @@ bool CUIActorMenu::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
         if (belt_cell_pos.x == -1 && belt_cell_pos.y == -1)
             return false;
 
-        //		PIItem	_iitem						= m_pActorInvOwner->inventory().ItemFromSlot(slot_id);
-
         CUICellItem* slot_cell = belt_list->GetCellAt(belt_cell_pos).m_item;
-        //		VERIFY								(slot_cell && ((PIItem)slot_cell->m_pData)==_iitem);
 
         bool result = ToBag(slot_cell, false);
         VERIFY(result);
@@ -703,25 +686,37 @@ bool CUIActorMenu::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
         return result;
     }
 }
+
 CUIDragDropListEx* CUIActorMenu::GetSlotList(u16 slot_idx)
 {
     if (slot_idx == NO_ACTIVE_SLOT)
     {
         return nullptr;
     }
+
     switch (slot_idx)
     {
-    case INV_SLOT_2: return m_pInventoryPistolList; break;
-
-    case INV_SLOT_3: return m_pInventoryAutomaticList; break;
-
-    case OUTFIT_SLOT: return m_pInventoryOutfitList; break;
-
-    case HELMET_SLOT: return m_pInventoryHelmetList; break;
-
-    case DETECTOR_SLOT: return m_pInventoryDetectorList; break;
-
-    case GRENADE_SLOT: // fake
+    case INV_SLOT_2:
+		return m_pInventoryPistolList;
+		break;
+    case INV_SLOT_3:
+		return m_pInventoryAutomaticList;
+		break;
+    case OUTFIT_SLOT:
+		return m_pInventoryOutfitList;
+		break;
+    case HELMET_SLOT:
+		return m_pInventoryHelmetList;
+		break;
+    case DETECTOR_SLOT:
+		return m_pInventoryDetectorList;
+		break;
+	case PDA_SLOT:
+	case TORCH_SLOT:
+	case ARTEFACT_SLOT:
+	case BINOCULAR_SLOT:
+	case KNIFE_SLOT:
+    case GRENADE_SLOT:
         if (m_currMenuMode == mmTrade)
         {
             return m_pTradeActorBagList;
@@ -904,8 +899,12 @@ void CUIActorMenu::PropertiesBoxForSlots(PIItem item, bool& b_show)
         else if (pHelmet)
             m_UIPropertiesBox->AddItem("st_undress_helmet", nullptr, INVENTORY_TO_BAG_ACTION);
         else
-            m_UIPropertiesBox->AddItem("st_move_to_bag", nullptr, INVENTORY_TO_BAG_ACTION);
-
+		{
+			if (m_currMenuMode == mmDeadBodySearch)
+				m_UIPropertiesBox->AddItem("st_move_to_bag", nullptr, INVENTORY_TO_BAG_ACTION);
+			else
+				m_UIPropertiesBox->AddItem("st_unequip", nullptr, INVENTORY_TO_BAG_ACTION);
+		}
         bAlreadyDressed = true;
         b_show = true;
     }
