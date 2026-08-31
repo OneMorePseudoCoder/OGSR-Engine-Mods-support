@@ -51,22 +51,7 @@ CTrade::CTrade(CInventoryOwner* p_io)
 CTrade::~CTrade() {}
 
 void CTrade::RemovePartner() { pPartner.Set(TT_NONE, 0, 0); }
-//// предложение торговли
-// void CTrade::Communicate()
-//{
-//	// Вывести приветствие
-////	Msg("--TRADE::----------------------------------------------");
-////	Msg("--TRADE::          TRADE ACIVATED                      ");
-////	Msg("--TRADE::----------------------------------------------");
-////	Msg("--TRADE:: - Hello, my name is [%s]", *pThis.base->cName());
-////	Msg("--TRADE::   Wanna trade with me?" );
-//
-//	if (pPartner.inv_owner->GetTrade()->OfferTrade(pThis)) {
-//		StartTrade();
-//	}
-//
-//}
-//
+
 bool CTrade::SetPartner(CEntity* p)
 {
     CAI_Trader* pTrader;
@@ -93,44 +78,11 @@ bool CTrade::SetPartner(CEntity* p)
     return true;
 }
 
-//// Man предлагает торговать
-//// возвращает true, если данный trader готов торговать с man
-//// т.е. принятие торговли
-// bool CTrade::OfferTrade(SInventoryOwner man)
-//{
-//	StartTrade();
-//	pPartner.Set(man.type,man.base,man.inv_owner);
-//
-//	string64	s;
-//	switch (pPartner.type)
-//	{
-//		case TT_TRADER: xr_strcpy(s, "trader"); break;
-//		case TT_STALKER:
-//		case TT_ACTOR: xr_strcpy(s, "stalker"); break;
-//	}
-//
-//
-//	switch (pPartner.inv_owner->m_tRank)
-//	{
-//		case ALife::eStalkerRankNone: xr_strcpy(s,"NO_RANK"); break;
-//		case ALife::eStalkerRankNovice: xr_strcpy(s,"NOVICE"); break;
-//		case ALife::eStalkerRankExperienced: xr_strcpy(s,"EXPERIENCED"); break;
-//		case ALife::eStalkerRankVeteran: xr_strcpy(s,"VETERAN"); break;
-//		case ALife::eStalkerRankMaster: xr_strcpy(s,"MASTER"); break;
-//		case ALife::eStalkerRankDummy: xr_strcpy(s,"DUMMY"); break;
-//	}
-//
-//	return true;
-// }
-//
-
 void CTrade::StartTrade()
 {
     TradeState = true;
     m_dwLastTradeTime = Level().timeServer();
     m_bNeedToUpdateArtefactTasks = false;
-
-    //	if (pThis.type == TT_TRADER) smart_cast<CAI_Trader*>(pThis.base)->OnStartTrade();
 }
 
 void CTrade::StartTradeEx(CInventoryOwner* pInvOwner)
@@ -160,7 +112,6 @@ void CTrade::StopTrade()
 {
     TradeState = false;
     m_dwLastTradeTime = 0;
-    //	Msg("--TRADE:: [%s]: Trade stopped...",*pThis.base->cName());
 
     CAI_Trader* pTrader = nullptr;
     if (pThis.type == TT_TRADER)

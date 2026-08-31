@@ -204,6 +204,7 @@ private:
     void PropertiesBoxForPlaying(PIItem item, bool& b_show);
     void PropertiesBoxForDrop(CUICellItem* cell_item, PIItem item, bool& b_show);
     void PropertiesBoxForRepair(PIItem item, bool& b_show);
+	void PropertiesBoxForDonate(PIItem item, bool& b_show); //Alundaio
 
 private:
     void clear_highlight_lists();
@@ -351,7 +352,8 @@ public:
 	CUIDragDropListEx* GetListByType(EDDListType t);
 	//AxelDominator && Alundaio consumable use condition
 	void RefreshCurrentItemCell();
-	void SetCurrentItem(CUICellItem* itm);		//Alundaio: Made public
-	CUICellItem* CurrentItem();					//Alundaio: Made public
+	void SetCurrentItem(CUICellItem* itm); //Alundaio: Made public
+	CUICellItem* CurrentItem(); //Alundaio: Made public
 	//-AxelDominator && Alundaio consumable use condition
+	void DonateCurrentItem(CUICellItem* cell_item); //Alundaio: Donate item via context menu while in trade menu
 }; // class CUIActorMenu

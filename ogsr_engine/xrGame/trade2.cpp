@@ -63,11 +63,11 @@ bool CTrade::CanTrade()
     return true;
 }
 
-void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying)
+void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying, bool bFree)
 {
     // сумма сделки учитывая ценовой коэффициент
     // актер цену не говорит никогда, все делают за него
-    u32 dwTransferMoney = GetItemPrice(pItem, bBuying);
+    u32 dwTransferMoney = GetItemPrice(pItem, bBuying, bFree);
 
     if (bBuying)
     {
@@ -129,7 +129,6 @@ CInventory& CTrade::GetTradeInv(SInventoryOwner owner)
 {
     R_ASSERT(TT_NONE != owner.type);
 
-    // return ((TT_TRADER == owner.type) ? (*owner.inv_owner->m_trade_storage) : (owner.inv_owner->inventory()));
     return owner.inv_owner->inventory();
 }
 
@@ -138,8 +137,11 @@ CInventory* CTrade::GetPartnerInventory() { return &GetTradeInv(pPartner); }
 
 CInventoryOwner* CTrade::GetPartner() { return pPartner.inv_owner; }
 
-u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
+u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying, bool b_free)
 {
+	if (b_free)
+		return 0;
+
     CArtefact* pArtefact = smart_cast<CArtefact*>(pItem);
 
     // computing base_cost
@@ -174,7 +176,6 @@ u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
     bool is_actor = (pThis.type == TT_ACTOR) || (pPartner.type == TT_ACTOR);
     if (is_actor)
     {
-        //.		buying				= (pPartner.type == TT_ACTOR);
         buying = b_buying;
         _partner = &(buying ? pThis : pPartner);
     }
@@ -183,7 +184,6 @@ u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
         // rare case
         _partner = &pPartner;
     }
-    //.	const SInventoryOwner	&partner = *_partner;
 
     // computing action factor
     const CTradeFactors* p_trade_factors;
@@ -200,8 +200,8 @@ u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
             return 0;
         p_trade_factors = &pThis.inv_owner->trade_parameters().factors(CTradeParameters::action_sell(0), pItem->object().cNameSect());
     }
-    const CTradeFactors& trade_factors = *p_trade_factors;
 
+    const CTradeFactors& trade_factors = *p_trade_factors;
     float action_factor;
     if (trade_factors.friend_factor() <= trade_factors.enemy_factor())
         action_factor = trade_factors.friend_factor() + (trade_factors.enemy_factor() - trade_factors.friend_factor()) * (1.f - relation_factor);
@@ -211,11 +211,7 @@ u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
     clamp(action_factor, _min(trade_factors.enemy_factor(), trade_factors.friend_factor()), _max(trade_factors.enemy_factor(), trade_factors.friend_factor()));
 
     // computing deficit_factor
-#if 0
-	float					deficit_factor = partner.inv_owner->deficit_factor(pItem->object().cNameSect());
-#else
     float deficit_factor = 1.f;
-#endif
 
     // total price calculation
     u32 result = iFloor(base_cost * condition_factor * action_factor * deficit_factor);
@@ -227,8 +223,6 @@ u32 CTrade::GetItemPrice(PIItem pItem, bool b_buying)
         R_ASSERT(ai().script_engine().functor("trade_manager.get_sell_discount", func));
 
     result = iFloor(result * func(smart_cast<const CGameObject*>(pThis.inv_owner)->ID()));
-    // if(result>500)
-    //	result		= iFloor(result/10+0.5f)*10;
 
     clamp<u32>(result, 1, 1000000);
     return (result);

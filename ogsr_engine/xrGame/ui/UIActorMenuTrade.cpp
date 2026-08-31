@@ -25,8 +25,6 @@
 #include "../UIGameSP.h"
 #include "UITalkWnd.h"
 
-// -------------------------------------------------
-
 void CUIActorMenu::InitTradeMode()
 {
     m_pInventoryBagList->Show(false);
@@ -528,3 +526,28 @@ void CUIActorMenu::TransferItems(CUIDragDropListEx* pSellList, CUIDragDropListEx
     pTrade->pThis.inv_owner->set_money(pTrade->pThis.inv_owner->get_money(), true);
     pTrade->pPartner.inv_owner->set_money(pTrade->pPartner.inv_owner->get_money(), true);
 }
+
+//Alundaio: Donate current item while in trade menu
+void CUIActorMenu::DonateCurrentItem(CUICellItem* cell_item)
+{
+	if (!m_partner_trade || !m_pTradePartnerList)
+		return;
+
+	CUIDragDropListEx* invlist = GetListByType(iActorBag);
+	if (!invlist->IsOwner(cell_item))
+		return;
+
+	PIItem item = (PIItem)cell_item->m_pData;
+	if (!item)
+		return;
+
+	invlist->RemoveItem(cell_item, false);
+
+	m_partner_trade->TransferItem(item,true,true);
+
+	m_pTradePartnerList->SetItem(cell_item);
+
+	SetCurrentItem(NULL);
+	UpdateItemsPlace();
+}
+//-Alundaio

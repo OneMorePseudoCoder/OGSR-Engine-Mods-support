@@ -18,7 +18,8 @@ class CTrade
         TT_TRADER,
         TT_STALKER,
         TT_ACTOR,
-    } EOwnerType;
+    } 
+	EOwnerType;
 
     struct SInventoryOwner
     {
@@ -55,13 +56,13 @@ public:
 
     void OnPerformTrade(u32 money_get, u32 money_put);
 
-    void TransferItem(CInventoryItem* pItem, bool bBuying);
+    void TransferItem(CInventoryItem* pItem, bool bBuying, bool bFree = false);
 
     CInventoryOwner* GetPartner();
     CTrade* GetPartnerTrade();
     CInventory* GetPartnerInventory();
 
-    u32 GetItemPrice(CInventoryItem* pItem, bool b_buying);
+    u32 GetItemPrice(CInventoryItem* pItem, bool b_buying, bool bFree = false);
 
     void UpdateTrade();
 
