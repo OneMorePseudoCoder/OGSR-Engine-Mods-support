@@ -1621,7 +1621,7 @@ bool CScriptGameObject::is_door_blocked_by_npc() const
 }
 
 //Alundaio: Methods for exporting the ability to detach/attach addons for magazined weapons
-void CScriptGameObject::Weapon_AddonAttach(CScriptGameObject &item)
+void CScriptGameObject::Weapon_AddonAttach(CScriptGameObject* item)
 {
 	CWeaponMagazined* weapon = smart_cast<CWeaponMagazined*>(&object());
 	if (!weapon)
@@ -1630,9 +1630,10 @@ void CScriptGameObject::Weapon_AddonAttach(CScriptGameObject &item)
 		return;
 	}
 
-	if (weapon->CanAttach((PIItem)&item))
+	PIItem pItm = smart_cast<PIItem>(item);
+	if (weapon->CanAttach(pItm))
 	{
-		weapon->Attach((PIItem)&item, true);
+		weapon->Attach(pItm, true);
 	}
 }
 

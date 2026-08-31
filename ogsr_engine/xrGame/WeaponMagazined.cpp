@@ -155,6 +155,12 @@ void CWeaponMagazined::FireStart()
         if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
             CurrentGameUI()->AddCustomStatic("gun_jammed", true);
 
+		//Alundaio
+		CGameObject	*object = smart_cast<CGameObject*>(H_Parent());
+		if (object)
+			object->callback(GameObject::eOnWeaponJammed)(object->lua_game_object(), this->lua_game_object());
+		//-Alundaio
+
         OnEmptyClick();
     }
 }
@@ -537,17 +543,6 @@ void CWeaponMagazined::state_Fire(float dt)
 
     if (fShotTimeCounter < 0)
     {
-        /*
-                if(bDebug && H_Parent() && (H_Parent()->ID() != Actor()->ID()))
-                {
-                    Msg("stop shooting w=[%s] magsize=[%d] sshot=[%s] qsize=[%d] shotnum=[%d]",
-                            IsWorking()?"true":"false",
-                            m_magazine.size(),
-                            m_bFireSingleShot?"true":"false",
-                            m_iQueueSize,
-                            m_iShotNum);
-                }
-        */
         if (iAmmoElapsed == 0)
             OnMagazineEmpty();
 
@@ -657,16 +652,6 @@ void CWeaponMagazined::switch2_Fire()
         return;
 #endif // DEBUG
 
-    //
-    //	VERIFY2(
-    //		io && (ii == io->inventory().ActiveItem()),
-    //		make_string(
-    //			"item[%s], parent[%s]",
-    //			*cName(),
-    //			H_Parent() ? *H_Parent()->cName() : "no_parent"
-    //		)
-    //	);
-
     m_bStopedAfterQueueFired = false;
     m_bFireSingleShot = true;
     m_iShotNum = 0;
@@ -685,6 +670,7 @@ void CWeaponMagazined::switch2_Empty()
         inherited::FireEnd();
     }
 }
+
 void CWeaponMagazined::PlayReloadSound()
 {
     if (m_sounds_enabled)
@@ -699,6 +685,7 @@ void CWeaponMagazined::switch2_Reload()
     PlayAnimReload();
     SetPending(TRUE);
 }
+
 void CWeaponMagazined::switch2_Hiding()
 {
     OnZoomOut();
@@ -1073,6 +1060,12 @@ void CWeaponMagazined::OnZoomIn()
     if (GetState() == eIdle)
         PlayAnimIdle();
 
+	//Alundaio: callback not sure why vs2013 gives error, it's fine
+	CGameObject	*object = smart_cast<CGameObject*>(H_Parent());
+	if (object)
+		object->callback(GameObject::eOnWeaponZoomIn)(object->lua_game_object(), this->lua_game_object());
+	//-Alundaio
+
     CActor* pActor = smart_cast<CActor*>(H_Parent());
     if (pActor)
     {
@@ -1086,6 +1079,7 @@ void CWeaponMagazined::OnZoomIn()
         R_ASSERT(S);
     }
 }
+
 void CWeaponMagazined::OnZoomOut()
 {
     if (!IsZoomed())
@@ -1095,6 +1089,12 @@ void CWeaponMagazined::OnZoomOut()
 
     if (GetState() == eIdle)
         PlayAnimIdle();
+
+	//Alundaio
+	CGameObject	*object = smart_cast<CGameObject*>(H_Parent());
+	if (object)
+		object->callback(GameObject::eOnWeaponZoomOut)(object->lua_game_object(), this->lua_game_object());
+	//-Alundaio
 
     CActor* pActor = smart_cast<CActor*>(H_Parent());
 

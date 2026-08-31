@@ -39,6 +39,7 @@
 #include "stalker_decision_space.h"
 #include "space_restriction_manager.h"
 #include "eatable_item.h"
+#include "artefact.h"
 
 namespace MemorySpace
 {
@@ -1171,4 +1172,82 @@ u8 CScriptGameObject::GetMaxUses()
 		return 0;
 
 	return eItm->GetMaxUses();
+}
+
+float CScriptGameObject::GetArtefactHealthRestoreSpeed()
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	return artefact->GetHealthPower();
+}
+
+float CScriptGameObject::GetArtefactRadiationRestoreSpeed()
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	return artefact->GetRadiationPower();
+}
+
+float CScriptGameObject::GetArtefactSatietyRestoreSpeed()
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	return artefact->GetSatietyPower();
+}
+float CScriptGameObject::GetArtefactPowerRestoreSpeed()
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	return artefact->GetPowerPower();
+}
+
+float CScriptGameObject::GetArtefactBleedingRestoreSpeed()
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	return artefact->GetBleedingPower();
+}
+
+void CScriptGameObject::SetArtefactHealthRestoreSpeed(float value)
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	artefact->SetHealthPower(value);
+}
+
+void CScriptGameObject::SetArtefactRadiationRestoreSpeed(float value)
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	artefact->SetRadiationPower(value);
+}
+
+void CScriptGameObject::SetArtefactSatietyRestoreSpeed(float value)
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	artefact->SetSatietyPower(value);
+}
+void CScriptGameObject::SetArtefactPowerRestoreSpeed(float value)
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	artefact->SetPowerPower(value);
+}
+
+void CScriptGameObject::SetArtefactBleedingRestoreSpeed(float value)
+{
+	CArtefact* artefact = smart_cast<CArtefact*>(&object());
+	THROW(artefact);
+
+	artefact->SetBleedingPower(value);
 }

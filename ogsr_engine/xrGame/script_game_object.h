@@ -398,7 +398,7 @@ public:
     bool Weapon_IsGrenadeLauncherAttached();
     bool Weapon_IsScopeAttached();
     bool Weapon_IsSilencerAttached();
-	void Weapon_AddonAttach(CScriptGameObject &item); //Alundaio
+	void Weapon_AddonAttach(CScriptGameObject* item); //Alundaio
 	void Weapon_AddonDetach(LPCSTR item_section);	//Alundaio
     int Weapon_GrenadeLauncher_Status();
     int Weapon_Scope_Status();
@@ -599,6 +599,18 @@ public:
     void DisableAnomaly();
     float GetAnomalyPower();
     void SetAnomalyPower(float p);
+
+    float GetArtefactHealthRestoreSpeed();
+    float GetArtefactRadiationRestoreSpeed();
+    float GetArtefactSatietyRestoreSpeed();
+    float GetArtefactPowerRestoreSpeed();
+    float GetArtefactBleedingRestoreSpeed(); 
+
+    void SetArtefactHealthRestoreSpeed(float value);
+    void SetArtefactRadiationRestoreSpeed(float value);
+    void SetArtefactSatietyRestoreSpeed(float value);
+    void SetArtefactPowerRestoreSpeed(float value);
+    void SetArtefactBleedingRestoreSpeed(float value);
 
 	//Eatable items
 	void SetRemainingUses(u8 value);

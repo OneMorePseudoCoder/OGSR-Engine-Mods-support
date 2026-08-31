@@ -8,6 +8,7 @@
 #include "UIXmlInit.h"
 #include "UIHelper.h"
 #include "../string_table.h"
+#include "../Inventory_Item.h"
 
 constexpr u32 red_clr = color_argb(255, 210, 50, 50);
 constexpr u32 green_clr = color_argb(255, 170, 170, 170);
@@ -131,7 +132,7 @@ void CUIArtefactParams::InitFromXml(CUIXml& xml)
 
 bool CUIArtefactParams::Check(const shared_str& af_section) { return !!pSettings->line_exist(af_section, "af_actor_properties"); }
 
-void CUIArtefactParams::SetInfo(shared_str const& af_section)
+void CUIArtefactParams::SetInfo(CInventoryItem& pInvItem)
 {
     DetachAll();
     AttachChild(m_Prop_line);
@@ -142,6 +143,8 @@ void CUIArtefactParams::SetInfo(shared_str const& af_section)
         return;
     }
 
+	const shared_str& af_section = pInvItem.object().cNameSect();
+    
     float val = 0.0f, max_val = 1.0f;
     Fvector2 pos;
     float h = m_Prop_line->GetWndPos().y + m_Prop_line->GetWndSize().y;
@@ -154,6 +157,8 @@ void CUIArtefactParams::SetInfo(shared_str const& af_section)
         {
             continue;
         }
+
+		val *= pInvItem.GetCondition();
         max_val = actor->conditions().GetZoneMaxPower((ALife::EInfluenceType)i);
         val /= max_val;
         m_immunity_item[i]->SetValue(val);
@@ -170,6 +175,7 @@ void CUIArtefactParams::SetInfo(shared_str const& af_section)
         val = pSettings->r_float(af_section, "additional_inventory_weight");
         if (!fis_zero(val))
         {
+			val *= pInvItem.GetCondition();
             m_additional_weight->SetValue(val);
 
             pos.set(m_additional_weight->GetWndPos());
@@ -191,6 +197,7 @@ void CUIArtefactParams::SetInfo(shared_str const& af_section)
         if (!itm)
             continue;
 
+		val *= pInvItem.GetCondition();
         itm->SetValue(val);
 
         pos.set(itm->GetWndPos());

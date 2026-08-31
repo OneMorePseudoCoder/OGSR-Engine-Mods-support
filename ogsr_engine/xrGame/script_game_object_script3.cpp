@@ -218,7 +218,8 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
         .def("set_character_community", &CScriptGameObject::SetCharacterCommunity)
 
         .def("set_character_icon",
-             [](CScriptGameObject* self, const char* iconName) {
+             [](CScriptGameObject* self, const char* iconName) 
+			 {
                  if (auto pInvOwner = smart_cast<CInventoryOwner*>(&self->object()))
                      pInvOwner->SetIcon(iconName);
              })
@@ -227,8 +228,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
         .def("set_actor_relation_flags", &CScriptGameObject::set_actor_relation_flags)
         .def("sound_voice_prefix", &CScriptGameObject::sound_voice_prefix)
 
-        .enum_("ACTOR_RELATIONS")[value("relation_attack", int(RELATION_REGISTRY::ATTACK)), value("relation_fight_help_monster", int(RELATION_REGISTRY::FIGHT_HELP_MONSTER)),
-                                  value("relation_fight_help_human", int(RELATION_REGISTRY::FIGHT_HELP_HUMAN)), value("relation_kill", int(RELATION_REGISTRY::KILL))]
+        .enum_("ACTOR_RELATIONS")[value("relation_attack", int(RELATION_REGISTRY::ATTACK)), value("relation_fight_help_monster", int(RELATION_REGISTRY::FIGHT_HELP_MONSTER)), value("relation_fight_help_human", int(RELATION_REGISTRY::FIGHT_HELP_HUMAN)), value("relation_kill", int(RELATION_REGISTRY::KILL))]
 
         .enum_("CLSIDS")[value("no_pda_msg", int(ePdaMsgMax))]
 
@@ -238,6 +238,18 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
         .def("get_anomaly_power", &CScriptGameObject::GetAnomalyPower)
         .def("set_anomaly_power", &CScriptGameObject::SetAnomalyPower)
 
+		.def("get_artefact_health", &CScriptGameObject::GetArtefactHealthRestoreSpeed)
+		.def("get_artefact_radiation", &CScriptGameObject::GetArtefactRadiationRestoreSpeed)
+		.def("get_artefact_satiety", &CScriptGameObject::GetArtefactSatietyRestoreSpeed)
+		.def("get_artefact_power", &CScriptGameObject::GetArtefactPowerRestoreSpeed)
+		.def("get_artefact_bleeding", &CScriptGameObject::GetArtefactBleedingRestoreSpeed)        
+
+		.def("set_artefact_health", &CScriptGameObject::SetArtefactHealthRestoreSpeed)
+		.def("set_artefact_radiation", &CScriptGameObject::SetArtefactRadiationRestoreSpeed)
+		.def("set_artefact_satiety", &CScriptGameObject::SetArtefactSatietyRestoreSpeed)
+		.def("set_artefact_power", &CScriptGameObject::SetArtefactPowerRestoreSpeed)
+		.def("set_artefact_bleeding", &CScriptGameObject::SetArtefactBleedingRestoreSpeed)
+
         // HELICOPTER
         .def("get_helicopter", &CScriptGameObject::get_helicopter)
         .def("get_car", &CScriptGameObject::get_car)
@@ -246,6 +258,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
         .def("get_physics_shell", &CScriptGameObject::get_physics_shell)
         .def("get_holder_class", &CScriptGameObject::get_custom_holder)
         .def("get_current_holder", &CScriptGameObject::get_current_holder)
+
         // usable object
         .def("set_tip_text", &CScriptGameObject::SetTipText)
         .def("set_tip_text_default", &CScriptGameObject::SetTipTextDefault)

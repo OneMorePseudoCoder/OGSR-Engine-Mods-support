@@ -49,8 +49,13 @@ enum ECallbackType
 	eKeyPress,
 	eKeyRelease,
 	eKeyHold,
+
 	eMouseMove,
 	eMouseWheel,
+
+	eOnWeaponZoomIn,
+	eOnWeaponZoomOut,
+	eOnWeaponJammed,
 	/* avo: end */
 
     eOnItemToBelt,

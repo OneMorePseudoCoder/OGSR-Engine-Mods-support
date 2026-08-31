@@ -37,14 +37,12 @@
 #include "ai_space.h"
 #include "trade.h"
 #include "Inventory.h"
-// #include "Physics.h"
 #include "Level.h"
 #include "GamePersistent.h"
 #include "xrmessages.h"
 #include "string_table.h"
 #include "UsableScriptObject.h"
 #include "../xrCDB/cl_intersect.h"
-// #include "ExtendedGeom.h"
 #include "alife_registry_wrappers.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "Artefact.h"
@@ -500,8 +498,7 @@ void CActor::Hit(SHit* pHDS)
 
     if ((mstate_real & mcSprint) && Level().CurrentControlEntity() == this && conditions().DisableSprint(pHDS))
     {
-        bool const is_special_burn_hit_2_self =
-            (pHDS->who == this) && (pHDS->boneID == BI_NONE) && ((pHDS->hit_type == ALife::eHitTypeBurn) || (pHDS->hit_type == ALife::eHitTypeLightBurn));
+        bool const is_special_burn_hit_2_self = (pHDS->who == this) && (pHDS->boneID == BI_NONE) && ((pHDS->hit_type == ALife::eHitTypeBurn) || (pHDS->hit_type == ALife::eHitTypeLightBurn));
         if (!is_special_burn_hit_2_self)
         {
             mstate_wishful &= ~mcSprint;
@@ -1513,22 +1510,23 @@ void CActor::UpdateArtefactsOnBeltAndOutfit()
             continue;
 
         auto& cond = conditions();
-        cond.ChangeBleeding(artefact->m_fBleedingRestoreSpeed * dt);
-        cond.ChangeHealth(artefact->m_fHealthRestoreSpeed * dt);
-        cond.ChangePower(artefact->m_fPowerRestoreSpeed * dt);
-        cond.ChangeSatiety(artefact->m_fSatietyRestoreSpeed * dt);
-        cond.ChangeThirst(artefact->m_fThirstRestoreSpeed * dt);
+        float art_cond = artefact->GetCondition();
+        cond.ChangeBleeding((artefact->m_fBleedingRestoreSpeed * art_cond) * dt);
+        cond.ChangeHealth((artefact->m_fHealthRestoreSpeed * art_cond) * dt);
+        cond.ChangePower((artefact->m_fPowerRestoreSpeed * art_cond) * dt);
+        cond.ChangeSatiety((artefact->m_fSatietyRestoreSpeed * art_cond) * dt);
+        cond.ChangeThirst((artefact->m_fThirstRestoreSpeed * art_cond) * dt);
 
         const float base_rad = artefact->m_fRadiationRestoreSpeed;
         if (base_rad > 0.0f)
         {
             float val = base_rad - cond.GetBoostRadiationImmunity();
             val = std::max(val, 0.0f);
-            cond.ChangeRadiation(val * dt);
+            cond.ChangeRadiation((val * art_cond) * dt);
         }
         else
         {
-            cond.ChangeRadiation(base_rad * dt);
+            cond.ChangeRadiation((base_rad * art_cond) * dt);
         }
     }
 
@@ -1574,7 +1572,7 @@ float CActor::GetProtection_ArtefactsOnBelt(ALife::EHitType hit_type)
     for (auto* item : inventory().m_belt)
     {
         if (auto* artefact = smart_cast<CArtefact*>(item))
-            protection_sum += artefact->m_ArtefactHitImmunities.AffectHit(1.0f, hit_type);
+            protection_sum += (artefact->m_ArtefactHitImmunities.AffectHit(1.0f, hit_type)) * artefact->GetCondition();
     }
 
     return protection_sum;
@@ -1623,7 +1621,7 @@ bool CActor::use_center_to_aim() const { return (!!(mstate_real & mcCrouch)); }
 bool CActor::can_attach(const CInventoryItem* inventory_item) const
 {
     const CAttachableItem* item = smart_cast<const CAttachableItem*>(inventory_item);
-    if (!item || /*!item->enabled() ||*/ !item->can_be_attached())
+    if (!item || !item->can_be_attached())
         return (false);
 
     // можно ли присоединять объекты такого типа
@@ -1661,7 +1659,7 @@ bool CActor::is_on_ground() { return (character_physics_support()->movement()->E
 
 bool CActor::is_ai_obstacle() const
 {
-    return (false); // true);
+    return (false);
 }
 
 float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
@@ -1669,7 +1667,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
     float res = 0.0f;
     switch (type)
     {
-    case ALife::eHealthRestoreSpeed: {
+    case ALife::eHealthRestoreSpeed: 
+	{
         res = conditions().change_v().m_fV_HealthRestore;
         res += conditions().V_SatietyHealth() * ((conditions().GetSatiety() > 0.0f) ? 1.0f : -1.0f);
 
@@ -1680,7 +1679,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fHealthRestoreSpeed;
+                res += (artefact->m_fHealthRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
@@ -1690,7 +1689,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
         }
         break;
     }
-    case ALife::eRadiationRestoreSpeed: {
+    case ALife::eRadiationRestoreSpeed: 
+	{
         TIItemContainer::iterator itb = inventory().m_belt.begin();
         TIItemContainer::iterator ite = inventory().m_belt.end();
         for (; itb != ite; ++itb)
@@ -1698,7 +1698,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fRadiationRestoreSpeed;
+                res += (artefact->m_fRadiationRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
@@ -1708,7 +1708,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
         }
         break;
     }
-    case ALife::eSatietyRestoreSpeed: {
+    case ALife::eSatietyRestoreSpeed: 
+	{
         res = conditions().V_Satiety();
 
         TIItemContainer::iterator itb = inventory().m_belt.begin();
@@ -1718,7 +1719,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fSatietyRestoreSpeed;
+                res += (artefact->m_fSatietyRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
@@ -1728,7 +1729,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
         }
         break;
     }
-    case ALife::eThirstRestoreSpeed: {
+    case ALife::eThirstRestoreSpeed: 
+	{
         res = conditions().V_Thirst();
 
         TIItemContainer::iterator itb = inventory().m_belt.begin();
@@ -1738,7 +1740,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fThirstRestoreSpeed;
+                res += (artefact->m_fThirstRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
@@ -1746,7 +1748,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             res += outfit->m_fThirstRestoreSpeed;
         break;
     }
-    case ALife::ePowerRestoreSpeed: {
+    case ALife::ePowerRestoreSpeed: 
+	{
         res = conditions().GetSatietyPower();
 
         TIItemContainer::iterator itb = inventory().m_belt.begin();
@@ -1756,7 +1759,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fPowerRestoreSpeed;
+                res += (artefact->m_fPowerRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
@@ -1770,7 +1773,8 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             res /= 0.5f;
         break;
     }
-    case ALife::eBleedingRestoreSpeed: {
+    case ALife::eBleedingRestoreSpeed: 
+	{
         res = conditions().change_v().m_fV_WoundIncarnation;
 
         TIItemContainer::iterator itb = inventory().m_belt.begin();
@@ -1780,7 +1784,7 @@ float CActor::GetRestoreSpeed(ALife::EConditionRestoreType const& type)
             CArtefact* artefact = smart_cast<CArtefact*>(*itb);
             if (artefact)
             {
-                res += artefact->m_fBleedingRestoreSpeed;
+                res += (artefact->m_fBleedingRestoreSpeed * artefact->GetCondition());
             }
         }
         CCustomOutfit* outfit = GetOutfit();
