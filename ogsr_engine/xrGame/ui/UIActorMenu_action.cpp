@@ -36,6 +36,7 @@ bool CUIActorMenu::AllowItemDrops(EDDListType from, EDDListType to)
 
     return (it != v.end());
 }
+
 class CUITrashIcon : public ICustomDrawDragItem
 {
     CUIStatic m_icon;
@@ -45,9 +46,9 @@ public:
     {
         m_icon.SetWndSize(Fvector2().set(29.0f * UI().get_current_kx(), 36.0f));
         m_icon.SetStretchTexture(true);
-        //		m_icon.SetAlignment		(waCenter);
         m_icon.InitTexture("ui_inGame2_inv_trash");
     }
+
     virtual void OnDraw(CUIDragItem* drag_item)
     {
         Fvector2 pos = drag_item->GetWndPos();
@@ -58,10 +59,10 @@ public:
         pos.y += drag_sz.y;
 
         m_icon.SetWndPos(pos);
-        //		m_icon.SetWndSize(sz);
         m_icon.Draw();
     }
 };
+
 void CUIActorMenu::OnDragItemOnTrash(CUIDragItem* item, bool b_receive)
 {
     if (b_receive && !CurrentIItem()->IsQuestItem())
@@ -145,8 +146,8 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 
     OnItemDropped(CurrentIItem(), new_owner, old_owner);
 
-    UpdateItemsPlace();
-    UpdateConditionProgressBars();
+	UpdateConditionProgressBars();
+	UpdateItemsPlace();
 
     return true;
 }
@@ -159,6 +160,7 @@ bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 
 bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 {
+	SetCurrentItem(itm);
     InfoCurItem(nullptr);
     CUIDragDropListEx* old_owner = itm->OwnerList();
     EDDListType t_old = GetListType(old_owner);
@@ -228,8 +230,8 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 
     }; // switch
 
-    UpdateItemsPlace();
     UpdateConditionProgressBars();
+    UpdateItemsPlace();
 
     return true;
 }
@@ -358,7 +360,6 @@ void CUIActorMenu::OnPressUserKey()
     case mmUndefined: break;
     case mmInventory: break;
     case mmTrade:
-        //		OnBtnPerformTrade( this, 0 );
         break;
     case mmUpgrade: TrySetCurUpgrade(); break;
     case mmDeadBodySearch: TakeAllFromPartner(this, 0); break;

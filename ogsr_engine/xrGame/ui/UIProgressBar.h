@@ -10,7 +10,7 @@ class CUIProgressBar : public CUIWindow
     typedef CUIWindow inherited;
 
 protected:
-    //	bool				m_bIsHorizontal;
+
     enum EOrientMode
     {
         om_horz = 0,
@@ -18,7 +18,8 @@ protected:
         om_back = 2,
         om_down = 3,
         om_count
-    } m_orient_mode;
+    } 
+	m_orient_mode;
 
     Fvector2 m_ProgressPos; // x-current y-dest
     float m_MinPos;
@@ -33,10 +34,12 @@ protected:
 
 public:
     bool m_bUseColor;
+	bool m_bUseGradient;
     Fcolor m_minColor;
     Fcolor m_middleColor;
     Fcolor m_maxColor;
-    float m_inertion; //
+    float m_inertion;
+
 public:
     CUIStatic m_UIProgressItem;
     CUIStatic m_UIBackgroundItem;

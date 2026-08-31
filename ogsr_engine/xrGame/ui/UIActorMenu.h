@@ -225,7 +225,6 @@ protected:
     void BindDragDropListEvents(CUIDragDropListEx* lst);
 
     EDDListType GetListType(CUIDragDropListEx* l);
-    CUIDragDropListEx* GetListByType(EDDListType t);
     CUIDragDropListEx* GetSlotList(u16 slot_idx);
     bool CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot);
 
@@ -256,8 +255,6 @@ protected:
     void CurModeToScript();
     void RepairEffect_CurItem();
 
-    void SetCurrentItem(CUICellItem* itm);
-    CUICellItem* CurrentItem();
     PIItem CurrentIItem();
 
     void InfoCurItem(CUICellItem* cell_item); // on update item
@@ -351,5 +348,10 @@ public:
     void UpdateConditionProgressBars();
 
     IC UIHint* get_hint_wnd() { return m_hint_wnd; }
-
+	CUIDragDropListEx* GetListByType(EDDListType t);
+	//AxelDominator && Alundaio consumable use condition
+	void RefreshCurrentItemCell();
+	void SetCurrentItem(CUICellItem* itm);		//Alundaio: Made public
+	CUICellItem* CurrentItem();					//Alundaio: Made public
+	//-AxelDominator && Alundaio consumable use condition
 }; // class CUIActorMenu

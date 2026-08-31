@@ -145,7 +145,6 @@ public:
 
     BOOL IsQuestItem() const { return m_flags.test(FIsQuestItem); }
     virtual u32 Cost() const { return m_cost; }
-    //			u32					Cost				()	const	{ return m_cost; }
     virtual float Weight() const { return m_weight; }
 
 public:
@@ -165,7 +164,6 @@ public:
     Irect GetUpgrIconRect() const;
     const shared_str& GetIconName() const { return m_icon_name; };
     Frect GetKillMsgRect() const;
-    //---------------------------------------------------------------------
     IC float GetCondition() const { return m_fCondition; }
     virtual float GetConditionToShow() const { return GetCondition(); }
     IC void SetCondition(float val) { m_fCondition = val; }

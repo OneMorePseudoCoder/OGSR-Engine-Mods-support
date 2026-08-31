@@ -21,58 +21,50 @@ CUIArtefactParams::~CUIArtefactParams()
 }
 
 LPCSTR af_immunity_section_names[] = // ALife::EInfluenceType
-    {
-        "radiation_immunity", // infl_rad=0
-        "burn_immunity", // infl_fire=1
-        "chemical_burn_immunity", // infl_acid=2
-        "telepatic_immunity", // infl_psi=3
-        "shock_immunity", // infl_electra=4
-
-        //	"strike_immunity",
-        //	"wound_immunity",
-        //	"explosion_immunity",
-        //	"fire_wound_immunity",
+{
+    "radiation_immunity", // infl_rad=0
+    "burn_immunity", // infl_fire=1
+    "chemical_burn_immunity", // infl_acid=2
+    "telepatic_immunity", // infl_psi=3
+    "shock_immunity", // infl_electra=4
+    "strike_immunity",
+    "wound_immunity",
+    "explosion_immunity",
+    "fire_wound_immunity",
 };
 
 LPCSTR af_restore_section_names[] = // ALife::EConditionRestoreType
-    {
-        "health_restore_speed", // eHealthRestoreSpeed=0
-        "satiety_restore_speed", // eSatietyRestoreSpeed=1
-        "power_restore_speed", // ePowerRestoreSpeed=2
-        "bleeding_restore_speed", // eBleedingRestoreSpeed=3
-        "radiation_restore_speed", // eRadiationRestoreSpeed=4
-        "thirst_restore_speed", 
+{
+    "health_restore_speed", // eHealthRestoreSpeed=0
+    "satiety_restore_speed", // eSatietyRestoreSpeed=1
+    "power_restore_speed", // ePowerRestoreSpeed=2
+    "bleeding_restore_speed", // eBleedingRestoreSpeed=3
+    "radiation_restore_speed", // eRadiationRestoreSpeed=4
+    "thirst_restore_speed", 
 };
 
 LPCSTR af_immunity_caption[] = // ALife::EInfluenceType
-    {
-        "ui_inv_outfit_radiation_protection", // "(radiation_imm)",
-        "ui_inv_outfit_burn_protection", // "(burn_imm)",
-        "ui_inv_outfit_chemical_burn_protection", // "(chemical_burn_imm)",
-        "ui_inv_outfit_telepatic_protection", // "(telepatic_imm)",
-        "ui_inv_outfit_shock_protection", // "(shock_imm)",
-
-        //	"ui_inv_outfit_strike_protection",			// "(strike_imm)",
-        //	"ui_inv_outfit_wound_protection",			// "(wound_imm)",
-        //	"ui_inv_outfit_explosion_protection",		// "(explosion_imm)",
-        //	"ui_inv_outfit_fire_wound_protection",		// "(fire_wound_imm)",
+{
+    "ui_inv_outfit_radiation_protection", // "(radiation_imm)",
+    "ui_inv_outfit_burn_protection", // "(burn_imm)",
+    "ui_inv_outfit_chemical_burn_protection", // "(chemical_burn_imm)",
+    "ui_inv_outfit_telepatic_protection", // "(telepatic_imm)",
+    "ui_inv_outfit_shock_protection", // "(shock_imm)",
+    "ui_inv_outfit_strike_protection",			// "(strike_imm)",
+    "ui_inv_outfit_wound_protection",			// "(wound_imm)",
+    "ui_inv_outfit_explosion_protection",		// "(explosion_imm)",
+    "ui_inv_outfit_fire_wound_protection",		// "(fire_wound_imm)",
 };
 
 LPCSTR af_restore_caption[] = // ALife::EConditionRestoreType
-    {
-        "ui_inv_health", "ui_inv_satiety", "ui_inv_power", "ui_inv_bleeding", "ui_inv_radiation", "ui_inv_thirst",
-};
-
-/*
-LPCSTR af_actor_param_names[]=
 {
-    "satiety_health_v",
-    "radiation_v",
-    "satiety_v",
-    "satiety_power_v",
-    "wound_incarnation_v",
+	"ui_inv_health",
+	"ui_inv_satiety",
+	"ui_inv_power",
+	"ui_inv_bleeding",
+	"ui_inv_radiation",
+	"ui_inv_thirst",
 };
-*/
 
 void CUIArtefactParams::InitFromXml(CUIXml& xml)
 {
@@ -132,8 +124,6 @@ void CUIArtefactParams::InitFromXml(CUIXml& xml)
 
         LPCSTR name = CStringTable().translate("ui_inv_weight").c_str();
         m_additional_weight->SetCaption(name);
-
-        // xml.SetLocalRoot( base_node );
     }
 
     xml.SetLocalRoot(stored_root);

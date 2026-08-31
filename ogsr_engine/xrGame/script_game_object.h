@@ -222,7 +222,6 @@ public:
     ALife::ERelationType GetRelationType(CScriptGameObject* who);
 
     // CScriptEntity
-
     _DECLARE_FUNCTION12(SetScriptControl, void, bool, LPCSTR);
     _DECLARE_FUNCTION10(GetScriptControl, bool);
     _DECLARE_FUNCTION10(GetScriptControlName, LPCSTR);
@@ -600,6 +599,11 @@ public:
     void DisableAnomaly();
     float GetAnomalyPower();
     void SetAnomalyPower(float p);
+
+	//Eatable items
+	void SetRemainingUses(u8 value);
+	u8 GetRemainingUses();
+	u8 GetMaxUses();
 
     // HELICOPTER
     CHelicopter* get_helicopter();

@@ -2,6 +2,7 @@
 #include "UICellItem.h"
 #include "uicursor.h"
 #include "../inventory_item.h"
+#include "../eatable_item.h"
 #include "UIDragDropListEx.h"
 #include "../xr_level_controller.h"
 #include "../../xr_3da/xr_input.h"
@@ -9,7 +10,6 @@
 #include "object_broker.h"
 #include "UIXmlInit.h"
 #include "UIProgressBar.h"
-
 #include "CustomOutfit.h"
 
 CUICellItem* CUICellItem::m_mouse_selected_item = nullptr;
@@ -20,7 +20,6 @@ CUICellItem::CUICellItem()
     m_pData = nullptr;
     m_custom_draw = nullptr;
     m_text = nullptr;
-    //-	m_mark				= nullptr;
     m_upgrade = nullptr;
     m_pConditionState = nullptr;
     m_drawn_frame = 0;
@@ -115,10 +114,6 @@ void CUICellItem::Update()
     if (item)
     {
         m_has_upgrade = item->has_any_upgrades();
-
-        //		Fvector2 size      = GetWndSize();
-        //		Fvector2 up_size = m_upgrade->GetWndSize();
-        //		pos.x = size.x - up_size.x - 4.0f;
         Fvector2 pos;
         pos.set(m_upgrade_pos);
         if (ChildsCount())
@@ -145,6 +140,7 @@ bool CUICellItem::OnMouseAction(float x, float y, EUIMessages mouse_action)
         {
             if (pInput->iGetAsyncKeyState(MOUSE_1, true))
                 GetMessageTarget()->SendMessage(this, DRAG_DROP_ITEM_DRAG, nullptr);
+
             return true;
         }
     }
@@ -203,7 +199,6 @@ CUIDragItem* CUICellItem::CreateDragItem()
 void CUICellItem::SetOwnerList(CUIDragDropListEx* p)
 {
     m_pParentList = p;
-    UpdateConditionProgressBar();
 }
 
 void CUICellItem::UpdateConditionProgressBar()
@@ -216,6 +211,38 @@ void CUICellItem::UpdateConditionProgressBar()
         PIItem itm = (PIItem)m_pData;
         if (itm && itm->IsUsingCondition())
         {
+			float cond = itm->GetCondition();
+
+			CEatableItem* eitm = smart_cast<CEatableItem*>(itm);
+			if (eitm)
+			{
+				u8 max_uses = eitm->GetMaxUses();
+				if (max_uses > 0)
+				{
+					u8 remaining_uses = eitm->GetRemainingUses();
+
+					if (max_uses < 8)
+					{
+						m_pConditionState->ShowBackground(false);
+					}
+
+					if (remaining_uses < 1)
+					{
+						cond = 0.f;
+					}
+					else if (max_uses > 8)
+					{
+						cond = (float)remaining_uses / (float)max_uses;
+					}
+					else
+					{
+						cond = ((float)remaining_uses * 0.125f) - 0.0625f;
+					}
+
+					m_pConditionState->m_bUseGradient = false;
+				}
+			}
+
             Ivector2 itm_grid_size = GetGridSize();
             if (m_pParentList->GetVerticalPlacement())
                 std::swap(itm_grid_size.x, itm_grid_size.y);
@@ -226,7 +253,7 @@ void CUICellItem::UpdateConditionProgressBar()
             float y = itm_grid_size.y * (cell_size.y + cell_space.y) - m_pConditionState->GetHeight() - 2.f;
 
             m_pConditionState->SetWndPos(Fvector2().set(x, y));
-            m_pConditionState->SetProgressPos(iCeil(itm->GetCondition() * 13.0f) / 13.0f);
+            m_pConditionState->SetProgressPos(iCeil(cond * 13.0f) / 13.0f);
             m_pConditionState->Show(true);
             return;
         }

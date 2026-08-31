@@ -7,7 +7,6 @@ using namespace luabind;
 
 CUIGameCustom* get_hud() { return CurrentGameUI(); }
 
-
 void CUIGameCustom::script_register(lua_State* L)
 {
     module(L)[class_<StaticDrawableWrapper>("StaticDrawableWrapper").def_readwrite("m_endTime", &StaticDrawableWrapper::m_endTime).def("wnd", &StaticDrawableWrapper::wnd),
@@ -18,6 +17,10 @@ void CUIGameCustom::script_register(lua_State* L)
                   .def("AddCustomStatic", &CUIGameCustom::AddCustomStatic)
                   .def("RemoveCustomStatic", &CUIGameCustom::RemoveCustomStatic)
                   .def("HideActorMenu", &CUIGameCustom::HideActorMenu)
+				  //Alundaio
+				  .def("UpdateActorMenu", &CUIGameCustom::UpdateActorMenu)
+				  .def("CurrentItemAtCell", &CUIGameCustom::CurrentItemAtCell)
+				  //-Alundaio
                   .def("HidePdaMenu", &CUIGameCustom::HidePdaMenu)
                   .def("show_messages", &CUIGameCustom::ShowMessagesWindow)
                   .def("hide_messages", &CUIGameCustom::HideMessagesWindow)

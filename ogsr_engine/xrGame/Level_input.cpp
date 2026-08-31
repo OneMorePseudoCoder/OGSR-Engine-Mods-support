@@ -23,6 +23,9 @@
 #include "saved_game_wrapper.h"
 #include "ui/UIMainIngameWnd.h"
 
+#include "script_game_object.h"
+#include "script_callback_ex.h"
+
 #include "../Include/xrRender/DebugRender.h"
 
 #include "ingame_editors/embedded_editor_main.h"

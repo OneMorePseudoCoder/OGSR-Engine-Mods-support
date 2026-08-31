@@ -906,13 +906,22 @@ bool CInventory::Eat(PIItem pIItem)
         return false;
 
     if (Actor()->m_inventory == this)
+	{
         Actor()->callback(GameObject::eUseObject)((smart_cast<CGameObject*>(pIItem))->lua_game_object());
+		if (pItemToEat->IsUsingCondition() && pItemToEat->GetRemainingUses() < 1 && pItemToEat->CanDelete())
+			CurrentGameUI()->ActorMenu().RefreshCurrentItemCell();
+		
+		CurrentGameUI()->ActorMenu().SetCurrentItem(NULL);
+	}
 
     if (pItemToEat->Empty())
     {
+		if (!pItemToEat->CanDelete())
+			return false;
+
         pIItem->SetDropManual(TRUE);
-        return false;
     }
+	
     return true;
 }
 

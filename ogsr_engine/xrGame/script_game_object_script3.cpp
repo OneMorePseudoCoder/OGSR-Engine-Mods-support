@@ -325,5 +325,10 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 
         .def("set_level_changer_invitation", &CScriptGameObject::set_level_changer_invitation)
         .def("start_particles", &CScriptGameObject::start_particles)
-        .def("stop_particles", &CScriptGameObject::stop_particles);
+        .def("stop_particles", &CScriptGameObject::stop_particles)
+		
+		// For EatableItem
+		.def("set_remaining_uses", &CScriptGameObject::SetRemainingUses)
+		.def("get_remaining_uses", &CScriptGameObject::GetRemainingUses)
+		.def("get_max_uses", &CScriptGameObject::GetMaxUses);
 }

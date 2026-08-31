@@ -18,6 +18,8 @@
 
 #include "../xr_3da/x_ray.h"
 
+#include "ui\UICellItem.h" //Alundaio
+
 #include <imgui.h>
 
 EGameIDs ParseStringToGameType(LPCSTR str);
@@ -34,6 +36,7 @@ CUIGameCustom::CUIGameCustom() : m_msgs_xml(nullptr), m_ActorMenu(nullptr), m_Pd
     ShowGameIndicators(true);
     ShowCrosshair(true);
 }
+
 bool g_b_ClearGameCaptions = false;
 
 CUIGameCustom::~CUIGameCustom()
@@ -354,3 +357,32 @@ void CUIGameCustom::FillDebugInfo()
         ImGui::Checkbox("Show game indicators", &m_bShowGameIndicators);
     }
 }
+
+//-Alundaio
+void CUIGameCustom::UpdateActorMenu()
+{
+	if (ActorMenu().IsShown())
+	{
+		ActorMenu().UpdateActor();
+		ActorMenu().RefreshCurrentItemCell();
+	}
+}
+
+CScriptGameObject* CUIGameCustom::CurrentItemAtCell()
+{
+    CUICellItem* itm = ActorMenu().CurrentItem();
+	if (!itm->m_pData)
+		return (0);
+
+	PIItem IItm = (PIItem)itm->m_pData;
+	if (!IItm)
+		return (0);
+
+	CGameObject* GO = smart_cast<CGameObject*>(IItm);
+
+	if (GO)
+		return GO->lua_game_object();
+
+	return (0);
+}
+//-Alundaio

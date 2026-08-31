@@ -10,6 +10,7 @@ CUIProgressBar::CUIProgressBar(void)
 
     m_bBackgroundPresent = false;
     m_bUseColor = false;
+	m_bUseGradient = true; //Alundaio
 
     AttachChild(&m_UIBackgroundItem);
     AttachChild(&m_UIProgressItem);
@@ -54,9 +55,16 @@ void CUIProgressBar::UpdateProgressBar()
 
     if (m_bUseColor)
     {
-        Fcolor curr;
-        curr.lerp(m_minColor, m_middleColor, m_maxColor, fCurrentLength);
-        m_UIProgressItem.SetTextureColor(curr.get());
+		if (m_bUseGradient)
+		{
+			Fcolor curr;
+			curr.lerp(m_minColor, m_middleColor, m_maxColor, fCurrentLength);
+			m_UIProgressItem.SetTextureColor(curr.get());
+		}
+		else
+		{
+			m_UIProgressItem.SetTextureColor(m_maxColor.get());
+		}
     }
 }
 

@@ -12,6 +12,11 @@ private:
 
 protected:
     CPhysicItem* m_physic_item;
+	u8 m_iMaxUses;
+	u8 m_iRemainingUses;
+	BOOL m_bRemoveAfterUse;
+	float m_fWeightFull;
+	float m_fWeightEmpty;
 
 public:
     shared_str UseText;
@@ -23,6 +28,8 @@ public:
     virtual CEatableItem* cast_eatable_item() { return this; }
 
     virtual void Load(LPCSTR section);
+	virtual void load(IReader& packet);
+	virtual void save(NET_Packet& packet);
     virtual bool Useful() const;
 
     virtual BOOL net_Spawn(CSE_Abstract* DC);
@@ -30,9 +37,10 @@ public:
     virtual void OnH_B_Independent(bool just_before_destroy);
     virtual void OnH_A_Independent();
     virtual bool UseBy(CEntityAlive* npc);
-    virtual bool Empty() { return PortionsNum() == 0; };
-    int PortionsNum() const { return m_iPortionsNum; }
-
-protected:
-    int m_iPortionsNum;
+	bool Empty() const { return m_iRemainingUses == 0; };
+	bool CanDelete() const { return m_bRemoveAfterUse == TRUE; };
+	u8 GetMaxUses() const { return m_iMaxUses; };
+	u8 GetRemainingUses() const { return m_iRemainingUses; };
+	void SetRemainingUses(u8 value) { if (value <= m_iMaxUses && value >= 0) m_iRemainingUses = value; };
+	virtual float Weight() const;
 };

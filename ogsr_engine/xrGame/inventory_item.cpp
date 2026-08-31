@@ -6,12 +6,10 @@
 //	Description : Inventory item
 ////////////////////////////////////////////////////////////////////////////
 
-// #include "stdafx.h"
 #include "stdafx.h"
 #include "inventory_item.h"
 #include "inventory_item_impl.h"
 #include "Inventory.h"
-// #include "Physics.h"
 #include "PhysicsShellHolder.h"
 #include "entity_alive.h"
 #include "Level.h"

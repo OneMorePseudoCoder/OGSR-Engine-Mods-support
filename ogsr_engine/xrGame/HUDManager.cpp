@@ -324,8 +324,6 @@ void CHUDManager::ShowCrosshair(bool show) { m_pHUDTarget->ShowCrosshair(show); 
 void CHUDManager::HitMarked(int idx, float power, const Fvector& dir)
 {
     HitMarker.Hit(dir);
-    //clamp(power, 0.0f, 1.0f);
-    //pInput->feedback(u16(iFloor(u16(-1) * power)), u16(iFloor(u16(-1) * power)), 0.5f);
 }
 
 bool CHUDManager::AddGrenade_ForMark(CGrenade* grn) { return HitMarker.AddGrenade_ForMark(grn); }
@@ -335,8 +333,6 @@ void CHUDManager::Update_GrenadeView(Fvector& pos_actor) { HitMarker.Update_Gren
 void CHUDManager::SetHitmarkType(LPCSTR tex_name) { HitMarker.InitShader(tex_name); }
 
 void CHUDManager::SetGrenadeMarkType(LPCSTR tex_name) { HitMarker.InitShader_Grenade(tex_name); }
-
-// ------------------------------------------------------------------------------------
 
 #include "ui/UIMainIngameWnd.h"
 extern CUIXml* pWpnScopeXml;
