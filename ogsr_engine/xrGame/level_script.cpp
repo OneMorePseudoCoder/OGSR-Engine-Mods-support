@@ -482,6 +482,7 @@ void set_snd_volume(float v)
     psSoundVFactor = v;
     clamp(psSoundVFactor, 0.0f, 1.0f);
 }
+
 #include "actor_statistic_mgr.h"
 void add_actor_points(LPCSTR sect, LPCSTR detail_key, int cnt, int pts) { return Actor()->StatisticMgr().AddPoints(sect, detail_key, cnt, pts); }
 
@@ -621,6 +622,11 @@ LPCSTR translate_string(LPCSTR str) { return *CStringTable().translate(str); }
 
 bool has_active_tutotial() { return (g_tutorial != nullptr); }
 
+void g_send(NET_Packet& P, bool bReliable = 0, bool bSequential = 1, bool bHighPriority = 0, bool bSendImmediately = 0)
+{
+	Level().Send(P, net_flags(bReliable, bSequential, bHighPriority, bSendImmediately));
+}
+
 CScriptGameObject* g_get_target_obj()
 {
     collide::rq_result& RQ = HUD().GetCurrentRayQuery();
@@ -671,8 +677,6 @@ static void shader_get_custom_param(const char* key, float& x, float& y, float& 
     w = v.w;
 }
 
-
-/////////
 u32 PlayHudMotion(u8 hand, LPCSTR hud_section, LPCSTR anm_name, bool bMixIn = true, float speed = 1.f, bool bOverride_item = false)
 {
     return g_player_hud->script_anim_play(hand, hud_section, anm_name, bMixIn, speed, bOverride_item);
@@ -694,8 +698,6 @@ void StopBlendAnm(LPCSTR name, bool bForce) { g_player_hud->StopBlendAnm(name, b
 void StopAllBlendAnms(bool bForce) { g_player_hud->StopAllBlendAnms(bForce); }
 
 float SetBlendAnmTime(LPCSTR name, float time) { return g_player_hud->SetBlendAnmTime(name, time); }
-/////////
-
 
 void CLevel::script_register(lua_State* L)
 {
@@ -720,6 +722,7 @@ void CLevel::script_register(lua_State* L)
     module(L, "level")
         [(
         // obsolete\deprecated
+		def("send", g_send), //allow the ability to send netpacket to level
         def("object_by_id", &get_object_by_id),
 #ifdef DEBUG
         def("debug_object", &get_object_by_name), def("debug_actor", &tpfGetActor), def("check_object", &check_object),
