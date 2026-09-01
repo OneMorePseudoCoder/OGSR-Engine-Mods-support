@@ -8,7 +8,7 @@
 #include "xrmessages.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "../Include/xrRender/KinematicsAnimated.h"
-// #include "PHWorld.h"
+
 CTeleWhirlwind ::CTeleWhirlwind()
 {
     m_owner_object = nullptr;
@@ -29,6 +29,7 @@ CTelekineticObject* CTeleWhirlwind::activate(CPhysicsShellHolder* obj, float str
     else
         return 0;
 }
+
 void CTeleWhirlwind::clear_impacts() { m_saved_impacts.clear(); }
 void CTeleWhirlwind::clear() { inherited::clear(); }
 
@@ -40,16 +41,16 @@ void CTeleWhirlwind::add_impact(const Fvector& dir, float val)
     point.set(0.f, 0.f, 0.f);
     m_saved_impacts.push_back(SPHImpact(force, point, 0));
 }
+
 void CTeleWhirlwind::set_throw_power(float throw_pow) { m_throw_power = throw_pow; }
 
 void CTeleWhirlwind::draw_out_impact(Fvector& dir, float& val)
 {
     VERIFY2(m_saved_impacts.size(), "NO IMPACTS ADDED!");
-
+	if (0 == m_saved_impacts.size())
+		return;
     dir.set(m_saved_impacts[0].force);
     val = dir.magnitude();
-    if (!fis_zero(val))
-        dir.mul(1.f / val);
     m_saved_impacts.erase(m_saved_impacts.begin());
 }
 
