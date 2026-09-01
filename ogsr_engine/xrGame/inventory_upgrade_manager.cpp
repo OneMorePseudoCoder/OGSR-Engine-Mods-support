@@ -21,12 +21,6 @@ namespace inventory
 namespace upgrade
 {
 
-// using inventory::upgrade::Manager;
-// using inventory::upgrade::UpgradeBase;
-// using inventory::upgrade::Upgrade;
-// using inventory::upgrade::Root;
-// using inventory::upgrade::Group;
-
 Manager::Manager()
 {
     load_all_properties(); // first
@@ -85,8 +79,6 @@ Property* Manager::get_property(shared_str const& property_id)
     return (nullptr);
 }
 
-// -----------------------------------------------------------------------
-
 Root* Manager::add_root(shared_str const& root_id)
 {
     if (get_root(root_id))
@@ -103,9 +95,7 @@ Upgrade* Manager::add_upgrade(shared_str const& upgrade_id, Group& parent_group)
 {
     if (get_upgrade(upgrade_id))
     {
-        VERIFY2(0,
-                make_string("Try add the existent upgrade (%s), in group <%s>. Such upgrade is in group <%s> already!", upgrade_id.c_str(), parent_group.id_str(),
-                            get_upgrade(upgrade_id)->parent_group_id().c_str()));
+        VERIFY2(0, make_string("Try add the existent upgrade (%s), in group <%s>. Such upgrade is in group <%s> already!", upgrade_id.c_str(), parent_group.id_str(), get_upgrade(upgrade_id)->parent_group_id().c_str()));
     }
     Upgrade* new_upgrade = xr_new<Upgrade>();
     m_upgrades.insert(std::make_pair(upgrade_id, new_upgrade));
@@ -158,35 +148,23 @@ bool Manager::item_upgrades_exist(shared_str const& item_id)
 
 void Manager::load_all_inventory()
 {
-    LPCSTR items_section = "upgraded_inventory";
+	//Alundaio: No longer the need to define upgradable sections in [upgraded_inventory]
+	typedef CInifile::Root sections_type;
+	sections_type sections = pSettings->sections();
 
-    VERIFY2(pSettings->section_exist(items_section), make_string("Section [%s] does not exist !", items_section));
-    VERIFY2(pSettings->line_count(items_section), make_string("Section [%s] is empty !", items_section));
+	sections_type::const_iterator i = sections.begin();
+	sections_type::const_iterator e = sections.end();
+	for (; i != e; ++i)
+	{
+		if (!pSettings->line_exist((*i)->Name, "upgrades") || !pSettings->r_string((*i)->Name, "upgrades"))
+			continue;
 
-    if (g_upgrades_log == 1)
-    {
-        Msg("# Inventory upgrade manager is loaded.");
-    }
+		if (!pSettings->line_exist((*i)->Name, "upgrade_scheme") || !pSettings->r_string((*i)->Name, "upgrade_scheme"))
+			continue;
 
-    const auto& inv_section = pSettings->r_section(items_section);
-    for (const auto& root_id : inv_section.Ordered_Data | std::views::keys)
-    {
-        //		if ( !item_upgrades_exist( root_id ) ) continue;
-        item_upgrades_exist(root_id);
-        add_root(root_id);
-    }
-
-    if (g_upgrades_log == 1)
-    {
-        Msg("# Upgrades of inventory items loaded.");
-    }
-
-    /*
-    float low, high; ///? <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    LPCSTR param = "cost";
-    compute_range( param, low ,high );
-    Msg( "Parameter <%s> min = %.3f, max = %.3f", param, low, high );
-    */
+		add_root((*i)->Name);
+	}
+	//-Alundaio
 }
 
 void Manager::load_all_properties()
@@ -312,14 +290,6 @@ bool Manager::is_known_upgrade(shared_str const& upgrade_id)
     VERIFY2(upgrade_p, make_string("Upgrade <%s> does not exist!", upgrade_id.c_str()));
     return (upgrade_p->is_known());
 }
-
-/*
-bool Manager::is_disabled_upgrade( CInventoryItem& item, shared_str const& upgrade_id )
-{
-    Upgrade* upgrade_p = upgrade_verify( item.m_section_id, upgrade_id );
-    return upgrade_p->can_install( item );
-}
-*/
 
 bool Manager::upgrade_install(CInventoryItem& item, shared_str const& upgrade_id, bool loading)
 {
