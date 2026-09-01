@@ -212,6 +212,7 @@ bool CParticlesObject::IsAutoRemove()
     else
         return false;
 }
+
 void CParticlesObject::SetAutoRemove(bool auto_remove)
 {
     VERIFY(!IsLooped());

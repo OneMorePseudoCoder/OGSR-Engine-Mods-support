@@ -12,25 +12,13 @@
 
 CScriptParticlesCustom::CScriptParticlesCustom(CScriptParticles* owner, LPCSTR caParticlesName) : CParticlesObject(caParticlesName, FALSE, true)
 {
-    //	CScriptParticlesCustom* self = this;
-    //	Msg							("CScriptParticlesCustom: 0x%08x",*(int*)&self);
     m_owner = owner;
     m_animator = 0;
 }
 
-// XRCORE_API		fastdelegate::FastDelegate< void () >	g_verify_stalkers;
-
 CScriptParticlesCustom::~CScriptParticlesCustom()
 {
-    //	CScriptParticlesCustom* self = this;
-    //	Msg							("~CScriptParticlesCustom: 0x%08x",*(int*)&self);
-    //	if ( g_verify_stalkers )
-    //		g_verify_stalkers		();
-
     xr_delete(m_animator);
-
-    //	if ( g_verify_stalkers )
-    //		g_verify_stalkers		();
 }
 
 void CScriptParticlesCustom::PSI_internal_delete()
@@ -60,6 +48,7 @@ void CScriptParticlesCustom::shedule_Update(u32 _dt)
         UpdateParent(m_animator->XFORM(), vel);
     }
 }
+
 void CScriptParticlesCustom::LoadPath(LPCSTR caPathName)
 {
     if (!m_animator)
@@ -70,11 +59,13 @@ void CScriptParticlesCustom::LoadPath(LPCSTR caPathName)
         m_animator->Load(caPathName);
     }
 }
+
 void CScriptParticlesCustom::StartPath(bool looped)
 {
     VERIFY(m_animator);
     m_animator->Play(looped);
 }
+
 void CScriptParticlesCustom::PausePath(bool val)
 {
     VERIFY(m_animator);
@@ -93,7 +84,11 @@ void CScriptParticlesCustom::remove_owner()
     m_owner = 0;
 }
 
-CScriptParticles::CScriptParticles(LPCSTR caParticlesName) { m_particles = xr_new<CScriptParticlesCustom>(this, caParticlesName); }
+CScriptParticles::CScriptParticles(LPCSTR caParticlesName)
+{ 
+	m_particles = xr_new<CScriptParticlesCustom>(this, caParticlesName);
+	m_transform.identity();  
+}
 
 CScriptParticles::~CScriptParticles()
 {
@@ -115,7 +110,10 @@ void CScriptParticles::Play()
 void CScriptParticles::PlayAtPos(const Fvector& position)
 {
     VERIFY(m_particles);
-    m_particles->play_at_pos(position);
+	m_transform.translate_over(position);
+    m_particles->UpdateParent(m_transform, {});	
+	m_particles->Play(false);	
+	m_particles->UpdateParent(m_transform, {});
 }
 
 void CScriptParticles::Stop()
@@ -133,9 +131,28 @@ void CScriptParticles::StopDeffered()
 void CScriptParticles::MoveTo(const Fvector& pos, const Fvector& vel)
 {
     VERIFY(m_particles);
-    Fmatrix XF;
-    XF.translate(pos);
-    m_particles->UpdateParent(XF, vel);
+	m_transform.translate_over(pos);
+	m_particles->UpdateParent(m_transform, vel);	  
+}
+
+void CScriptParticles::SetDirection(const Fvector &dir)
+{
+	Fmatrix	matrix; 
+	matrix.identity();
+	matrix.k.set(dir);
+	Fvector::generate_orthonormal_basis_normalized(matrix.k, matrix.j, matrix.i);
+	matrix.translate_over(m_transform.c);
+	m_transform.set(matrix);
+    m_particles->UpdateParent(matrix, {});
+}
+ 
+void CScriptParticles::SetOrientation(float yaw, float pitch, float roll)
+{
+	Fmatrix matrix;	
+	matrix.setHPB(yaw, pitch, roll);
+	matrix.translate_over(m_transform.c);
+	m_transform.set(matrix);
+    m_particles->UpdateParent(matrix, {});
 }
 
 bool CScriptParticles::IsPlaying() const
@@ -155,6 +172,7 @@ void CScriptParticles::LoadPath(LPCSTR caPathName)
     VERIFY(m_particles);
     m_particles->LoadPath(caPathName);
 }
+
 void CScriptParticles::StartPath(bool looped) { m_particles->StartPath(looped); }
 void CScriptParticles::StopPath() { m_particles->StopPath(); }
 void CScriptParticles::PausePath(bool val) { m_particles->PausePath(val); }
