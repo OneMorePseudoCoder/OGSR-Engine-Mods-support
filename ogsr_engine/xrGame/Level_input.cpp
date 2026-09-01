@@ -42,6 +42,11 @@ extern void try_change_current_entity();
 extern void restore_actor();
 #endif
 
+//Alundaio
+#include "../../xrServerEntities/script_engine.h" 
+using namespace luabind; 
+//-Alundaio
+
 bool g_bDisableAllInput = false;
 extern float g_fTimeFactor;
 
@@ -198,11 +203,19 @@ void CLevel::IR_OnKeyboardPress(int key)
     if (game && game->OnKeyboardPress(get_binded_action(key)))
         return;
 
+	luabind::functor<bool> funct;
+	if (ai().script_engine().functor("level_input.on_key_press", funct))
+	{
+		if (funct(key, _curr))
+			return;
+	}
+
     if (_curr == kQUICK_SAVE)
     {
         Console->Execute("save");
         return;
     }
+
     if (_curr == kQUICK_LOAD)
     {
 #ifdef DEBUG

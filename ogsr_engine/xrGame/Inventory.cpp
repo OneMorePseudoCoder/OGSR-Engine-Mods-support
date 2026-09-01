@@ -897,13 +897,22 @@ bool CInventory::Eat(PIItem pIItem)
     CInventory* pInventory = pItemToEat->m_pInventory;
     if (!pInventory || pInventory != this)
         return false;
+
     if (pInventory != IO->m_inventory)
         return false;
+
     if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID())
         return false;
 
     if (!pItemToEat->UseBy(entity_alive))
         return false;
+
+	luabind::functor<bool>	funct;
+	if (ai().script_engine().functor("_G.CInventory__eat", funct))
+	{
+		if (!funct(smart_cast<CGameObject*>(pItemToEat->object().H_Parent())->lua_game_object(), (smart_cast<CGameObject*>(pIItem))->lua_game_object()))
+			return false;
+	}
 
     if (Actor()->m_inventory == this)
 	{
