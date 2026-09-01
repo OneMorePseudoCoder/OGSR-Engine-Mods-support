@@ -156,13 +156,13 @@ void Manager::load_all_inventory()
 	sections_type::const_iterator e = sections.end();
 	for (; i != e; ++i)
 	{
-		if (!pSettings->line_exist((*i)->Name, "upgrades") || !pSettings->r_string((*i)->Name, "upgrades"))
+        if (!pSettings->line_exist((*i).second->Name, "upgrades") || !pSettings->r_string((*i).second->Name, "upgrades"))
 			continue;
 
-		if (!pSettings->line_exist((*i)->Name, "upgrade_scheme") || !pSettings->r_string((*i)->Name, "upgrade_scheme"))
+		if (!pSettings->line_exist((*i).second->Name, "upgrade_scheme") || !pSettings->r_string((*i).second->Name, "upgrade_scheme"))
 			continue;
 
-		add_root((*i)->Name);
+		add_root((*i).second->Name);
 	}
 	//-Alundaio
 }
