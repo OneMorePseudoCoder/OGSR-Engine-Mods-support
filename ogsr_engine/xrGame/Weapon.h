@@ -131,11 +131,12 @@ public:
 
 protected:
     bool m_bTriStateReload;
-    u8 m_sub_state;
     // a misfire happens, you'll need to rearm weapon
     bool bMisfire;
-
     BOOL m_bAutoSpawnAmmo;
+
+public:
+    u8 m_sub_state;
 
 public:
     bool IsGrenadeLauncherAttached() const;
@@ -426,11 +427,10 @@ protected:
     CParticlesObject* m_pFlameParticles2;
 
 protected:
-    int GetAmmoCount_forType(shared_str const& ammo_type) const;
     int GetAmmoCount(u8 ammo_type) const;
 
 public:
-    IC int GetAmmoElapsed() const { return /*int(m_magazine.size())*/ iAmmoElapsed; }
+    IC int GetAmmoElapsed() const { return iAmmoElapsed; }
     IC int GetAmmoMagSize() const { return iMagazineSize; }
     int GetSuitableAmmoTotal(bool use_item_to_spawn = false) const;
 
@@ -461,18 +461,6 @@ protected:
 
 public:
     xr_vector<shared_str> m_ammoTypes;
-    /*
-        struct SScopes
-        {
-            shared_str			m_sScopeName;
-            int					m_iScopeX;
-            int					m_iScopeY;
-        };
-        DEFINE_VECTOR(SScopes*, SCOPES_VECTOR, SCOPES_VECTOR_IT);
-        SCOPES_VECTOR			m_scopes;
-
-        u8						cur_scope;
-    */
 
     using SCOPES_VECTOR = xr_vector<shared_str>;
     using SCOPES_VECTOR_IT = SCOPES_VECTOR::iterator;
@@ -482,7 +470,6 @@ public:
 
     CWeaponAmmo* m_pCurrentAmmo;
     u8 m_ammoType;
-    //-	shared_str				m_ammoName; <== deleted
     bool m_bHasTracers;
     u8 m_u8TracerColorID;
     u8 m_set_next_ammoType_on_reload;
@@ -503,6 +490,14 @@ protected:
 public:
     virtual u32 ef_main_weapon_type() const;
     virtual u32 ef_weapon_type() const;
+
+	//Alundaio
+	int GetAmmoCount_forType(shared_str const& ammo_type) const;
+	virtual void set_ef_main_weapon_type(u32 type){ m_ef_main_weapon_type = type; };
+	virtual void set_ef_weapon_type(u32 type){ m_ef_weapon_type = type; };
+	virtual void SetAmmoType(u8 type) { m_ammoType = type; };
+	u8 GetAmmoType() { return m_ammoType; };
+	//-Alundaio
 
 protected:
     // This is because when scope is attached we can't ask scope for these params

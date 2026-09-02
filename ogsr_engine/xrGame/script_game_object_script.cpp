@@ -18,21 +18,23 @@ extern class_<CScriptGameObject> script_register_game_object1(class_<CScriptGame
 extern class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>&&);
 extern class_<CScriptGameObject> script_register_game_object_trader(class_<CScriptGameObject>&&);
 
-
 void CScriptGameObject::script_register(lua_State* L)
 {
     class_<CScriptGameObject> instance("game_object");
 
-    module(
-        L)[class_<CSightParams>("CSightParams")
-               .enum_(
-                   "bla-bla")[value("eSightTypeCurrentDirection", int(SightManager::eSightTypeCurrentDirection)),
-                              value("eSightTypePathDirection", int(SightManager::eSightTypePathDirection)), value("eSightTypeDirection", int(SightManager::eSightTypeDirection)),
-                              value("eSightTypePosition", int(SightManager::eSightTypePosition)), value("eSightTypeObject", int(SightManager::eSightTypeObject)),
-                              value("eSightTypeCover", int(SightManager::eSightTypeCover)), value("eSightTypeSearch", int(SightManager::eSightTypeSearch)),
-                              value("eSightTypeLookOver", int(SightManager::eSightTypeLookOver)), value("eSightTypeCoverLookOver", int(SightManager::eSightTypeCoverLookOver)),
-                              value("eSightTypeFireObject", int(SightManager::eSightTypeFireObject)), value("eSightTypeFirePosition", int(SightManager::eSightTypeFirePosition)),
-                              value("eSightTypeAnimationDirection", int(SightManager::eSightTypeAnimationDirection)), value("eSightTypeDummy", int(SightManager::eSightTypeDummy))]
+    module(L)
+	[
+		class_<CSightParams>("CSightParams")
+               .enum_("bla-bla")
+			   [
+				    value("eSightTypeCurrentDirection", int(SightManager::eSightTypeCurrentDirection)),
+                    value("eSightTypePathDirection", int(SightManager::eSightTypePathDirection)), value("eSightTypeDirection", int(SightManager::eSightTypeDirection)),
+                    value("eSightTypePosition", int(SightManager::eSightTypePosition)), value("eSightTypeObject", int(SightManager::eSightTypeObject)),
+                    value("eSightTypeCover", int(SightManager::eSightTypeCover)), value("eSightTypeSearch", int(SightManager::eSightTypeSearch)),
+                    value("eSightTypeLookOver", int(SightManager::eSightTypeLookOver)), value("eSightTypeCoverLookOver", int(SightManager::eSightTypeCoverLookOver)),
+                    value("eSightTypeFireObject", int(SightManager::eSightTypeFireObject)), value("eSightTypeFirePosition", int(SightManager::eSightTypeFirePosition)),
+                    value("eSightTypeAnimationDirection", int(SightManager::eSightTypeAnimationDirection)), value("eSightTypeDummy", int(SightManager::eSightTypeDummy))
+				]
                .def(constructor<>())
                .def_readonly("m_object", &CSightParams::m_object)
                .def_readonly("m_vector", &CSightParams::m_vector)
@@ -58,7 +60,7 @@ void CScriptGameObject::script_register(lua_State* L)
                     value("helicopter_on_point", int(GameObject::eHelicopterOnPoint)), value("helicopter_on_hit", int(GameObject::eHelicopterOnHit)),
 					/* avo: custom callbacks */
 					value("key_press", int(GameObject::eKeyPress)), value("key_release", int(GameObject::eKeyRelease)), value("key_hold", int(GameObject::eKeyHold)), value("mouse_move", int(GameObject::eMouseMove)), value("mouse_wheel", int(GameObject::eMouseWheel)),
-					value("weapon_jammed", int(GameObject::eOnWeaponJammed)), value("weapon_zoom_in", int(GameObject::eOnWeaponZoomIn)), value("weapon_zoom_out", int(GameObject::eOnWeaponZoomOut)),
+					value("weapon_jammed", int(GameObject::eOnWeaponJammed)), value("weapon_zoom_in", int(GameObject::eOnWeaponZoomIn)), value("weapon_zoom_out", int(GameObject::eOnWeaponZoomOut)), value("weapon_magazine_empty", int(GameObject::eOnWeaponMagazineEmpty)),
 					/* avo: end */
                     value("on_item_take", int(GameObject::eOnItemTake)), value("on_item_drop", int(GameObject::eOnItemDrop)),
                     value("script_animation", int(GameObject::eScriptAnimation)), value("task_state", int(GameObject::eTaskStateChange)),

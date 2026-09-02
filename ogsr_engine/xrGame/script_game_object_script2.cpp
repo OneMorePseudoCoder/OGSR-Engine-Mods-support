@@ -21,7 +21,6 @@
 #include "script_monster_hit_info.h"
 #include "script_entity_action.h"
 #include "action_planner.h"
-// #include "../xrphysics/PhysicsShell.h"
 #include "helicopter.h"
 #include "script_zone.h"
 #include "relation_registry.h"
@@ -38,20 +37,36 @@ extern CScriptActionPlanner* script_action_planner(CScriptGameObject* obj);
 class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>&& instance)
 {
     return std::move(instance)
-        .enum_("relation")[value("friend", int(ALife::eRelationTypeFriend)), value("neutral", int(ALife::eRelationTypeNeutral)), value("enemy", int(ALife::eRelationTypeEnemy)),
-                           value("dummy", int(ALife::eRelationTypeDummy))]
-        .enum_("action_types")[value("movement", int(ScriptEntity::eActionTypeMovement)), value("watch", int(ScriptEntity::eActionTypeWatch)),
-                               value("animation", int(ScriptEntity::eActionTypeAnimation)), value("sound", int(ScriptEntity::eActionTypeSound)),
-                               value("particle", int(ScriptEntity::eActionTypeParticle)), value("object", int(ScriptEntity::eActionTypeObject)),
-                               value("action_type_count", int(ScriptEntity::eActionTypeCount))]
-        .enum_("EPathType")[value("game_path", int(MovementManager::ePathTypeGamePath)), value("level_path", int(MovementManager::ePathTypeLevelPath)),
-                            value("patrol_path", int(MovementManager::ePathTypePatrolPath)), value("no_path", int(MovementManager::ePathTypeNoPath))]
-        .enum_("ESelectionType")[value("alifeMovementTypeMask", int(eSelectionTypeMask)), value("alifeMovementTypeRandom", int(eSelectionTypeRandomBranching))]
+        .enum_("relation")
+		[
+			value("friend", int(ALife::eRelationTypeFriend)),
+			value("neutral", int(ALife::eRelationTypeNeutral)),
+			value("enemy", int(ALife::eRelationTypeEnemy)),
+            value("dummy", int(ALife::eRelationTypeDummy))
+		]
+        .enum_("action_types")
+		[
+			value("movement", int(ScriptEntity::eActionTypeMovement)),
+			value("watch", int(ScriptEntity::eActionTypeWatch)),
+            value("animation", int(ScriptEntity::eActionTypeAnimation)),
+			value("sound", int(ScriptEntity::eActionTypeSound)),
+            value("particle", int(ScriptEntity::eActionTypeParticle)),
+			value("object", int(ScriptEntity::eActionTypeObject)),
+            value("action_type_count", int(ScriptEntity::eActionTypeCount))
+		]
+        .enum_("EPathType")
+		[
+			value("game_path", int(MovementManager::ePathTypeGamePath)),
+			value("level_path", int(MovementManager::ePathTypeLevelPath)),
+            value("patrol_path", int(MovementManager::ePathTypePatrolPath)),
+			value("no_path", int(MovementManager::ePathTypeNoPath))
+		]
+        .enum_("ESelectionType")
+		[
+			value("alifeMovementTypeMask", int(eSelectionTypeMask)),
+			value("alifeMovementTypeRandom", int(eSelectionTypeRandomBranching))
+		]
 
-        //		.property("visible",				&CScriptGameObject::getVisible,			&CScriptGameObject::setVisible)
-        //		.property("enabled",				&CScriptGameObject::getEnabled,			&CScriptGameObject::setEnabled)
-
-        //		.def_readonly("health",				&CScriptGameObject::GetHealth,			&CScriptGameObject::SetHealth)
         .property("health", &CScriptGameObject::GetHealth, &CScriptGameObject::SetHealth)
         .property("psy_health", &CScriptGameObject::GetPsyHealth, &CScriptGameObject::SetPsyHealth)
         .property("power", &CScriptGameObject::GetPower, &CScriptGameObject::SetPower)
@@ -77,7 +92,6 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("condition", &CScriptGameObject::GetCondition)
         .def("set_condition", &CScriptGameObject::SetCondition)
         .def("death_time", &CScriptGameObject::DeathTime)
-        //		.def("armor",						&CScriptGameObject::Armor)
         .def("max_health", &CScriptGameObject::MaxHealth)
         .def("accuracy", &CScriptGameObject::Accuracy)
         .def("alive", &CScriptGameObject::Alive)
@@ -129,18 +143,21 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("get_ammo_in_magazine", &CScriptGameObject::GetAmmoElapsed)
         .def("get_ammo_total", &CScriptGameObject::GetSuitableAmmoTotal)
         .def("set_ammo_elapsed", &CScriptGameObject::SetAmmoElapsed)
+		.def("set_ammo_type", &CScriptGameObject::SetAmmoType)
+		.def("get_ammo_type", &CScriptGameObject::GetAmmoType)
+		.def("get_ammo_count_for_type", &CScriptGameObject::GetAmmoCount)
+		.def("get_main_weapon_type", &CScriptGameObject::GetMainWeaponType)
+		.def("get_weapon_type", &CScriptGameObject::GetWeaponType)
+		.def("set_main_weapon_type", &CScriptGameObject::SetMainWeaponType)
+		.def("set_weapon_type", &CScriptGameObject::SetWeaponType)
+		.def("has_ammo_type", &CScriptGameObject::HasAmmoType)
+		.def("get_weapon_substate", &CScriptGameObject::GetWeaponSubstate)
         .def("set_queue_size", &CScriptGameObject::SetQueueSize)
-        //		.def("best_hit",					&CScriptGameObject::GetBestHit)
-        //		.def("best_sound",					&CScriptGameObject::GetBestSound)
         .def("best_danger", &CScriptGameObject::GetBestDanger)
         .def("best_enemy", &CScriptGameObject::GetBestEnemy)
         .def("best_item", &CScriptGameObject::GetBestItem)
         .def("action_count", &CScriptGameObject::GetActionCount)
         .def("action_by_index", &CScriptGameObject::GetActionByIndex)
-
-        //.def("set_hear_callback",			(void (CScriptGameObject::*)(const luabind::object &, LPCSTR))(&CScriptGameObject::SetSoundCallback))
-        //.def("set_hear_callback",			(void (CScriptGameObject::*)(const luabind::functor<void> &))(&CScriptGameObject::SetSoundCallback))
-        //.def("clear_hear_callback",		&CScriptGameObject::ClearSoundCallback)
 
         .def("memory_time", &CScriptGameObject::memory_time)
         .def("memory_position", &CScriptGameObject::memory_position)

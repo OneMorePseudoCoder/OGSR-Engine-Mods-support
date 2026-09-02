@@ -238,6 +238,12 @@ bool CWeaponMagazined::IsAmmoAvailable()
 
 void CWeaponMagazined::OnMagazineEmpty()
 {
+	if (ParentIsActor())
+	{
+		int	AC = GetSuitableAmmoTotal();
+		Actor()->callback(GameObject::eOnWeaponMagazineEmpty)(lua_game_object(), AC);
+	}
+
     if (GetState() == eIdle)
     {
         OnEmptyClick();
@@ -276,6 +282,12 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
     }
 
     VERIFY((u32)iAmmoElapsed == m_magazine.size());
+
+	if (ParentIsActor())
+	{
+		int	AC = GetSuitableAmmoTotal();
+		Actor()->callback(GameObject::eOnWeaponMagazineEmpty)(lua_game_object(), AC);
+	}
 
     if (!spawn_ammo)
         return;

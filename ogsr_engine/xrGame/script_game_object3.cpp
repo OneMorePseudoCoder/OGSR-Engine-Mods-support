@@ -40,6 +40,7 @@
 #include "space_restriction_manager.h"
 #include "eatable_item.h"
 #include "artefact.h"
+#include "weaponammo.h"
 
 namespace MemorySpace
 {
@@ -1133,6 +1134,33 @@ bool CScriptGameObject::is_weapon_going_to_be_strapped(CScriptGameObject const* 
     }
 
     return stalker->is_weapon_going_to_be_strapped(&object->object());
+}
+
+u16 CScriptGameObject::AmmoGetCount()
+{
+	CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(&object());
+	if (!ammo)
+		return 0;
+
+	return ammo->m_boxCurr;
+}
+
+void CScriptGameObject::AmmoSetCount(u16 count)
+{
+	CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(&object());
+	if (!ammo)
+		return;
+
+	ammo->m_boxCurr = count;
+}
+
+u16 CScriptGameObject::AmmoBoxSize()
+{
+	CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(&object());
+	if (!ammo)
+		return 0;
+
+	return ammo->m_boxSize;
 }
 
 void CScriptGameObject::SetRemainingUses(u8 value)

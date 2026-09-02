@@ -21,12 +21,16 @@
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
 
+//Alundaio
+using namespace luabind; 
+//-Alundaio
+
 using namespace InventoryUtilities;
 
 // what to block
+u16 INV_STATE_BLOCK_ALL = 0xffff;
 u16 INV_STATE_LADDER = INV_STATE_BLOCK_ALL;
 u16 INV_STATE_CAR = INV_STATE_BLOCK_ALL;
-u16 INV_STATE_BLOCK_ALL = 0xffff;
 u16 INV_STATE_INV_WND = INV_STATE_BLOCK_ALL;
 u16 INV_STATE_BUY_MENU = INV_STATE_BLOCK_ALL;
 
@@ -68,7 +72,7 @@ CInventory::CInventory()
         string256 slot_persistent;
         string256 slot_active;
         xr_sprintf(slot_persistent, "slot_persistent_%d", i);
-        xr_sprintf(slot_active,     "slot_active_%d",     i);
+        xr_sprintf(slot_active, "slot_active_%d", i);
 
         if (!pSettings->line_exist("inventory", slot_persistent))
         {
@@ -80,7 +84,8 @@ CInventory::CInventory()
         const bool isActive = READ_IF_EXISTS(pSettings, r_bool, "inventory", slot_active, false);
 
         m_slots.emplace_back(CInventorySlot{ nullptr, isPersistent, isActive });
-    } while (true);
+    } 
+	while (true);
 
     m_last_slot = i;
 #ifndef MASTER_GOLD
@@ -907,7 +912,7 @@ bool CInventory::Eat(PIItem pIItem)
     if (!pItemToEat->UseBy(entity_alive))
         return false;
 
-	luabind::functor<bool>	funct;
+	luabind::functor<bool> funct;
 	if (ai().script_engine().functor("_G.CInventory__eat", funct))
 	{
 		if (!funct(smart_cast<CGameObject*>(pItemToEat->object().H_Parent())->lua_game_object(), (smart_cast<CGameObject*>(pIItem))->lua_game_object()))

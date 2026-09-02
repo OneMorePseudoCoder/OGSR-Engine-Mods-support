@@ -56,6 +56,7 @@ enum ECallbackType
 	eOnWeaponZoomIn,
 	eOnWeaponZoomOut,
 	eOnWeaponJammed,
+	eOnWeaponMagazineEmpty,
 	/* avo: end */
 
     eOnItemToBelt,
