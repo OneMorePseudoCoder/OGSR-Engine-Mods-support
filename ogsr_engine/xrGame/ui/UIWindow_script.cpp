@@ -9,13 +9,28 @@
 #include "UIMMShniaga.h"
 #include "UITextureMaster.h"
 #include "UIScrollView.h"
+#include "UIHint.h"
+#include "../ScriptXMLInit.h"
+#include "../UICursor.h"
 
 const Fvector2* get_wnd_pos(CUIWindow* w) { return &w->GetWndPos(); }
+
+Fvector2 GetCursorPosition_script()
+{
+	return GetUICursor().GetCursorPosition();
+}
+
+void SetCursorPosition_script(Fvector2& pos)
+{
+	GetUICursor().SetUICursorPosition(pos);
+}
+
 using namespace luabind;
 
 void CUIWindow::script_register(lua_State* L)
 {
-    module(L)[
+    module(L)
+	[
         def("GetARGB", &color_argb),
         def("GetFontSmall", [] { return UI().Font().pFontStat; }),
         def("GetFontMedium", [] { return UI().Font().pFontMedium; }),
@@ -28,6 +43,9 @@ void CUIWindow::script_register(lua_State* L)
         def("GetFontGraffiti50Russian", [] { return UI().Font().pFontGraffiti50Russian; }),
 		def("GetFontArial14", [] {return UI().Font().pFontArial14; }),
         def("GetFontLetterica25", [] { return UI().Font().pFontLetterica25; }),
+		def("GetCursorPosition", &GetCursorPosition_script),
+		def("SetCursorPosition", &SetCursorPosition_script),
+		def("FitInRect", &fit_in_rect),	
         def("GetFontCustom", [](const char* sect) { return UI().Font().InitializeCustomFont(sect); }),
 
            class_<CUIWindow>("CUIWindow")
@@ -61,9 +79,16 @@ void CUIWindow::script_register(lua_State* L)
                .def("GetMousePosX", [](CUIWindow* self) { return self->cursor_pos.x; })
                .def("GetMousePosY", [](CUIWindow* self) { return self->cursor_pos.y; })
            ,
-           class_<CDialogHolder>("CDialogHolder").def("AddDialogToRender", &CDialogHolder::AddDialogToRender).def("RemoveDialogToRender", &CDialogHolder::RemoveDialogToRender),
+
+           class_<CDialogHolder>("CDialogHolder")
+		   		.def(constructor<>())
+			    .def("TopInputReceiver", &CDialogHolder::TopInputReceiver)
+			    .def("SetMainInputReceiver", &CDialogHolder::SetMainInputReceiver)	
+			    .def("AddDialogToRender", &CDialogHolder::AddDialogToRender)
+				.def("RemoveDialogToRender", &CDialogHolder::RemoveDialogToRender),
 
            class_<CUIDialogWnd, CUIWindow>("CUIDialogWnd")
+		   	   .def(constructor<>())		
                .def("ShowDialog", &CUIDialogWnd::ShowDialog)
                .def("HideDialog", &CUIDialogWnd::HideDialog)
                .def("GetHolder", &CUIDialogWnd::GetHolder),
@@ -80,6 +105,13 @@ void CUIWindow::script_register(lua_State* L)
                .def("SetHeight", &CUIFrameLineWnd::SetHeight)
                .def("SetColor", &CUIFrameLineWnd::SetTextureColor),
 
+		   class_<UIHint, CUIWindow>("UIHint")
+			   .def(constructor<>())
+			   .def("SetWidth", &UIHint::SetWidth)
+			   .def("SetHeight", &UIHint::SetHeight)
+			   .def("SetHintText", &UIHint::set_text)
+			   .def("GetHintText", &UIHint::get_text),
+		
            class_<CUIMMShniaga, CUIWindow>("CUIMMShniaga")
                .enum_("enum_page_id")[value("epi_main", CUIMMShniaga::epi_main), value("epi_new_game", CUIMMShniaga::epi_new_game)]
                .def("SetVisibleMagnifier", &CUIMMShniaga::SetVisibleMagnifier)
@@ -99,7 +131,8 @@ void CUIWindow::script_register(lua_State* L)
                .def("SetScrollPos", &CUIScrollView::SetScrollPos),
 
            class_<enum_exporter<EUIMessages>>("ui_events")
-               .enum_("events")[
+               .enum_("events")
+               [
                    // CUIWindow
                    value("WINDOW_LBUTTON_DOWN", int(WINDOW_LBUTTON_DOWN)), value("WINDOW_RBUTTON_DOWN", int(WINDOW_RBUTTON_DOWN)),
                    value("WINDOW_LBUTTON_UP", int(WINDOW_LBUTTON_UP)), value("WINDOW_RBUTTON_UP", int(WINDOW_RBUTTON_UP)), value("WINDOW_MOUSE_MOVE", int(WINDOW_MOUSE_MOVE)),
@@ -139,5 +172,7 @@ void CUIWindow::script_register(lua_State* L)
 
                    value("EDIT_TEXT_COMMIT", int(EDIT_TEXT_COMMIT)),
                    // CMainMenu
-                   value("MAIN_MENU_RELOADED", int(MAIN_MENU_RELOADED))]];
+                   value("MAIN_MENU_RELOADED", int(MAIN_MENU_RELOADED))
+               ]
+	];
 }

@@ -29,6 +29,8 @@
 #include "UIPropertiesBox.h"
 #include "UIMainIngameWnd.h"
 
+using namespace luabind; //Alundaio
+
 bool CUIActorMenu::AllowItemDrops(EDDListType from, EDDListType to)
 {
     xr_vector<EDDListType>& v = m_allowed_drops[to];
@@ -88,9 +90,42 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
         Msg("incorrect action [%d]->[%d]", t_old, t_new);
         return true;
     }
+	
+	if (old_owner == new_owner)
+    {
+        // Alundaio: Here we export the action of dragging one inventory item ontop of another!
+        luabind::functor<bool> funct1;
+        if (ai().script_engine().functor("actor_menu_inventory.CUIActorMenu_OnItemDropped", funct1))
+        {
+            // If list only has 1 item, get it, otherwise try to get item at current drag position
+            CUICellItem* _citem = (new_owner->ItemsCount() == 1) ? new_owner->GetItemIdx(0) : nullptr;
+            if (!_citem)
+            {
+                CUICellContainer* c = old_owner->GetContainer();
+                Ivector2 c_pos = c->PickCell(old_owner->GetDragItemPosition());
+                if (c->ValidCell(c_pos))
+                {
+                    CUICell& ui_cell = c->GetCellAt(c_pos);
+                    if (!ui_cell.Empty())
+                        _citem = ui_cell.m_item;
+                }
+            }
+
+            PIItem _iitem = _citem ? (PIItem)_citem->m_pData : nullptr;
+
+            CGameObject* GO1 = smart_cast<CGameObject*>(CurrentIItem());
+            CGameObject* GO2 = _iitem ? smart_cast<CGameObject*>(_iitem) : nullptr;
+            if (funct1(GO1 ? GO1->lua_game_object() : (0), GO2 ? GO2->lua_game_object() : (0), (int)t_old, (int)t_new) == false)
+                return false;
+        }
+        //-Alundaio
+        return false;
+    }
+
     switch (t_new)
     {
-    case iTrashSlot: {
+    case iTrashSlot: 
+	{
         if (CurrentIItem()->IsQuestItem())
             return true;
 
@@ -103,48 +138,82 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
         SetCurrentItem(nullptr);
     }
     break;
-    case iActorSlot: {
-        //.			if(GetSlotList(CurrentIItem()->GetSlot())==new_owner)
+    case iActorSlot: 
+	{
         u16 slot_to_place;
         if (CanSetItemToList(CurrentIItem(), new_owner, slot_to_place))
             ToSlot(itm, true, slot_to_place);
     }
     break;
-    case iActorBag: {
+    case iActorBag: 
+	{
         ToBag(itm, true);
     }
     break;
-    case iActorBelt: {
+    case iActorBelt: 
+	{
         ToBelt(itm, true);
     }
     break;
-    case iActorTrade: {
+    case iActorTrade: 
+	{
         ToActorTrade(itm, true);
     }
     break;
-    case iPartnerTrade: {
+    case iPartnerTrade: 
+	{
         if (t_old != iPartnerTradeBag)
             return false;
         ToPartnerTrade(itm, true);
     }
     break;
-    case iPartnerTradeBag: {
+    case iPartnerTradeBag: 
+	{
         if (t_old != iPartnerTrade)
             return false;
         ToPartnerTradeBag(itm, true);
     }
     break;
-    case iDeadBodyBag: {
+    case iDeadBodyBag: 
+	{
         ToDeadBodyBag(itm, true);
     }
     break;
-    case iQuickSlot: {
+    case iQuickSlot: 
+	{
         ToQuickSlot(itm);
     }
     break;
     };
 
     OnItemDropped(CurrentIItem(), new_owner, old_owner);
+
+	// Alundaio: Here we export the action of dragging one inventory item ontop of another!
+    luabind::functor<bool> funct1;
+    if (ai().script_engine().functor("actor_menu_inventory.CUIActorMenu_OnItemDropped", funct1))
+    {
+        // If list only has 1 item, get it, otherwise try to get item at current drag position
+        CUICellItem* _citem = (new_owner->ItemsCount() == 1) ? new_owner->GetItemIdx(0) : nullptr;
+        if (!_citem)
+        {
+            CUICellContainer* c = old_owner->GetContainer();
+            Ivector2 c_pos = c->PickCell(old_owner->GetDragItemPosition());
+            if (c->ValidCell(c_pos))
+            {
+                CUICell& ui_cell = c->GetCellAt(c_pos);
+                if (!ui_cell.Empty())
+                    _citem = ui_cell.m_item;
+            }
+        }
+
+        PIItem _iitem = _citem ? (PIItem)_citem->m_pData : nullptr;
+
+        CGameObject* GO1 = smart_cast<CGameObject*>(CurrentIItem());
+        CGameObject* GO2 = _iitem ? smart_cast<CGameObject*>(_iitem) : nullptr;
+        if (funct1(GO1 ? GO1->lua_game_object() : (0), GO2 ? GO2->lua_game_object() : (0), (int)t_old, (int)t_new) == false)
+            return false;
+    }
+    //-Alundaio
 
 	UpdateConditionProgressBars();
 	UpdateItemsPlace();
@@ -239,7 +308,6 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
         ToQuickSlot(itm);
     }
     break;
-
     }; // switch
 
     UpdateConditionProgressBars();
@@ -272,6 +340,17 @@ bool CUIActorMenu::OnItemFocusReceive(CUICellItem* itm)
 
     itm->m_selected = true;
     set_highlight_item(itm);
+	
+	luabind::functor<bool> funct1;
+	if (ai().script_engine().functor("actor_menu_inventory.CUIActorMenu_OnItemFocusReceive", funct1))
+	{
+		PIItem _iitem = (PIItem)itm->m_pData;
+
+		CGameObject* GO = _iitem ? smart_cast<CGameObject*>(_iitem) : nullptr;
+		if (GO)
+			funct1(GO->lua_game_object());
+	}
+
     return true;
 }
 
@@ -281,6 +360,17 @@ bool CUIActorMenu::OnItemFocusLost(CUICellItem* itm)
     {
         itm->m_selected = false;
     }
+
+	luabind::functor<bool> funct1;
+	if (ai().script_engine().functor("actor_menu_inventory.CUIActorMenu_OnItemFocusLost", funct1))
+	{
+		PIItem _iitem = (PIItem)itm->m_pData;
+
+		CGameObject* GO = _iitem ? smart_cast<CGameObject*>(_iitem) : nullptr;
+		if (GO)
+			funct1(GO->lua_game_object());
+	}
+
     InfoCurItem(nullptr);
     clear_highlight_lists();
 

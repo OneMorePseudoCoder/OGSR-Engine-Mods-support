@@ -1,6 +1,9 @@
 #pragma once
 #include "../xr_level_controller.h"
 #include "ingame_editors/embedded_editor_ui.h"
+
+class UIHint;
+class CScriptXmlInit;
 class CUIWindow;
 
 #define ui_list xr_vector
