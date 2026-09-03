@@ -9,17 +9,6 @@
 #include "UIHelper.h"
 #include "../string_table.h"
 
-CUIBoosterInfo::CUIBoosterInfo()
-{
-    for (u32 i = 0; i < eBoostExplImmunity; ++i)
-    {
-        m_booster_items[i] = nullptr;
-    }
-    m_booster_satiety = nullptr;
-    m_booster_anabiotic = nullptr;
-    m_booster_time = nullptr;
-}
-
 CUIBoosterInfo::~CUIBoosterInfo()
 {
     delete_data(m_booster_items);
@@ -29,7 +18,7 @@ CUIBoosterInfo::~CUIBoosterInfo()
     xr_delete(m_Prop_line);
 }
 
-LPCSTR boost_influence_caption[] = {"ui_inv_health",
+constexpr const char* boost_influence_caption[]{"ui_inv_health",
                                     "ui_inv_power",
                                     "ui_inv_radiation",
                                     "ui_inv_bleeding",
@@ -45,6 +34,7 @@ LPCSTR boost_influence_caption[] = {"ui_inv_health",
                                     "ui_inv_outfit_radiation_immunity",
                                     "ui_inv_outfit_telepatic_immunity",
                                     "ui_inv_outfit_chemical_burn_immunity"};
+static_assert(std::size(boost_influence_caption) == eBoostExplImmunity);
 
 void CUIBoosterInfo::InitFromXml(CUIXml& xml)
 {
@@ -64,12 +54,20 @@ void CUIBoosterInfo::InitFromXml(CUIXml& xml)
 
     for (u32 i = 0; i < eBoostExplImmunity; ++i)
     {
-        m_booster_items[i] = xr_new<UIBoosterInfoItem>();
-        m_booster_items[i]->Init(xml, ef_boosters_section_names[i]);
-        m_booster_items[i]->SetAutoDelete(false);
+        const char* xml_node_name = ef_boosters_section_names[i];
+        if (!xml.NavigateToNode(xml_node_name))
+        {
+            Msg("!![%s] XML node not found: [%s]", __FUNCTION__, xml_node_name);
+            continue;
+        }
+        auto* booster = xr_new<UIBoosterInfoItem>();
+        booster->Init(xml, xml_node_name);
+        booster->SetAutoDelete(false);
 
         LPCSTR name = CStringTable().translate(boost_influence_caption[i]).c_str();
-        m_booster_items[i]->SetCaption(name);
+        booster->SetCaption(name);
+
+        m_booster_items[i] = booster;
 
         xml.SetLocalRoot(base_node);
     }
@@ -116,6 +114,10 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
 
     for (u32 i = 0; i < eBoostExplImmunity; ++i)
     {
+        auto* booster = m_booster_items[i];
+        if (!booster)
+            continue;
+
         if (pSettings->line_exist(section.c_str(), ef_boosters_section_names[i]))
         {
             val = pSettings->r_float(section, ef_boosters_section_names[i]);
@@ -143,14 +145,14 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
             case eBoostChemicalBurnProtection: max_val = actor->conditions().GetZoneMaxPower(ALife::infl_acid); break;
             }
             val /= max_val;
-            m_booster_items[i]->SetValue(val);
+            booster->SetValue(val);
 
-            pos.set(m_booster_items[i]->GetWndPos());
+            pos.set(booster->GetWndPos());
             pos.y = h;
-            m_booster_items[i]->SetWndPos(pos);
+            booster->SetWndPos(pos);
 
-            h += m_booster_items[i]->GetWndSize().y;
-            AttachChild(m_booster_items[i]);
+            h += booster->GetWndSize().y;
+            AttachChild(booster);
         }
     }
 

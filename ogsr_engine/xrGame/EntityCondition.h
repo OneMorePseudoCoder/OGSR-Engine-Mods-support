@@ -14,6 +14,9 @@ enum EBoostParams
     eBoostPowerRestore,
     eBoostRadiationRestore,
     eBoostBleedingRestore,
+    eBoostSatietyRestore,
+    eBoostThirstRestore,
+    eBoostAlcoholRestore,
     eBoostMaxWeight,
     eBoostRadiationProtection,
     eBoostTelepaticProtection,
@@ -27,17 +30,15 @@ enum EBoostParams
     eBoostStrikeImmunity,
     eBoostFireWoundImmunity,
     eBoostWoundImmunity,
-    eBoostAlcoholRestore,
-    eBoostSatietyRestore,
-    eBoostThirstRestore,
     eBoostMaxCount,
 };
 
-static const LPCSTR ef_boosters_section_names[] = {"boost_health_restore",    "boost_power_restore",        "boost_radiation_restore",  "boost_bleeding_restore",
-                                                   "boost_max_weight",        "boost_radiation_protection", "boost_telepat_protection", "boost_chemburn_protection",
-                                                   "boost_burn_immunity",     "boost_shock_immunity",       "boost_radiation_immunity", "boost_telepat_immunity",
-                                                   "boost_chemburn_immunity", "boost_explosion_immunity",   "boost_strike_immunity",    "boost_fire_wound_immunity",
-                                                   "boost_wound_immunity",    "boost_alcohol_restore",      "boost_satiety_restore",    "boost_thirst_restore"};
+inline constexpr const char* ef_boosters_section_names[]{"boost_health_restore",       "boost_power_restore",      "boost_radiation_restore",   "boost_bleeding_restore",
+                                                         "boost_satiety_restore",      "boost_thirst_restore",     "boost_alcohol_restore",     "boost_max_weight",
+                                                         "boost_radiation_protection", "boost_telepat_protection", "boost_chemburn_protection", "boost_burn_immunity",
+                                                         "boost_shock_immunity",       "boost_radiation_immunity", "boost_telepat_immunity",    "boost_chemburn_immunity",
+                                                         "boost_explosion_immunity",   "boost_strike_immunity",    "boost_fire_wound_immunity", "boost_wound_immunity"};
+static_assert(std::size(ef_boosters_section_names) == eBoostMaxCount);
 
 struct SBooster
 {
