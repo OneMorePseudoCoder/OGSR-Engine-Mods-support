@@ -19,8 +19,18 @@
 #include "UIHint.h"
 #include "map_hint.h"
 #include "uicursor.h"
+#include "../GametaskManager.h"
+#include "../GameTask.h"
+
+#include "UIPropertiesBox.h"
+#include "UIListBoxItem.h"
 
 #include "../../xr_3da/xr_input.h" //remove me !!!
+
+// Alundaio
+#include "../../xrServerEntities/script_engine.h"
+using namespace luabind;
+//-Alundaio
 
 CUIMapWnd* g_map_wnd = nullptr; // quick temporary solution -(
 CUIMapWnd* GetMapWnd() { return g_map_wnd; }
@@ -34,13 +44,6 @@ CUIMapWnd::CUIMapWnd()
     m_currentZoom = 1.0f;
     m_map_location_hint = nullptr;
     m_map_move_step = 10.0f;
-    /*
-    #ifdef DEBUG
-    //	m_dbg_text_hint			= nullptr;
-    //	m_dbg_info				= nullptr;
-    #endif // DEBUG /**/
-
-    //	UIMainMapHeader			= nullptr;
     m_scroll_mode = false;
     m_nav_timing = Device.dwTimeGlobal;
     hint_wnd = nullptr;
@@ -52,11 +55,6 @@ CUIMapWnd::~CUIMapWnd()
     delete_data(m_ActionPlanner);
     delete_data(m_GameMaps);
     delete_data(m_map_location_hint);
-    /*
-    #ifdef DEBUG
-        delete_data( m_dbg_text_hint );
-        delete_data( m_dbg_info );
-    #endif // DEBUG/**/
     g_map_wnd = nullptr;
 }
 
@@ -76,7 +74,6 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
     m_UILevelFrame->SetAutoDelete(true);
     xr_strconcat(pth, start_from, ":level_frame");
     xml_init.InitWindow(uiXml, pth, 0, m_UILevelFrame);
-    //	m_UIMainFrame->AttachChild		(m_UILevelFrame);
     AttachChild(m_UILevelFrame);
 
     m_UIMainFrame = xr_new<CUIFrameWindow>();
@@ -95,14 +92,14 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
         sx = uiXml.ReadAttribFlt(pth, 0, "sx", 5.0f);
         sy = uiXml.ReadAttribFlt(pth, 0, "sy", 5.0f);
 
-        CUIWindow* rect_parent = m_UIMainFrame; // m_UILevelFrame;
+        CUIWindow* rect_parent = m_UIMainFrame;
         Frect r = rect_parent->GetWndRect();
 
         m_UIMainScrollH = xr_new<CUIFixedScrollBar>();
         m_UIMainScrollH->SetAutoDelete(true);
         m_UIMainScrollH->InitScrollBar(Fvector2().set(r.left + dx, r.bottom - sy), true);
         m_UIMainScrollH->SetStepSize(_max(1, (int)(m_UILevelFrame->GetWidth() * 0.1f)));
-        m_UIMainScrollH->SetPageSize((int)m_UILevelFrame->GetWidth()); // iFloor
+        m_UIMainScrollH->SetPageSize((int)m_UILevelFrame->GetWidth());
         AttachChild(m_UIMainScrollH);
         Register(m_UIMainScrollH);
         AddCallback(m_UIMainScrollH, SCROLLBAR_HSCROLL, fastdelegate::MakeDelegate(this, &CUIMapWnd::OnScrollH));
@@ -123,7 +120,6 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
     m_map_location_hint->SetAutoDelete(false);
 
     // Load maps
-
     m_GlobalMap = xr_new<CUIGlobalMap>(this);
     m_GlobalMap->SetAutoDelete(true);
     m_GlobalMap->Initialize();
@@ -186,6 +182,13 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
     m_ActionPlanner = xr_new<CMapActionPlanner>();
     m_ActionPlanner->setup(this);
     m_view_actor = true;
+	
+	m_UIPropertiesBox = xr_new<CUIPropertiesBox>();
+	m_UIPropertiesBox->SetAutoDelete(true);
+	m_UIPropertiesBox->InitPropertiesBox(Fvector2().set(0, 0), Fvector2().set(300, 300));
+	AttachChild(m_UIPropertiesBox);
+	m_UIPropertiesBox->Hide();
+	m_UIPropertiesBox->SetWindowName("property_box");
 }
 
 void CUIMapWnd::Show(bool status)
@@ -298,10 +301,9 @@ void CUIMapWnd::SetTargetMap(CUICustomMap* m, const Fvector2& pos, bool bZoomIn)
     }
     else
     {
-        if (bZoomIn /* && fsimilar(GlobalMap()->GetCurrentZoom(), GlobalMap()->GetMinZoom(),EPS_L )*/)
+        if (bZoomIn)
             SetZoom(GlobalMap()->GetMaxZoom());
 
-        //		m_tgtCenter						= m->ConvertRealToLocalNoTransform(pos, m->BoundRect());
         m_tgtCenter = m->ConvertRealToLocal(pos, true);
         m_tgtCenter.add(m->GetWndPos()).div(GlobalMap()->GetCurrentZoom());
     }
@@ -318,12 +320,6 @@ void CUIMapWnd::MoveMap(Fvector2 const& pos_delta)
 void CUIMapWnd::Draw()
 {
     inherited::Draw();
-    /*
-    #ifdef DEBUG
-        m_dbg_text_hint->Draw	();
-        m_dbg_info->Draw		();
-    #endif // DEBUG/**/
-
     m_btn_nav_parent->Draw();
 }
 
@@ -365,7 +361,8 @@ bool CUIMapWnd::OnKeyboardHold(int dik)
     case DIK_UP:
     case DIK_DOWN:
     case DIK_LEFT:
-    case DIK_RIGHT: {
+    case DIK_RIGHT: 
+	{
         Fvector2 pos_delta;
         pos_delta.set(0.0f, 0.0f);
 
@@ -389,17 +386,15 @@ bool CUIMapWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
     switch (dik)
     {
-    case DIK_NUMPADMINUS: {
-        // SetZoom(GetZoom()/1.5f);
+    case DIK_NUMPADMINUS: 
+	{
         UpdateZoom(false);
-        // ResetActionPlanner();
         return true;
     }
     break;
-    case DIK_NUMPADPLUS: {
-        // SetZoom(GetZoom()*1.5f);
+    case DIK_NUMPADPLUS: 
+	{
         UpdateZoom(true);
-        // ResetActionPlanner();
         return true;
     }
     break;
@@ -410,7 +405,7 @@ bool CUIMapWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 
 bool CUIMapWnd::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
-    if (inherited::OnMouseAction(x, y, mouse_action) /*|| m_btn_nav_parent->OnMouseAction(x,y,mouse_action)*/)
+    if (inherited::OnMouseAction(x, y, mouse_action))
     {
         return true;
     }
@@ -421,6 +416,9 @@ bool CUIMapWnd::OnMouseAction(float x, float y, EUIMessages mouse_action)
     {
         switch (mouse_action)
         {
+		case WINDOW_RBUTTON_UP:
+			ActivatePropertiesBox(NULL);
+			break;
         case WINDOW_MOUSE_MOVE:
             if (pInput->iGetAsyncKeyState(MOUSE_1))
             {
@@ -430,7 +428,6 @@ bool CUIMapWnd::OnMouseAction(float x, float y, EUIMessages mouse_action)
                 return true;
             }
             break;
-
         case WINDOW_MOUSE_WHEEL_DOWN:
             UpdateZoom(true);
             return true;
@@ -439,7 +436,6 @@ bool CUIMapWnd::OnMouseAction(float x, float y, EUIMessages mouse_action)
             UpdateZoom(false);
             return true;
             break;
-
         } // switch
     };
 
@@ -463,7 +459,6 @@ bool CUIMapWnd::UpdateZoom(bool b_zoom_in)
 
     if (!fsimilar(prev_zoom, GetZoom()))
     {
-        //		m_tgtCenter.set( 0, 0 );// = cursor_pos;
         Frect vis_rect = ActiveMapRect();
         vis_rect.getcenter(m_tgtCenter);
 
@@ -482,8 +477,38 @@ bool CUIMapWnd::UpdateZoom(bool b_zoom_in)
 
 void CUIMapWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
-    //	inherited::SendMessage( pWnd, msg, pData);
     CUIWndCallback::OnEvent(pWnd, msg, pData);
+	if (pWnd == m_UIPropertiesBox && msg == PROPERTY_CLICKED && m_UIPropertiesBox->GetClickedItem())
+	{
+		luabind::functor<void> funct;
+		if (ai().script_engine().functor("pda.property_box_clicked", funct))
+			funct(m_UIPropertiesBox);
+	}
+}
+
+void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
+{
+	m_UIPropertiesBox->RemoveAll();
+	luabind::functor<void> funct;
+	if (ai().script_engine().functor("pda.property_box_add_properties", funct))
+	{
+		CMapSpot* sp = smart_cast<CMapSpot*>(w);
+		if (sp)
+			funct(m_UIPropertiesBox, sp->MapLocation()->ObjectID(), (LPCSTR)sp->MapLocation()->GetLevelName().c_str(), (LPCSTR)sp->MapLocation()->GetHint());
+	}
+	
+	if (m_UIPropertiesBox->GetItemsCount() > 0)
+	{
+		m_UIPropertiesBox->AutoUpdateSize();
+
+		Fvector2 cursor_pos;
+		Frect vis_rect;
+
+		GetAbsoluteRect(vis_rect);
+		cursor_pos = GetUICursor().GetCursorPosition();
+		cursor_pos.sub(vis_rect.lt);
+		m_UIPropertiesBox->Show(vis_rect, cursor_pos);
+	}
 }
 
 CUICustomMap* CUIMapWnd::GetMapByIdx(u16 idx)
@@ -683,24 +708,13 @@ void CUIMapWnd::HideHint(CUIWindow* parent)
 
 void CUIMapWnd::HideCurHint() { m_map_location_hint->SetOwner(nullptr); }
 
-void CUIMapWnd::Hint(const shared_str& text)
-{
-    /*
-#ifdef DEBUG
-    m_dbg_text_hint->SetTextST( *text );
-#endif // DEBUG/**/
-}
+void CUIMapWnd::Hint(const shared_str& text) {}
 
 void CUIMapWnd::Reset()
 {
     inherited::Reset();
     ResetActionPlanner();
 }
-
-#include "../GametaskManager.h"
-#include "../Actor.h"
-#include "../map_spot.h"
-#include "../GameTask.h"
 
 void CUIMapWnd::SpotSelected(CUIWindow* w)
 {

@@ -3,13 +3,24 @@
 
 using namespace luabind;
 
-
 void CGameTask::script_register(lua_State* L)
 {
-    module(L)[class_<enum_exporter<ETaskState>>("task")
-                  .enum_("task_state")[value("fail", int(eTaskStateFail)), value("in_progress", int(eTaskStateInProgress)), value("completed", int(eTaskStateCompleted)),
-                                       value("task_dummy", int(eTaskStateDummy))]
-                  .enum_("task_type")[value("storyline", int(eTaskTypeStoryline)), value("additional", int(eTaskTypeAdditional))],
+    module(L)
+	[
+			  class_<enum_exporter<ETaskState>>("task")
+                .enum_("task_state")
+				[
+					value("fail", int(eTaskStateFail)),
+					value("in_progress", int(eTaskStateInProgress)),
+					value("completed", int(eTaskStateCompleted)),
+					value("task_dummy", int(eTaskStateDummy))
+				]
+
+                .enum_("task_type")
+				[
+					value("storyline", int(eTaskTypeStoryline)),
+					value("additional", int(eTaskTypeAdditional))
+				],
 
               class_<CGameTask>("CGameTask")
                   .def(constructor<>())
@@ -20,7 +31,6 @@ void CGameTask::script_register(lua_State* L)
                   .def("get_id", &CGameTask::GetID_script)
                   .def("set_id", &CGameTask::SetID_script)
                   .def("set_type", &CGameTask::SetType_script)
-                  //				.def("get_type",							&CGameTask::GetType_script						)
                   .def("set_icon_name", &CGameTask::SetIconName_script)
                   .def("get_icon_name", &CGameTask::GetIconName_script)
                   .def("set_description", &CGameTask::SetDescription_script)
@@ -28,6 +38,9 @@ void CGameTask::script_register(lua_State* L)
                   .def("set_map_hint", &CGameTask::SetMapHint_script)
                   .def("set_map_location", &CGameTask::SetMapLocation_script)
                   .def("set_map_object_id", &CGameTask::SetMapObjectID_script)
+
+				  .def("get_map_location", &CGameTask::GetMapLocation_script)
+				  .def("get_map_object_id", &CGameTask::GetMapObjectID_script)
 
                   .def("add_complete_info", &CGameTask::AddCompleteInfo_script)
                   .def("add_fail_info", &CGameTask::AddFailInfo_script)
@@ -40,5 +53,6 @@ void CGameTask::script_register(lua_State* L)
                   .def("add_on_fail_func", &CGameTask::AddOnFailFunc_script)
 
                   .def("remove_map_locations", &CGameTask::RemoveMapLocations)
-                  .def("change_map_location", &CGameTask::ChangeMapLocation)];
+                  .def("change_map_location", &CGameTask::ChangeMapLocation)
+	];
 }

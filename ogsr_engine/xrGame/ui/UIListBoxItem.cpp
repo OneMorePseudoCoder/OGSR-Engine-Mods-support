@@ -47,6 +47,11 @@ bool CUIListBoxItem::OnMouseDown(int mouse_btn)
         GetMessageTarget()->SendMessage(this, LIST_ITEM_CLICKED, &tag);
         return true;
     }
+	else if (mouse_btn == MOUSE_2) 
+	{
+		GetMessageTarget()->SendMessage(this, WINDOW_RBUTTON_DOWN, &tag);
+		return true;
+	}
     else
         return false;
 }
@@ -61,16 +66,6 @@ float CUIListBoxItem::FieldsLength() const
         return 0.0f;
 
     float len = 0.0f;
-    /*
-        WINDOW_LIST::const_iterator it		= m_ChildWndList.begin();
-        WINDOW_LIST::const_iterator it_e	= m_ChildWndList.end();
-
-        for(;it!=it_e;++it)
-        {
-            CUIWindow* w	= *it;
-            len				+= w->GetWndPos().x + w->GetWidth();
-        }
-    */
     CUIWindow* w = m_ChildWndList.back();
     len += w->GetWndPos().x + w->GetWidth();
     return len;

@@ -132,4 +132,5 @@ enum EUIMessages
     MAP_SELECT_SPOT,
 
     MAIN_MENU_RELOADED,
+	MAP_SELECT_SPOT2,
 };

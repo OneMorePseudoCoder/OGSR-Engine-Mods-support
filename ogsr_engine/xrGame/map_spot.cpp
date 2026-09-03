@@ -87,6 +87,11 @@ bool CMapSpot::OnMouseDown(int mouse_btn)
             GetMessageTarget()->SendMessage(this, MAP_SELECT_SPOT);
             return true;
         }
+		else if (mouse_btn == MOUSE_2)
+		{
+			GetMessageTarget()->SendMessage(this, MAP_SELECT_SPOT2);
+			return true;
+		}
         return false;
     }
     else

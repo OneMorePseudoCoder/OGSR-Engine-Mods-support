@@ -19,6 +19,7 @@ class CMapSpot;
 class CGameTask;
 class CUIXml;
 class UIHint;
+class CUIPropertiesBox;
 
 using GameMaps = xr_map<shared_str, CUICustomMap*>;
 using GameMapsPairIt = GameMaps::iterator;
@@ -44,13 +45,7 @@ private:
     CUIFixedScrollBar* m_UIMainScrollH;
     CUIWindow* m_UILevelFrame;
     CMapActionPlanner* m_ActionPlanner;
-    //	CUIFrameLineWnd*			UIMainMapHeader;
     CUIMapLocationHint* m_map_location_hint;
-
-#ifdef DEBUG
-//	CUIStatic*					m_dbg_text_hint;
-//	CUIStatic*					m_dbg_info;
-#endif // DEBUG
 
     enum EBtnPos
     {
@@ -100,6 +95,7 @@ public:
 
     void MoveScrollV(float dy);
     void MoveScrollH(float dx);
+	void ActivatePropertiesBox(CUIWindow* w);
 
 public:
     CUICustomMap* m_tgtMap;
@@ -110,6 +106,7 @@ protected:
     void init_xml_nav(CUIXml& xml);
     void ShowHint(bool extra = false);
     void Activated();
+	CUIPropertiesBox* m_UIPropertiesBox;
 
 public:
     CUIMapWnd();

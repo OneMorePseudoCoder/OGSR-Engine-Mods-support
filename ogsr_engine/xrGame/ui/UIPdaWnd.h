@@ -11,14 +11,13 @@ class CUIStatic;
 class CUITextWnd;
 class CUIXml;
 class CUIFrameWindow;
-class UIHint;
-
 class CUITaskWnd;
 class CUIRankingWnd;
 class CUILogsWnd;
 class CUIEncyclopediaWnd;
 class CUIAnimatedStatic;
 class UIHint;
+class CMapSpot;
 
 namespace pda_section
 {
@@ -35,7 +34,6 @@ enum part
     news = diary | (1 << 1),
     info = diary | (1 << 2),
     journal = diary | (1 << 3),
-
 };
 };
 
@@ -66,6 +64,7 @@ public:
     CUIRankingWnd* pUIRankingWnd;
     CUILogsWnd* pUILogsWnd;
     CUIEncyclopediaWnd* pUIEncyclopediaWnd;
+	CMapSpot* pSelectedMapSpot;
 
     virtual void Reset();
 
