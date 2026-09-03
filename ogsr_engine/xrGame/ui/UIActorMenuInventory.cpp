@@ -207,7 +207,6 @@ bool FindItemInList(CUIDragDropListEx* lst, PIItem pItem, CUICellItem*& ci_res)
             if (ici->object() == pItem)
             {
                 ci_res = ici;
-                // lst->RemoveItem(ci,false);
                 return true;
             }
         }
@@ -216,7 +215,6 @@ bool FindItemInList(CUIDragDropListEx* lst, PIItem pItem, CUICellItem*& ci_res)
         if (ici->object() == pItem)
         {
             ci_res = ci;
-            // lst->RemoveItem(ci,false);
             return true;
         }
     }
@@ -258,7 +256,8 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
     switch (action_type)
     {
     case GE_TRADE_BUY:
-    case GE_OWNERSHIP_TAKE: {
+    case GE_OWNERSHIP_TAKE: 
+	{
         bool b_already = false;
 
         CUIDragDropListEx* lst_to_add = nullptr;
@@ -273,7 +272,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
             lst_to_add = GetSlotList(pl.slot_id);
         else if (pl.type == eItemPlaceBelt)
             lst_to_add = GetListByType(iActorBelt);
-        else /* if(pl.type==eItemPlaceRuck)*/
+        else
         {
             if (pItem->parent_id() == m_pActorInvOwner->object_id())
                 lst_to_add = GetListByType(iActorBag);
@@ -297,7 +296,6 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
                 {
                     b_already = true;
                 }
-                // break;
             }
         }
         CUICellItem* ci = nullptr;
@@ -317,7 +315,8 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
     }
     break;
     case GE_TRADE_SELL:
-    case GE_OWNERSHIP_REJECT: {
+    case GE_OWNERSHIP_REJECT: 
+	{
         if (CUIDragDropListEx::m_drag_item)
         {
             CUIInventoryCellItem* ici = smart_cast<CUIInventoryCellItem*>(CUIDragDropListEx::m_drag_item->ParentItem());
@@ -351,6 +350,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
     UpdateItemsPlace();
     UpdateConditionProgressBars();
 }
+
 void CUIActorMenu::AttachAddon(PIItem item_to_upgrade)
 {
     PlaySnd(eAttachAddon);
@@ -551,39 +551,40 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 
 			if (ToBag(slot_cell, false) == false)
 				return false;
-		}
-		else
-		{
-			//Alundaio: Since the player's inventory is being used as a slot we need to search for cell with matching m_pData
-			CUICellContainer* c = slot_list->GetContainer();
-			CUIWindow::WINDOW_LIST child_list = c->GetChildWndList();
-
-			for (WINDOW_LIST_it it = child_list.begin(); child_list.end() != it; ++it)
+			else
 			{
-				CUICellItem* i = (CUICellItem*)(*it);
-				PIItem	pitm = (PIItem)i->m_pData;
-				if (pitm == _iitem)
+				//Alundaio: Since the player's inventory is being used as a slot we need to search for cell with matching m_pData
+				CUICellContainer* c = slot_list->GetContainer();
+				CUIWindow::WINDOW_LIST child_list = c->GetChildWndList();
+
+				for (WINDOW_LIST_it it = child_list.begin(); child_list.end() != it; ++it)
 				{
-					if (ToBag(i, false))
+					CUICellItem* i = (CUICellItem*)(*it);
+					PIItem pitm = (PIItem)i->m_pData;
+					if (pitm == _iitem)
 					{
-						break;
+						if (ToBag(i, false))
+						{
+							break;
+						}
+						else
+							return false;
 					}
-					else
-						return false;
 				}
+
+				return ToSlot(itm, false, slot_id);
 			}
 
-			return ToSlot(itm, false, slot_id);
+			bool result	= ToSlot(itm, false, slot_id);
+			if (b_own_item && result && slot_id == DETECTOR_SLOT)
+			{
+				CCustomDetector* det = smart_cast<CCustomDetector*>(iitem);
+				det->ToggleDetector(g_player_hud->attached_item(0) != nullptr);
+			}
+
+			return result;
 		}
-
-		bool result	= ToSlot(itm, false, slot_id);
-        if (b_own_item && result && slot_id == DETECTOR_SLOT)
-        {
-            CCustomDetector* det = smart_cast<CCustomDetector*>(iitem);
-            det->ToggleDetector(g_player_hud->attached_item(0) != nullptr);
-        }
-
-        return result;
+		return false;
     }
 }
 
@@ -683,7 +684,6 @@ bool CUIActorMenu::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
         if (!b_own_item)
             SendEvent_Item2Belt(iitem, m_pActorInvOwner->object_id());
 
-        // ColorizeItem						(itm, false);
         return true;
     }
     else
@@ -759,12 +759,7 @@ CUIDragDropListEx* CUIActorMenu::GetSlotList(u16 slot_idx)
     case DETECTOR_SLOT:
 		return m_pInventoryDetectorList;
 		break;
-	case PDA_SLOT:
-	case TORCH_SLOT:
-	case ARTEFACT_SLOT:
-	case BINOCULAR_SLOT:
-	case KNIFE_SLOT:
-    case GRENADE_SLOT:
+	default:
         if (m_currMenuMode == mmTrade)
         {
             return m_pTradeActorBagList;
@@ -1090,35 +1085,67 @@ void CUIActorMenu::PropertiesBoxForUsing(PIItem item, bool& b_show)
     }
 
 	//1st Custom Use action
-	act_str = READ_IF_EXISTS(pSettings, r_string, section_name, "use1_text", 0);
-	if (act_str)
+	LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use1_functor", 0);
+	if (functor_name)
     {
-		m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT2_ACTION);
-		b_show = true;
+		luabind::functor<LPCSTR> funct1;
+		if (ai().script_engine().functor(functor_name, funct1))
+		{
+			act_str = funct1(GO->lua_game_object());
+			if (act_str)
+			{
+				m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT2_ACTION);
+				b_show = true;				
+			}
+		}
 	}
 
 	//2nd Custom Use action
-	act_str = READ_IF_EXISTS(pSettings, r_string, section_name, "use2_text", 0);
-	if (act_str)
+	functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use2_functor", 0);
+	if (functor_name)
 	{
-		m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT3_ACTION);
-		b_show = true;
+		luabind::functor<LPCSTR> funct1;
+		if (ai().script_engine().functor(functor_name, funct1))
+		{
+			act_str = funct1(GO->lua_game_object());
+			if (act_str)
+			{
+				m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT3_ACTION);
+				b_show = true;				
+			}
+		}
     }
 	
 	//3rd Custom Use action
-	act_str = READ_IF_EXISTS(pSettings, r_string, section_name, "use3_text", 0);
-	if (act_str)
+	functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use3_functor", 0);
+	if (functor_name)
 	{
-		m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT4_ACTION);
-		b_show = true;
+		luabind::functor<LPCSTR> funct1;
+		if (ai().script_engine().functor(functor_name, funct1))
+		{
+			act_str = funct1(GO->lua_game_object());
+			if (act_str)
+			{
+				m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT4_ACTION);
+				b_show = true;				
+			}
+		}
 	}
 
 	//4th Custom Use action
-	act_str = READ_IF_EXISTS(pSettings, r_string, section_name, "use4_text", 0);
-	if (act_str)
+	functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use4_functor", 0);
+	if (functor_name)
 	{
-		m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT5_ACTION);
-		b_show = true;
+		luabind::functor<LPCSTR> funct1;
+		if (ai().script_engine().functor(functor_name, funct1))
+		{
+			act_str = funct1(GO->lua_game_object());
+			if (act_str)
+			{
+				m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT5_ACTION);
+				b_show = true;				
+			}
+		}
 	}
 }
 
@@ -1163,8 +1190,11 @@ void CUIActorMenu::PropertiesBoxForRepair(PIItem item, bool& b_show)
 //Alundaio: Ability to donate item during trade
 void CUIActorMenu::PropertiesBoxForDonate(PIItem item, bool& b_show)
 {
-	m_UIPropertiesBox->AddItem("st_donate", NULL, INVENTORY_DONATE_ACTION);
-	b_show = true;
+	if (!item->IsQuestItem())
+	{
+		m_UIPropertiesBox->AddItem("st_donate", NULL, INVENTORY_DONATE_ACTION);
+		b_show = true;
+	}
 }
 //-Alundaio
 
@@ -1196,7 +1226,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 	case INVENTORY_EAT2_ACTION:
 	{
 		CGameObject* GO = smart_cast<CGameObject*>(item);
-		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use1_functor", 0);
+		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use1_action_functor", 0);
 		if (functor_name)
 		{
 			luabind::functor<bool>	funct1;
@@ -1211,7 +1241,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 	case INVENTORY_EAT3_ACTION:
 	{
 		CGameObject* GO = smart_cast<CGameObject*>(item);
-		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use2_functor", 0);
+		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use2_action_functor", 0);
 		if (functor_name)
 		{
 			luabind::functor<bool>	funct2;
@@ -1226,7 +1256,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 	case INVENTORY_EAT4_ACTION:
 	{
 		CGameObject* GO = smart_cast<CGameObject*>(item);
-		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use3_functor", 0);
+		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use3_action_functor", 0);
 		if (functor_name)
 		{
 			luabind::functor<bool>	funct3;
@@ -1241,7 +1271,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 	case INVENTORY_EAT5_ACTION:
 	{
 		CGameObject* GO = smart_cast<CGameObject*>(item);
-		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use4_functor", 0);
+		LPCSTR functor_name = READ_IF_EXISTS(pSettings, r_string, GO->cNameSect(), "use4_action_functor", 0);
 		if (functor_name)
 		{
 			luabind::functor<bool>	funct4;

@@ -502,9 +502,15 @@ bool CUICellContainer::AddSimilar(CUICellItem* itm)
         return false;
 
 	//Alundaio: Don't stack equipped items
-	PIItem	iitem = (PIItem)itm->m_pData;
-	if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
-		return false;
+	PIItem iitem = (PIItem)itm->m_pData;
+	if (iitem && iitem->m_pInventory)
+	{
+		if (iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
+			return false;
+
+		if (pSettings->line_exist(iitem->m_section_id, "dont_stack") && pSettings->r_bool(iitem->m_section_id, "dont_stack") == TRUE)
+			return false;
+	}
 	//-Alundaio
 
     CUICellItem* i = FindSimilar(itm);
@@ -527,9 +533,15 @@ CUICellItem* CUICellContainer::FindSimilar(CUICellItem* itm)
         auto i = (CUICellItem*)it;
 #endif
 		//Alundaio: Don't stack equipped items
-		PIItem	iitem = (PIItem)i->m_pData;
-		if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
-			continue;
+		PIItem iitem = (PIItem)i->m_pData;
+		if (iitem && iitem->m_pInventory)
+		{
+			if (iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
+				continue;
+
+			if (pSettings->line_exist(iitem->m_section_id, "dont_stack") && pSettings->r_bool(iitem->m_section_id, "dont_stack") == TRUE)
+				continue;
+		}
 		//-Alundaio
 
         if (i == itm)
@@ -730,7 +742,7 @@ CUICell& CUICellContainer::GetCellAt(const Ivector2& pos)
 {
     if (!ValidCell(pos))
         Msg("!![%s] invalid cell position: [%d , %d]", __FUNCTION__, pos.x, pos.y);
-    // R_ASSERT			(ValidCell(pos));
+
     return m_cells.at(m_cellsCapacity.x * pos.y + pos.x);
 }
 
@@ -894,13 +906,9 @@ void CUICellContainer::Draw()
                     select_mode = 3;
                 }
             }
-			else 
+			else if (ui_cell.m_item->m_select_equipped)
 			{
-				//Alundaio: Highlight equipped items
-				PIItem iitem = (PIItem)ui_cell.m_item->m_pData;
-				if (iitem && iitem->m_pInventory && iitem->m_pInventory->ItemFromSlot(iitem->BaseSlot()) == iitem)
-					select_mode = 2;
-				//-Alundaio:
+				select_mode = 2;
 			}
 	
             Fvector2 tp;
