@@ -2,15 +2,15 @@
 <window>
     <main_wnd x="0" y="0" width="1024" height="768"/>
 
-	<background x="35" y="80" width="955" height="25" vertical="1" stretch="1">
+	<background x="35" y="80" width="955" height="25" vertical="1">
         <texture>ui_pda2_fr</texture>
 	</background>
 	
-	<left_background x="35" y="115" width="308" height="595" vertical="1" stretch="1">
+	<left_background x="35" y="115" width="308" height="595" vertical="1">
 		<texture>ui_pda2_fr</texture>
 	</left_background>
 	
-	<right_background x="351" y="115" width="638" height="595" vertical="1" stretch="1">
+	<right_background x="351" y="115" width="638" height="595" vertical="1">
 		<texture>ui_pda2_fr</texture>
 	</right_background>
 	
