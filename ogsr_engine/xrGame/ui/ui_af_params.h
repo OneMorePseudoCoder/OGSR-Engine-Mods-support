@@ -21,6 +21,7 @@ protected:
     UIArtefactParamItem* m_immunity_item[ALife::infl_max_count]{};
     UIArtefactParamItem* m_restore_item[ALife::eRestoreTypeMax]{};
     UIArtefactParamItem* m_additional_weight{};
+	UIArtefactParamItem* m_disp_condition{}; //Alundaio: Show AF Condition
 
     CUIStatic* m_Prop_line;
 

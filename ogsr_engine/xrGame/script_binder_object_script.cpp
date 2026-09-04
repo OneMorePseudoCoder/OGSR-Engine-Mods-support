@@ -17,7 +17,7 @@ using namespace luabind;
 void CScriptBinderObject::script_register(lua_State* L)
 {
     module(L)[class_<CScriptBinderObject, CScriptBinderObjectWrapper>("object_binder")
-                  .def_readonly("object", &CScriptBinderObject::m_object)
+                  .def_readwrite("object", &CScriptBinderObject::m_object)
                   .def(constructor<CScriptGameObject*>())
                   .def("reinit", &CScriptBinderObject::reinit, &CScriptBinderObjectWrapper::reinit_static)
                   .def("reload", &CScriptBinderObject::reload, &CScriptBinderObjectWrapper::reload_static)

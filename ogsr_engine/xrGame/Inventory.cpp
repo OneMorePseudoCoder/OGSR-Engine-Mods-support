@@ -1108,7 +1108,7 @@ u32 CInventory::BeltWidth() const
             return outfit->get_artefact_count();
         }
     }
-    return 0; // m_iMaxBelt;
+    return 0;
 }
 
 void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
@@ -1117,7 +1117,18 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
     {
         PIItem pIItem = *it;
         if (!for_trade || pIItem->CanTrade())
+		{
+			if (m_pOwner->is_alive())
+			{
+				luabind::functor<bool> funct;
+				if (ai().script_engine().functor("actor_menu_inventory.CInventory_ItemAvailableToTrade", funct))
+				{
+					if (!funct(m_pOwner->cast_game_object()->lua_game_object(), pIItem->cast_game_object()->lua_game_object()))
+						continue;
+				}
+			}
             items_container.push_back(pIItem);
+		}
     }
 
     if (m_bBeltUseful)
@@ -1126,7 +1137,18 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
         {
             PIItem pIItem = *it;
             if (!for_trade || pIItem->CanTrade())
+			{
+				if (m_pOwner->is_alive())
+				{
+					luabind::functor<bool> funct;
+					if (ai().script_engine().functor("actor_menu_inventory.CInventory_ItemAvailableToTrade", funct))
+					{
+						if (!funct(m_pOwner->cast_game_object()->lua_game_object(), pIItem->cast_game_object()->lua_game_object()))
+							continue;
+					}
+				}
                 items_container.push_back(pIItem);
+			}
         }
     }
 
@@ -1137,10 +1159,18 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
         for (; I <= E; ++I)
         {
             PIItem item = ItemFromSlot(I);
-            if (item && (!for_trade || item->CanTrade()))
+            if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT)
             {
-                if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT)
-                    items_container.push_back(item);
+				if (m_pOwner->is_alive())
+				{
+					luabind::functor<bool> funct;
+					if (ai().script_engine().functor("actor_menu_inventory.CInventory_ItemAvailableToTrade", funct))
+					{
+						if (!funct(m_pOwner->cast_game_object()->lua_game_object(), item->cast_game_object()->lua_game_object()))
+							continue;
+					}
+				}
+				items_container.push_back(item);
             }
         }
     }

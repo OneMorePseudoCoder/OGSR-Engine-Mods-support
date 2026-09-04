@@ -20,7 +20,7 @@
 void CSE_ALifeDynamicObject::on_spawn()
 {
 #ifdef DEBUG
-//	Msg			("[LSS] spawning object [%d][%d][%s][%s]",ID,ID_Parent,name(),name_replace());
+//	Msg("[LSS] spawning object [%d][%d][%s][%s]",ID,ID_Parent,name(),name_replace());
 #endif
 }
 
@@ -42,7 +42,13 @@ void CSE_ALifeDynamicObject::on_before_register() {}
 #include "Level.h"
 #include "map_manager.h"
 
-void CSE_ALifeDynamicObject::on_unregister() { Level().MapManager().OnObjectDestroyNotify(ID); }
+void CSE_ALifeDynamicObject::on_unregister()
+{
+	luabind::functor<void> funct;
+	if (ai().script_engine().functor("_G.CSE_ALifeDynamicObject_on_unregister", funct))
+		funct((u16)ID);	
+	Level().MapManager().OnObjectDestroyNotify(ID);
+}
 
 void CSE_ALifeDynamicObject::switch_online()
 {

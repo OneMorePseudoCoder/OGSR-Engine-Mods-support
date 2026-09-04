@@ -10,6 +10,7 @@
 #include "xrServer_Objects_ALife.h"
 #include "alife_simulator.h"
 #include "xrServer_Objects_ALife_Items.h"
+#include "../../xrServerEntities/script_engine.h"
 
 void CSE_ALifeObject::spawn_supplies() { spawn_supplies(*m_ini_string); }
 
@@ -20,6 +21,13 @@ void CSE_ALifeObject::spawn_supplies(LPCSTR ini_string)
 
     if (!xr_strlen(ini_string))
         return;
+
+	luabind::functor<bool>	funct;
+	if (ai().script_engine().functor("ai_stalker.CSE_ALifeObject_spawn_supplies", funct))
+	{
+		if (funct(this, ID, ini_string))
+			return;
+	}
 
     IReader r((void*)(ini_string), strlen(ini_string));
     CInifile ini(&r, FS.get_path("$game_config$")->m_Path);
@@ -53,7 +61,7 @@ void CSE_ALifeObject::spawn_supplies(LPCSTR ini_string)
 
 		if (!OnlyOne.empty())
 		{
-			s32 sel = ::Random.randI(0, OnlyOne.size());
+			s32 sel = ::Random.randI(0, OnlyOne.size() - 1);
 			if (ini.r_line(loadout_section, OnlyOne.at(sel), &itmSection, &V))
 			{
 				VERIFY(xr_strlen(itmSection));
