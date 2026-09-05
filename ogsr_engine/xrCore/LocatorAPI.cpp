@@ -44,6 +44,7 @@ struct eq_pointer<IReader>
     eq_pointer(IReader* p) : _val(p) {}
     bool operator()(_open_file& itm) { return (_val == itm._reader); }
 };
+
 template <>
 struct eq_pointer<CStreamReader>
 {
@@ -51,12 +52,14 @@ struct eq_pointer<CStreamReader>
     eq_pointer(CStreamReader* p) : _val(p) {}
     bool operator()(_open_file& itm) { return (_val == itm._stream_reader); }
 };
+
 struct eq_fname_free
 {
     shared_str _val;
     eq_fname_free(shared_str s) { _val = s; }
     bool operator()(_open_file& itm) { return (_val == itm._fn && itm._reader == nullptr); }
 };
+
 struct eq_fname_check
 {
     shared_str _val;
@@ -922,7 +925,13 @@ int CLocatorAPI::file_list(FS_FileSet& dest, LPCSTR path, u32 flags, LPCSTR mask
             xr_string fn = entry_begin;
 
             // insert file entry
-            if (flags & FS_ClampExt)
+            if (flags & FS_FullName) //Alundaio: Ability to get a file list with full path names
+            {
+                string_path full_name;
+                strconcat(sizeof(full_name), full_name, N, entry_begin);
+                file.name = full_name;
+            }
+			else
             {
                 LPSTR src_ext = strext(entry_begin);
                 if (src_ext)

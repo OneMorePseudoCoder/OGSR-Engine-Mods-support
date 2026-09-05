@@ -82,7 +82,8 @@ private:
             STANDARD,
             SQFS,
             DB,
-        } type{};
+        } 
+		type{};
 
         // SquashFS
         xr_sqfs* fs{};
@@ -147,7 +148,7 @@ public:
         // = (1 << 1),
         flReady = (1 << 2),
         // = (1 << 3),
-        // = (1 << 4),
+		FS_FullName = (1 << 4), //Alundaio: full path name
         // = (1 << 5),
         // = (1 << 6),
         // = (1 << 7),
