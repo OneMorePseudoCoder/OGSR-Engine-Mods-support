@@ -193,7 +193,7 @@ void CUIArtefactParams::SetInfo(shared_str const& af_section)
 
     for (u32 i = 0; i < ALife::eRestoreTypeMax; ++i)
     {
-        val = pSettings->r_float(af_section, af_restore_section_names[i]);
+        val = READ_IF_EXISTS(pSettings, r_float, af_section, af_restore_section_names[i], 0.0f);
         if (fis_zero(val))
             continue;
 
