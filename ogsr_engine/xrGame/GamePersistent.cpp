@@ -377,17 +377,9 @@ void CGamePersistent::WeathersUpdate()
     }
 }
 
-bool allow_intro()
-{
-    if (strstr(Core.Params, "-nointro"))
-    {
-        return false;
-    }
-    else
-        return true;
-}
+static bool allow_intro() { return false; /*return !!strstr(Core.Params, "-intro");*/ } //Временно отключено
 
-bool allow_game_intro() { return !strstr(Core.Params, "-nogameintro"); }
+static bool allow_game_intro() { return !strstr(Core.Params, "-nogameintro"); }
 
 void CGamePersistent::start_logo_intro()
 {
@@ -450,7 +442,7 @@ void CGamePersistent::update_game_loaded()
 
 void CGamePersistent::start_game_intro()
 {
-    if (!allow_intro())
+    if (!allow_game_intro())
     {
         return;
     }
