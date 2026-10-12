@@ -73,7 +73,7 @@ bool CPSLibrary::Load(const char* nm)
     bool bRes = true;
     size_t loaded_count{};
 
-    const bool copFileFormat{strstr(nm, "_cop")};
+    const bool copFileFormat{strstr(nm, "_cop") ? true : false};
 
     if (copFileFormat)
         Msg("~~[%s] cs/cop format used for file [%s]", __FUNCTION__, nm);

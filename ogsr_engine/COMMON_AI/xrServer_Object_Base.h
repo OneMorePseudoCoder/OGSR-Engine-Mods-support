@@ -76,7 +76,6 @@ xrClientData* owner;
 // spawn data
 shared_str s_name;
 u8 s_gameid;
-u8 s_RP;
 Flags16 s_flags; // state flags
 xr_vector<u16> children;
 

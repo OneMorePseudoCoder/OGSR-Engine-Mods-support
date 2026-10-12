@@ -46,7 +46,6 @@ void CPHSkeleton::RespawnInit()
     {
         K->LL_SetBoneRoot(0);
 
-        // K->LL_SetBonesVisibleAll();
         VisMask new_mask;
         new_mask.set_all();
         K->LL_SetBonesVisible(new_mask);
@@ -141,14 +140,12 @@ void CPHSkeleton::Update(u32 dt)
 {
     CPhysicsShellHolder* obj = PPhysicsShellHolder();
     CPhysicsShell* pPhysicsShell = obj->PPhysicsShell();
-    if (pPhysicsShell && pPhysicsShell->isFractured()) //! ai().get_alife() &&
+    if (pPhysicsShell && pPhysicsShell->isFractured())
     {
         PHSplit();
     }
 
-    if (b_removing && Device.dwTimeGlobal > m_remove_time &&
-        //(Device.dwTimeGlobal-m_unsplit_time)*phTimefactor>remove_time&&
-        m_unsplited_shels.empty())
+    if (b_removing && Device.dwTimeGlobal > m_remove_time && m_unsplited_shels.empty())
     {
         if (obj->Local())
             obj->DestroyObject();
@@ -179,75 +176,6 @@ void CPHSkeleton::Update(u32 dt)
 void CPHSkeleton::SaveNetState(NET_Packet& P)
 {
     SyncNetState();
-    /* Весь этот код больше не нужен, но оставляю его на всякий
-       случай. Вместо того, что бы окольными путями записывать данные в
-       нетпакет, который потом прочитает CSE_PHSkeleton::load(), мы может
-       поместить все напрямую в CSE_PHSkeleton, что и делает
-       SyncNetState().
-
-        //Msg("!!Called [CPHSkeleton::SaveNetState]");
-
-        CPhysicsShellHolder* obj=PPhysicsShellHolder();
-        CPhysicsShell* pPhysicsShell=obj->PPhysicsShell();
-        IKinematics* K	=smart_cast<IKinematics*>(obj->Visual());
-        if(pPhysicsShell&&pPhysicsShell->isActive())			m_flags.set(CSE_PHSkeleton::flActive,pPhysicsShell->isEnabled());
-
-        P.w_u8 (m_flags.get());
-        VisMask _vm;
-        if(K)
-        {
-            _vm = K->LL_GetBonesVisible();
-            P.w_u64(_vm._visimask.flags);
-    //		P.w_u64(K->LL_GetBonesVisible());
-            P.w_u16(K->LL_GetBoneRoot());
-        }
-        else
-        {
-            P.w_u64(u64(-1));
-            P.w_u16(0);
-        }
-        /////////////////////////////
-        Fvector min,max;
-
-        min.set(F_MAX,F_MAX,F_MAX);
-        max.set(-F_MAX,-F_MAX,-F_MAX);
-        /////////////////////////////////////
-
-        u16 bones_number=obj->PHGetSyncItemsNumber();
-        for(u16 i=0;i<bones_number;i++)
-        {
-            SPHNetState state;
-            obj->PHGetSyncItem(i)->get_State(state);
-            Fvector& p=state.position;
-            if(p.x<min.x)min.x=p.x;
-            if(p.y<min.y)min.y=p.y;
-            if(p.z<min.z)min.z=p.z;
-
-            if(p.x>max.x)max.x=p.x;
-            if(p.y>max.y)max.y=p.y;
-            if(p.z>max.z)max.z=p.z;
-        }
-
-        min.sub(2.f*EPS_L);
-        max.add(2.f*EPS_L);
-
-        P.w_vec3(min);
-        P.w_vec3(max);
-
-        P.w_u16(bones_number);
-        if (bones_number > 64)
-        {
-            Msg("!![CPHSkeleton::SaveNetState] bones_number is [%u]!", bones_number);
-            P.w_u64(K ? _vm._visimask_ex.flags : u64(-1));
-        }
-
-        for(u16 i=0;i<bones_number;i++)
-        {
-            SPHNetState state;
-            obj->PHGetSyncItem(i)->get_State(state);
-            state.net_Save(P,min,max);
-        }
-    */
 }
 
 void CPHSkeleton::RestoreNetState(CSE_PHSkeleton* /*po*/)
@@ -273,7 +201,6 @@ void CPHSkeleton::RestoreNetState(CSE_PHSkeleton* /*po*/)
     if (saved_bones.size() == obj->PHGetSyncItemsNumber())
     {
         // если у нас только одна рутовая кость и она fixed - попробуем не грузить состояние костей вообще. пусть будет как после спауна
-
         const u16 bones_number = obj->PHGetSyncItemsNumber();
 
         bool canSkip = obj->PPhysicsShell() != nullptr;
@@ -309,8 +236,7 @@ void CPHSkeleton::RestoreNetState(CSE_PHSkeleton* /*po*/)
     }
     else
     {
-        MsgDbg("~ [%s]: [%s] has different state in saved_bones[%u] PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]", __FUNCTION__, obj->Name_script(), saved_bones.size(),
-            obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(), (obj->cast_entity_alive() && obj->cast_entity_alive()->conditions().GetHealth() > 0.f) ? "yes" : "no");
+        MsgDbg("~ [%s]: [%s] has different state in saved_bones[%u] PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]", __FUNCTION__, obj->Name_script(), saved_bones.size(), obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(), (obj->cast_entity_alive() && obj->cast_entity_alive()->conditions().GetHealth() > 0.f) ? "yes" : "no");
     }
 
     saved_bones.clear();
@@ -333,13 +259,11 @@ void CPHSkeleton::SpawnCopy()
 {
     if (PPhysicsShellHolder()->Local())
     {
-        CSE_Abstract* D = F_entity_Create("ph_skeleton_object"); //*cNameSect()
+        CSE_Abstract* D = F_entity_Create("ph_skeleton_object");
         R_ASSERT(D);
-        /////////////////////////////////////////////////////////////////////////////////////////////
         CSE_ALifePHSkeletonObject* l_tpALifePhysicObject = smart_cast<CSE_ALifePHSkeletonObject*>(D);
         R_ASSERT(l_tpALifePhysicObject);
         l_tpALifePhysicObject->_flags.set(CSE_PHSkeleton::flSpawnCopy, 1);
-        /////////////////////////////////////////////////////////////////////////////////////////////
         InitServerObject(D);
         // Send
         NET_Packet P;
@@ -357,7 +281,6 @@ void CPHSkeleton::PHSplit()
     u16 spawned = u16(m_unsplited_shels.size());
     PPhysicsShellHolder()->PPhysicsShell()->SplitProcess(m_unsplited_shels);
     u16 i = u16(m_unsplited_shels.size()) - spawned;
-    //	Msg("%o,spawned,%d",this,i);
     for (; i; --i)
         SpawnCopy();
 }
@@ -456,6 +379,7 @@ void CPHSkeleton::RecursiveBonesCheck(u16 id)
         RecursiveBonesCheck((*it)->GetSelfID());
     }
 }
+
 bool CPHSkeleton::ReadyForRemove()
 {
     removable = true;
@@ -478,12 +402,11 @@ void CPHSkeleton::InitServerObject(CSE_Abstract* D)
 
     l_tpALifePhysicObject->source_id = u16(obj->ID());
     l_tpALifePhysicObject->startup_animation = m_startup_anim;
-    D->s_name = "ph_skeleton_object"; //*cNameSect()
+    D->s_name = "ph_skeleton_object";
     D->set_name_replace("");
     D->s_gameid = u8(GameID());
-    D->s_RP = 0xff;
     D->ID = 0xffff;
-    D->ID_Parent = 0xffff; // u16(ID());//
+    D->ID_Parent = 0xffff;
     D->ID_Phantom = 0xffff;
     D->o_Position = obj->Position();
     if (ai().get_alife())

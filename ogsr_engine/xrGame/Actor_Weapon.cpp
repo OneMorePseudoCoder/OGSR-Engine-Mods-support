@@ -38,13 +38,10 @@ float CActor::GetWeaponAccuracy() const
     {
         // angular factor
         dispersion *= (1.f + (state.fAVelocity / VEL_A_MAX) * m_fDispVelFactor * GetWeaponParam(W, Get_PDM_Vel_F(), 1.0f));
-        //		Msg("--- base=[%f] angular disp=[%f]",m_fDispBase, dispersion);
         // linear movement factor
         bool bAccelerated = isActorAccelerated(mstate_real, IsZoomAimingMode());
         if (bAccelerated)
-            dispersion *= (1.f +
-                           (state.fVelocity / VEL_MAX) * m_fDispVelFactor * GetWeaponParam(W, Get_PDM_Vel_F(), 1.0f) *
-                               (1.f + m_fDispAccelFactor * GetWeaponParam(W, Get_PDM_Accel_F(), 1.0f)));
+            dispersion *= (1.f + (state.fVelocity / VEL_MAX) * m_fDispVelFactor * GetWeaponParam(W, Get_PDM_Vel_F(), 1.0f) * (1.f + m_fDispAccelFactor * GetWeaponParam(W, Get_PDM_Accel_F(), 1.0f)));
         else
             dispersion *= (1.f + (state.fVelocity / VEL_MAX) * m_fDispVelFactor * GetWeaponParam(W, Get_PDM_Vel_F(), 1.0f));
 
@@ -79,8 +76,7 @@ void CActor::g_fireParams(CHudItem* pHudItem, Fvector& fire_pos, Fvector& fire_d
             pHudItem->object().Center(fire_pos);
         }
     }
-    else if (auto weapon = smart_cast<CWeapon*>(pHudItem);
-             weapon && !smart_cast<CWeaponKnife*>(pHudItem) && !smart_cast<CMissile*>(pHudItem) && !smart_cast<CWeaponBinoculars*>(pHudItem))
+    else if (auto weapon = smart_cast<CWeapon*>(pHudItem); weapon && !smart_cast<CWeaponKnife*>(pHudItem) && !smart_cast<CMissile*>(pHudItem) && !smart_cast<CWeaponBinoculars*>(pHudItem))
     {
         if (psHUD_Flags.test(HUD_CROSSHAIR_HARD) && !(weapon->IsZoomed() && !weapon->IsRotatingToZoom()))
         {
@@ -114,52 +110,16 @@ void CActor::SetWeaponHideState(u32 State, bool bSet, bool now)
         this->inventory().SetSlotsBlocked(State, bSet, now);
 }
 
-#define ENEMY_HIT_SPOT "mp_hit_sector_location"
-BOOL g_bShowHitSectors = TRUE;
-
-void CActor::HitSector(CObject* who, CObject* weapon)
-{
-    if (!g_bShowHitSectors)
-        return;
-    if (!g_Alive())
-        return;
-
-    bool bShowHitSector = true;
-
-    CEntityAlive* pEntityAlive = smart_cast<CEntityAlive*>(who);
-
-    if (!pEntityAlive || this == who)
-        bShowHitSector = false;
-
-    if (weapon)
-    {
-        CWeapon* pWeapon = smart_cast<CWeapon*>(weapon);
-        if (pWeapon)
-        {
-            if (pWeapon->IsSilencerAttached())
-            {
-                bShowHitSector = false;
-                if (pWeapon->IsGrenadeLauncherAttached())
-                {}
-            }
-        }
-    }
-
-    if (!bShowHitSector)
-        return;
-    Level().MapManager().AddMapLocation(ENEMY_HIT_SPOT, who->ID());
-}
-
 void CActor::on_weapon_shot_start(CWeapon* weapon)
 {
     CWeaponMagazined* pWM = smart_cast<CWeaponMagazined*>(weapon);
-    //*
+
     CCameraShotEffector* effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
     if (!effector)
     {
-        effector = (CCameraShotEffector*)Cameras().AddCamEffector(
-            xr_new<CCameraShotEffector>(weapon->camMaxAngle, weapon->camRelaxSpeed, weapon->camMaxAngleHorz, weapon->camStepAngleHorz, weapon->camDispertionFrac));
+        effector = (CCameraShotEffector*)Cameras().AddCamEffector(xr_new<CCameraShotEffector>(weapon->camMaxAngle, weapon->camRelaxSpeed, weapon->camMaxAngleHorz, weapon->camStepAngleHorz, weapon->camDispertionFrac));
     }
+
     R_ASSERT(effector);
 
     if (pWM)
@@ -192,14 +152,13 @@ void CActor::on_weapon_shot_start(CWeapon* weapon)
 
 void CActor::on_weapon_shot_stop(CWeapon* weapon)
 {
-    //---------------------------------------------
     CCameraShotEffector* effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
     if (effector && effector->IsActive())
     {
         if (effector->IsSingleShot())
             update_camera(effector);
     }
-    //---------------------------------------------
+
     Cameras().RemoveCamEffector(eCEShot);
 }
 

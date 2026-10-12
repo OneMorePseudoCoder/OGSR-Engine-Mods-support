@@ -765,7 +765,6 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
     appendShaderOption(HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0, "SM_5", "1");
 
     // SSS
-
     appendShaderOption(ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR), "SSLR_ENABLED", "1");
 
     appendShaderOption(ps_r2_ls_flags.test(R2FLAG_SSFX_HEIGHT_FOG), "SSFX_FOG", "1");
@@ -786,7 +785,7 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
 
     appendShaderOption(ps_r2_ls_flags.test(R2FLAGEXT_SSFX_INTER_BRANCHES), "SSFX_INTER_BRANCHES", "1");
 
-    appendShaderOption(strstr(Core.Params, "-cscoplmap"), "USE_CS_COP_LMAP", "1");
+    appendShaderOption(strstr(Core.Params, "-cscoplmap") ? 1 : 0, "USE_CS_COP_LMAP", "1");
 
     if (ps_ssfx_rain_1.w > 0.f)
     {

@@ -127,6 +127,7 @@ protected:
     int ID_parent;
 
 public:
+    Flags32 OwnProps;
     SoundVec BreakingSounds;
     SoundVec StepSounds;
     SoundVec CollideSounds;
@@ -161,7 +162,6 @@ public:
     IC bool IsPair(int m0, int m1) { return !!(((mtl0 == m0) && (mtl1 == m1)) || ((mtl0 == m1) && (mtl1 == m0))); }
     void Save(IWriter& fs);
     void Load(IReader& fs);
-    //IC int GetParent() { return ID_parent; }
     BOOL SetParent(int parent);
 #ifdef DEBUG
     LPCSTR dbg_Name();
@@ -187,7 +187,7 @@ class ENGINE_API CGameMtlLibrary
 
 public:
     CGameMtlLibrary();
-    ~CGameMtlLibrary();
+    ~CGameMtlLibrary() {};
     IC void Unload()
     {
         material_count = 0;

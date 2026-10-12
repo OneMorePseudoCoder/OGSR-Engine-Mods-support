@@ -308,7 +308,6 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
         D->s_name = item_section_name;
         D->set_name_replace("");
         D->s_gameid = u8(GameID());
-        D->s_RP = 0xff;
         D->ID = 0xffff;
         D->ID_Parent = object().H_Parent()->ID();
         D->ID_Phantom = 0xffff;
@@ -356,11 +355,7 @@ BOOL CInventoryItem::net_Spawn(CSE_Abstract* DC)
     return TRUE;
 }
 
-void CInventoryItem::net_Destroy()
-{
-    //инвентарь которому мы принадлежали
-    //.	m_pCurrentInventory = NULL;
-}
+void CInventoryItem::net_Destroy() {}
 
 void CInventoryItem::save(NET_Packet& packet)
 {
@@ -494,9 +489,6 @@ void CInventoryItem::UpdateXForm()
     // Get matrices
     int boneL, boneR, boneR2;
     E->g_WeaponBones(boneL, boneR, boneR2);
-    //	if ((HandDependence() == hd1Hand) || (STATE == eReload) || (!E->g_Alive()))
-    //		boneL = boneR2;
-#pragma todo("TO ALL: serious performance problem")
     V->CalculateBones();
     Fmatrix& mL = V->LL_GetTransform(u16(boneL));
     Fmatrix& mR = V->LL_GetTransform(u16(boneR));
@@ -523,12 +515,10 @@ void CInventoryItem::UpdateXForm()
         mRes.mulA_43(E->XFORM());
     }
 
-    //	UpdatePosition	(mRes);
     object().Position().set(mRes.c);
 }
 
 #ifdef DEBUG
-
 void CInventoryItem::OnRender()
 {
     if (bDebug && object().Visual())
@@ -569,7 +559,6 @@ bool CInventoryItem::CanTrade() const
 }
 
 int CInventoryItem::GetGridWidth() const { return (int)m_icon_params.grid_width; }
-
 int CInventoryItem::GetGridHeight() const { return (int)m_icon_params.grid_height; }
 
 int CInventoryItem::GetIconIndex() const { return m_icon_params.icon_group; }

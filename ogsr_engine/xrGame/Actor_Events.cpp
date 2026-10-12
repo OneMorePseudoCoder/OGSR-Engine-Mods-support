@@ -36,7 +36,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
     {
     case GE_TRADE_BUY:
     case GE_OWNERSHIP_TAKE:
-    case GE_TRANSFER_TAKE: {
+    case GE_TRANSFER_TAKE: 
+	{
         P.r_u16(id);
         CObject* O = Level().Objects.net_Find(id);
         if (!O)
@@ -86,7 +87,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
     break;
     case GE_TRADE_SELL:
     case GE_OWNERSHIP_REJECT:
-    case GE_TRANSFER_REJECT: {
+    case GE_TRANSFER_REJECT: 
+	{
         P.r_u16(id);
         CObject* O = Level().Objects.net_Find(id);
 
@@ -103,7 +105,6 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
         if (inventory().DropItem(smart_cast<CGameObject*>(O)) && !O->getDestroy())
         {
             O->H_SetParent(0, dont_create_shell);
-            //.				feel_touch_deny(O,2000);
             Level().m_feel_deny.feel_touch_deny(O, 1000);
         }
 
@@ -115,7 +116,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
     case GEG_PLAYER_ITEM2BELT:
     case GEG_PLAYER_ITEM2RUCK:
     case GEG_PLAYER_ITEM_EAT:
-    case GEG_PLAYER_ACTIVATEARTEFACT: {
+    case GEG_PLAYER_ACTIVATEARTEFACT: 
+	{
         P.r_u16(id);
         CObject* O = Level().Objects.net_Find(id);
         if (!O)
@@ -133,7 +135,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
         case GEG_PLAYER_ITEM2BELT: inventory().Belt(smart_cast<CInventoryItem*>(O)); break;
         case GEG_PLAYER_ITEM2RUCK: inventory().Ruck(smart_cast<CInventoryItem*>(O)); break;
         case GEG_PLAYER_ITEM_EAT: inventory().Eat(smart_cast<CInventoryItem*>(O)); break;
-        case GEG_PLAYER_ACTIVATEARTEFACT: {
+        case GEG_PLAYER_ACTIVATEARTEFACT: 
+		{
             CArtefact* pArtefact = smart_cast<CArtefact*>(O);
             pArtefact->ActivateArtefact();
         }
@@ -141,7 +144,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
         }
     }
     break;
-    case GEG_PLAYER_ACTIVATE_SLOT: {
+    case GEG_PLAYER_ACTIVATE_SLOT: 
+	{
         u32 slot_id;
         P.r_u32(slot_id);
 
@@ -149,7 +153,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
     }
     break;
 
-    case GEG_PLAYER_ATTACH_HOLDER: {
+    case GEG_PLAYER_ATTACH_HOLDER: 
+	{
         u32 id = P.r_u32();
         CObject* O = Level().Objects.net_Find(id);
         if (!O)
@@ -163,7 +168,8 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
             use_Holder(holder);
     }
     break;
-    case GEG_PLAYER_DETACH_HOLDER: {
+    case GEG_PLAYER_DETACH_HOLDER: 
+	{
         if (!m_holder)
             break;
 #ifdef DEBUG
@@ -186,7 +192,7 @@ void CActor::MoveActor(Fvector NewPos, Fvector NewDir)
     r_torso.pitch = -NewDir.x;
     unaffected_r_torso.yaw = r_torso.yaw;
     unaffected_r_torso.pitch = r_torso.pitch;
-    unaffected_r_torso.roll = 0; // r_torso.roll;
+    unaffected_r_torso.roll = 0;
 
     r_torso_tgt_roll = 0;
     cam_Active()->Set(-unaffected_r_torso.yaw, unaffected_r_torso.pitch, unaffected_r_torso.roll);

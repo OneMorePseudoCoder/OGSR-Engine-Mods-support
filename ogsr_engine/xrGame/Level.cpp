@@ -79,7 +79,7 @@ CLevel::CLevel()
     Server = NULL;
 
     game = NULL;
-    //	game						= xr_new<game_cl_GameState>();
+
     game_events = xr_new<NET_Queue_Event>();
 
     game_configured = FALSE;
@@ -131,11 +131,10 @@ CLevel::CLevel()
 CLevel::~CLevel()
 {
     xr_delete(g_player_hud);
-    //	g_pGameLevel		= NULL;
+
     Msg("- Destroying level");
 
     Engine.Event.Handler_Detach(eEntitySpawn, this);
-
     Engine.Event.Handler_Detach(eEnvironment, this);
     Engine.Event.Handler_Detach(eChangeTrack, this);
     Engine.Event.Handler_Detach(eDemoPlay, this);
@@ -283,32 +282,10 @@ void CLevel::CancelPrefetchManySounds(LPCSTR prefix)
     sound_registry_defer.erase(std::remove(sound_registry_defer.begin(), sound_registry_defer.end(), s), sound_registry_defer.end());
 }
 
-// Game interface ////////////////////////////////////////////////////
-int CLevel::get_RPID(LPCSTR /**name/**/)
-{
-    /*
-    // Gain access to string
-    LPCSTR	params = pLevel->r_string("respawn_point",name);
-    if (0==params)	return -1;
-
-    // Read data
-    Fvector4	pos;
-    int			team;
-    sscanf		(params,"%f,%f,%f,%d,%f",&pos.x,&pos.y,&pos.z,&team,&pos.w); pos.y += 0.1f;
-
-    // Search respawn point
-    svector<Fvector4,maxRP>	&rp = Level().get_team(team).RespawnPoints;
-    for (int i=0; i<(int)(rp.size()); ++i)
-        if (pos.similar(rp[i],EPS_L))	return i;
-    */
-    return -1;
-}
-
 BOOL g_bDebugEvents = FALSE;
 
 void CLevel::cl_Process_Event(u16 dest, u16 type, NET_Packet& P)
 {
-    //			Msg				("--- event[%d] for [%d]",type,dest);
     CObject* O = Objects.net_Find(dest);
     if (0 == O)
     {
@@ -337,11 +314,6 @@ void CLevel::ProcessGameEvents()
     {
         NET_Packet P;
         u32 svT = timeServer() - NET_Latency;
-
-        /*
-        if (!game_events->queue.empty())
-            Msg("- d[%d],ts[%d] -- E[svT=%d],[evT=%d]",Device.dwTimeGlobal,timeServer(),svT,game_events->queue.begin()->timestamp);
-        */
 
         m_just_destroyed.clear();
 
@@ -439,9 +411,7 @@ void CLevel::OnRender()
     ::Render->ui_is_rendering = true;
 
     //отрисовать трассы пуль
-    // Device.Statistic->TEST1.Begin();
     BulletManager().Render();
-    // Device.Statistic->TEST1.End();
 
     if (use_reshade)
         render_reshade_effects();
@@ -486,7 +456,6 @@ void CLevel::OnRender()
     draw_wnds_rects();
 
 #ifndef DEBUG
-
     if (psActorFlags.test(AF_ZONES_DBG))
     {
         for (u32 I = 0; I < Level().Objects.o_count(); I++)
@@ -519,14 +488,10 @@ void CLevel::OnRender()
             CObject* _O = Level().Objects.o_get_by_iterator(I);
 
             CGameObject* pGO = smart_cast<CGameObject*>(_O);
-            if (pGO /*&& pGO != Level().CurrentViewEntity()*/ && !pGO->H_Parent())
+            if (pGO && !pGO->H_Parent())
             {
                 if (pGO->Position().distance_to_sqr(Device.vCameraPosition) < 400.0f)
                 {
-                    //CPhysicObject* physic_object = smart_cast<CPhysicObject*>(_O);
-                    //if (physic_object)
-                    //    physic_object->OnRender();
-
                     pGO->dbg_DrawSkeleton();
                 }
             }
@@ -535,9 +500,7 @@ void CLevel::OnRender()
 
     //-- static shown debug items
     Level().debug_renderer().OnRenderStaticItems();
-
 #else
-
     ph_world->OnRender();
 
     if (ai().get_level_graph())
@@ -555,7 +518,6 @@ void CLevel::OnRender()
     {
         ObjectSpace.dbgRender();
 
-        //---------------------------------------------------------------------
         HUD().Font().pFontStat->OutSet(170, 630);
         HUD().Font().pFontStat->SetHeight(16.0f);
         HUD().Font().pFontStat->SetColor(0xffff0000);
@@ -565,7 +527,6 @@ void CLevel::OnRender()
         HUD().Font().pFontStat->OutNext("Server Objects:      [%d]", Objects.o_count());
         HUD().Font().pFontStat->OutNext("Interpolation Steps: [%d]", Level().GetInterpolationSteps());
         HUD().Font().pFontStat->SetHeight(8.0f);
-        //---------------------------------------------------------------------
     }
 
     ScriptDebugRender();
@@ -581,7 +542,6 @@ void CLevel::OnRender()
     debug_renderer().render();
 
 #ifdef DEBUG
-
     if (psAI_Flags.is(aiVision))
     {
         for (u32 I = 0; I < Level().Objects.o_count(); I++)
@@ -621,8 +581,6 @@ void CLevel::OnEvent(EVENT E, u64 P1, u64 /**P2/**/)
         sscanf(LPCSTR(P1), "%s", Name);
         Level().g_cl_Spawn(Name, 0xff, M_SPAWN_OBJECT_LOCAL, Fvector().set(0, 0, 0));
     }
-    else if (E == eChangeRP && P1)
-    {}
     else if (E == eDemoPlay && P1)
     {
         char* name = (char*)P1;
@@ -630,17 +588,6 @@ void CLevel::OnEvent(EVENT E, u64 P1, u64 /**P2/**/)
         strcpy_s(RealName, name);
         strcat_s(RealName, ".xrdemo");
         Cameras().AddCamEffector(xr_new<CDemoPlay>(RealName, 1.3f, 0));
-    }
-    else if (E == eChangeTrack && P1)
-    {
-        // int id = atoi((char*)P1);
-        // Environment->Music_Play(id);
-    }
-    else if (E == eEnvironment)
-    {
-        // int id=0; float s=1;
-        // sscanf((char*)P1,"%d,%f",&id,&s);
-        // Environment->set_EnvMode(id,s);
     }
     else
         return;
@@ -650,14 +597,12 @@ void CLevel::PhisStepsCallback(u32, u32) {}
 
 ALife::_TIME_ID CLevel::GetGameTime()
 {
-    return (game->GetGameTime());
-    //	return			(Server->game->GetGameTime());
+    return game->GetGameTime();
 }
 
 ALife::_TIME_ID CLevel::GetEnvironmentGameTime()
 {
-    return (game->GetEnvironmentGameTime());
-    //	return			(Server->game->GetGameTime());
+    return game->GetEnvironmentGameTime();
 }
 
 u8 CLevel::GetDayTime()
@@ -725,26 +670,6 @@ void CLevel::GetGameTimeForShaders(u32& hours, u32& minutes, u32& seconds, u32& 
     split_time(GetGameTime(), unused, unused, unused, hours, minutes, seconds, milliseconds);
 }
 
-//bool CLevel::IsServer() // always false
-//{
-//    //if (!Server)
-//    //    return false;
-//
-//    bool r = !Server ? false : (Server->client_Count() != 0);
-//    Msg("IsServer = %d", r ? 1 : 0);
-//    return r;
-//}
-//
-//bool CLevel::IsClient() // always false
-//{
-//    //if (!Server)
-//    //    return true;
-//
-//    bool r = !Server ? true : (Server->client_Count() == 0);
-//    Msg("IsClient = %d", r ? 1 : 0);
-//    return r;
-//}
-
 void CLevel::OnSessionTerminate(LPCSTR reason) { MainMenu()->OnSessionTerminate(reason); }
 
 void CLevel::OnDestroyObject(u16 id) { m_just_destroyed.push_back(id); }
@@ -775,6 +700,7 @@ struct delete_predicate_by_time
         return false;
     };
 };
+
 struct objects_ptrs_equal
 {
     bool operator()(Feel::Touch::DenyTouch const& left, CObject const* const right) const
@@ -788,15 +714,12 @@ struct objects_ptrs_equal
 void GlobalFeelTouch::update()
 {
     // we ignore P and R arguments, we need just delete evaled denied objects...
-    xr_vector<Feel::Touch::DenyTouch>::iterator new_end =
-        std::remove_if(feel_touch_disable.begin(), feel_touch_disable.end(), std::bind(delete_predicate_by_time(), std::placeholders::_1, Device.dwTimeGlobal));
+    xr_vector<Feel::Touch::DenyTouch>::iterator new_end = std::remove_if(feel_touch_disable.begin(), feel_touch_disable.end(), std::bind(delete_predicate_by_time(), std::placeholders::_1, Device.dwTimeGlobal));
     feel_touch_disable.erase(new_end, feel_touch_disable.end());
 }
 
 bool GlobalFeelTouch::is_object_denied(CObject const* O)
 {
-    /*Fvector temp_vector;
-    feel_touch_update(temp_vector, 0.f);*/
     if (std::find_if(feel_touch_disable.begin(), feel_touch_disable.end(), std::bind(objects_ptrs_equal(), std::placeholders::_1, O)) == feel_touch_disable.end())
     {
         return false;
@@ -808,32 +731,27 @@ void CLevel::script_gc() const
 {
     ZoneScoped;
 
-    //int memory_before_kb = lua_gc(ai().script_engine().lua(), LUA_GCCOUNT, 0);
-
     switch (ps_lua_gc_method)
     {
-    case gc_step: {
+    case gc_step: 
+	{
         // делает один шаг очистки памяти в lua. там у него свое понимание сколько надо очистить
         lua_gc(ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP);
-
         lua_gc(ai().script_engine().lua(), LUA_GCSTOP, 0);
         break;
     }
-    case gc_timeout: {
+    case gc_timeout: 
+	{
         // чистит столько раз пока не вышел timeout. это типо лучше, НО иногда бывает что какой то шаг очистки может занять сильно больше времени
         lua_gc(ai().script_engine().lua(), LUA_GCTIMEOUT, psLUA_GCTIMEOUT);
-
         lua_gc(ai().script_engine().lua(), LUA_GCSTOP, 0);
         break;
     }
-    case gc_default: {
+    case gc_default: 
+	{
         // луаджит чистит себе память сам когда захочет.
         lua_gc(ai().script_engine().lua(), LUA_GCRESTART, 0);
         break;
     }
     }
-
-    //int memory_after_kb = lua_gc(ai().script_engine().lua(), LUA_GCCOUNT, 0);
-
-    //Msg("##[%s] script_gc [timeout: %d]: before [%d]kb after [%d]kb", __FUNCTION__, psLUA_GCTIMEOUT, memory_before_kb, memory_after_kb);
 }

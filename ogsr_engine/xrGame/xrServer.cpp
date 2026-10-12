@@ -55,11 +55,8 @@ xrServer::~xrServer()
     m_aDelayedPackets.clear();
 }
 
-//--------------------------------------------------------------------
-
 CSE_Abstract* xrServer::ID_to_entity(u16 ID)
 {
-    // #pragma todo("??? to all : ID_to_entity - must be replaced to 'game->entity_from_eid()'")
     if (0xffff == ID)
         return 0;
     xrS_entities::iterator I = entities.find(ID);
@@ -69,7 +66,6 @@ CSE_Abstract* xrServer::ID_to_entity(u16 ID)
         return 0;
 }
 
-//--------------------------------------------------------------------
 IClient* xrServer::client_Create() { return xr_new<xrClientData>(); }
 
 IClient* xrServer::client_Find_Get(ClientID ID)
@@ -97,8 +93,6 @@ void xrServer::client_Destroy(IClient* C)
     csPlayers.Enter();
 
     // Delete assosiated entity
-    // xrClientData*	D = (xrClientData*)C;
-    // CSE_Abstract* E = D->owner;
     for (u32 DI = 0; DI < net_Players_disconnected.size(); DI++)
     {
         if (net_Players_disconnected[DI] == C)
@@ -128,7 +122,8 @@ void xrServer::client_Destroy(IClient* C)
                     }
                     else
                         break;
-                } while (true);
+                } 
+				while (true);
             }
 
             if (!g_sv_Client_Reconnect_Time || !C->flags.bVerified)
@@ -149,7 +144,6 @@ void xrServer::client_Destroy(IClient* C)
     csPlayers.Leave();
 }
 
-//--------------------------------------------------------------------
 int g_Dump_Update_Write = 0;
 
 #ifdef DEBUG
@@ -164,28 +158,10 @@ void xrServer::Update()
     VERIFY(verify_entities());
 
     ProceedDelayedPackets();
+
     // game update
     game->ProcessDelayedEvent();
     game->Update();
-
-    // spawn queue
-    u32 svT = Device.TimerAsync();
-    while (!(q_respawn.empty() || (svT < q_respawn.begin()->timestamp)))
-    {
-        // get
-        svs_respawn R = *q_respawn.begin();
-        q_respawn.erase(q_respawn.begin());
-
-        //
-        CSE_Abstract* E = ID_to_entity(R.phantom);
-        E->Spawn_Write(Packet, FALSE);
-        u16 ID;
-        Packet.r_begin(ID);
-        R_ASSERT(M_SPAWN == ID);
-        ClientID clientID;
-        clientID.set(0xffff);
-        Process_spawn(Packet, clientID);
-    }
 
     SendUpdatesToAll();
 
@@ -296,39 +272,28 @@ void xrServer::SendUpdatesToAll()
                     if (pCurUpdatePacket->B.count + tmpPacket.B.count >= NET_PacketSizeLimit)
                     {
                         R_ASSERT(0);
-                        // m_iCurUpdatePacket++;
-
-                        // if (m_aUpdatePackets.size() == m_iCurUpdatePacket) m_aUpdatePackets.emplace_back();
-
-                        // PacketType = M_UPDATE_OBJECTS;
-                        // pCurUpdatePacket = &(m_aUpdatePackets[m_iCurUpdatePacket]);
-                        // pCurUpdatePacket->w_begin(PacketType);
                     }
                     pCurUpdatePacket->w(tmpPacket.B.data, tmpPacket.B.count);
                 } // all entities
             }
         }
 
-        //.#ifdef DEBUG
         if (g_Dump_Update_Write)
             Msg("----------------------- ");
-        //.#endif
+
         for (u32 p = 0; p <= m_iCurUpdatePacket; p++)
         {
             NET_Packet& ToSend = m_aUpdatePackets[p];
             if (ToSend.B.count > 2)
             {
-                //.#ifdef DEBUG
                 if (g_Dump_Update_Write && Client->ps != NULL)
                 {
                     Msg("- Server Update[%d] to Client[%s]  : %d", *((u16*)ToSend.B.data), Client->ps->getName(), ToSend.B.count);
                 }
-                //.#endif
 
                 SendTo(Client->ID, ToSend, net_flags(FALSE, TRUE));
             }
         }
-
     }; // for each client
 #ifdef DEBUG
     g_sv_SendUpdate = 0;
@@ -529,7 +494,6 @@ void xrServer::entity_Destroy(CSE_Abstract*& P)
 }
 
 #ifdef DEBUG
-
 static BOOL _ve_initialized = FALSE;
 static BOOL _ve_use = TRUE;
 
@@ -565,8 +529,7 @@ void xrServer::verify_entity(const CSE_Abstract* entity) const
         VERIFY3(J != entities.end(), "SERVER : Cannot find parent in the map", entity->name_replace());
         VERIFY3((*J).second, "SERVER : Null entity object in the map", entity->name_replace());
         VERIFY3((*J).first == (*J).second->ID, "SERVER : ID mismatch - map key doesn't correspond to the real entity ID", (*J).second->name_replace());
-        VERIFY3(std::find((*J).second->children.begin(), (*J).second->children.end(), entity->ID) != (*J).second->children.end(),
-                "SERVER : Parent/Children relationship mismatch - Object has parent, but corresponding parent doesn't have children", (*J).second->name_replace());
+        VERIFY3(std::find((*J).second->children.begin(), (*J).second->children.end(), entity->ID) != (*J).second->children.end(), "SERVER : Parent/Children relationship mismatch - Object has parent, but corresponding parent doesn't have children", (*J).second->name_replace());
     }
 
     xr_vector<u16>::const_iterator I = entity->children.begin();
@@ -578,11 +541,9 @@ void xrServer::verify_entity(const CSE_Abstract* entity) const
         VERIFY3(J != entities.end(), "SERVER : Cannot find children in the map", entity->name_replace());
         VERIFY3((*J).second, "SERVER : Null entity object in the map", entity->name_replace());
         VERIFY3((*J).first == (*J).second->ID, "SERVER : ID mismatch - map key doesn't correspond to the real entity ID", (*J).second->name_replace());
-        VERIFY3((*J).second->ID_Parent == entity->ID, "SERVER : Parent/Children relationship mismatch - Object has children, but children doesn't have parent",
-                (*J).second->name_replace());
+        VERIFY3((*J).second->ID_Parent == entity->ID, "SERVER : Parent/Children relationship mismatch - Object has children, but children doesn't have parent", (*J).second->name_replace());
     }
 }
-
 #endif // DEBUG
 
 shared_str xrServer::level_name(const shared_str& server_options) const { return (game->level_name(server_options)); }
@@ -604,7 +565,6 @@ void xrServer::ProceedDelayedPackets()
     {
         DelayedPacket& DPacket = *m_aDelayedPackets.begin();
         OnDelayedMessage(DPacket.Packet, DPacket.SenderID);
-        //		OnMessage(DPacket.Packet, DPacket.SenderID);
         m_aDelayedPackets.pop_front();
     }
     DelayedPackestCS.Leave();

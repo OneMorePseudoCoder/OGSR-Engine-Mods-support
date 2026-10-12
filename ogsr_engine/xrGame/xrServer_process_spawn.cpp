@@ -23,23 +23,9 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
         E->Spawn_Read(P);
         if (!((game->Type() == E->s_gameid) || (GAME_ANY == E->s_gameid)) || !E->match_configuration() || !game->OnPreCreate(E))
         {
-            // Msg			("- SERVER: Entity [%s] incompatible with current game type.",*E->s_name);
             F_entity_Destroy(E);
             return NULL;
         }
-
-        //		E->m_bALifeControl = false;
-    }
-    else
-    {
-        VERIFY(E->m_bALifeControl);
-        //		E->owner			= CL;
-        //		if (CL != NULL)
-        //		{
-        //			int x=0;
-        //			x=x;
-        //		};
-        //		E->m_bALifeControl = true;
     }
 
     CSE_Abstract* e_parent = 0;
@@ -49,7 +35,6 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
         if (!e_parent)
         {
             R_ASSERT(!tpExistedEntity);
-            //			VERIFY3			(smart_cast<CSE_ALifeItemBolt*>(E) || smart_cast<CSE_ALifeItemGrenade*>(E),*E->s_name,E->name_replace());
             F_entity_Destroy(E);
             return NULL;
         }
@@ -87,7 +72,7 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
         {
             // Clone from Phantom
             E->ID = PerformIDgen(0xffff);
-            E->owner = CL; //		= SelectBestClientToMigrateTo	(E);
+            E->owner = CL;
             E->s_flags.set(M_SPAWN_OBJECT_PHANTOM, FALSE);
             entities.insert(mk_pair(E->ID, E));
         }
@@ -111,12 +96,7 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
     if (CL && (E->s_flags.is(M_SPAWN_OBJECT_ASPLAYER)))
     {
         CL->owner = E;
-        //		E->set_name_replace	(CL->name);
     }
-
-    // PROCESS RP;	 3D position/orientation
-    PerformRP(E);
-    E->s_RP = 0xFE; // Use supplied
 
     // Parent-Connect
     if (!tpExistedEntity)
@@ -158,18 +138,11 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
         clientID.set(0);
         SendBroadcast(clientID, Packet, net_flags(TRUE, TRUE));
     }
+
     if (!tpExistedEntity)
     {
         game->OnPostCreate(E->ID);
     };
 
-    // log
-    // Msg		("- SERVER: Spawning '%s'(%d,%d,%d) as #%d, on '%s'", E->s_name_replace, E->g_team(), E->g_squad(), E->g_group(), E->ID, CL?CL->name:"*SERVER*");
     return E;
 }
-
-/*
-void spawn_WithPhantom
-void spawn_FromPhantom
-void spawn_Simple
-*/

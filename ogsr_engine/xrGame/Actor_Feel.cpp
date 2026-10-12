@@ -15,7 +15,6 @@
 #include "Level.h"
 
 #define PICKUP_INFO_COLOR 0xFFDDDDDD
-// AAAAAA
 
 void CActor::feel_touch_new(CObject* O) {}
 
@@ -126,8 +125,7 @@ void CActor::PickupModeUpdate()
     if (!m_bPickupMode)
         return;
 
-    //. ????? GetNearest ?????
-    feel_touch_update(Position(), /*inventory().GetTakeDist()*/ m_fPickupInfoRadius);
+    feel_touch_update(Position(), m_fPickupInfoRadius);
 
     CFrustum frustum;
     frustum.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
@@ -153,11 +151,7 @@ void CActor::PickupModeUpdate_COD()
     }
 
     //подбирание объекта
-    if (inventory().m_pTarget 
-        && inventory().m_pTarget->Useful() 
-        && m_pUsableObject 
-        && m_pUsableObject->nonscript_usable() &&
-        !Level().m_feel_deny.is_object_denied(smart_cast<CGameObject*>(inventory().m_pTarget)))
+    if (inventory().m_pTarget && inventory().m_pTarget->Useful() && m_pUsableObject && m_pUsableObject->nonscript_usable() && !Level().m_feel_deny.is_object_denied(smart_cast<CGameObject*>(inventory().m_pTarget)))
     {
         CInventoryItem* pNearestItem = inventory().m_pTarget;
         if (m_bPickupMode)
@@ -194,10 +188,8 @@ void CActor::PickupModeUpdate_COD()
     CFrustum frustum;
     frustum.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
 
-    //---------------------------------------------------------------------------
     ISpatialResult.clear();
     g_SpatialSpace->q_frustum(ISpatialResult, 0, STYPE_COLLIDEABLE, frustum);
-    //---------------------------------------------------------------------------
 
     float maxlen = 1000.0f;
 
@@ -295,8 +287,6 @@ void CActor::PickupInfoDraw(CObject* object)
     LPCSTR draw_str = NULL;
 
     CInventoryItem* item = smart_cast<CInventoryItem*>(object);
-    //.	CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(object);
-    //.	VERIFY(item || inventory_owner);
     if (!item)
         return;
 
@@ -305,7 +295,7 @@ void CActor::PickupInfoDraw(CObject* object)
     Fvector4 v_res;
     Fvector shift;
 
-    draw_str = item->Name /*Complex*/ ();
+    draw_str = item->Name();
     shift.set(0, 0, 0);
 
     res.transform(v_res, shift);

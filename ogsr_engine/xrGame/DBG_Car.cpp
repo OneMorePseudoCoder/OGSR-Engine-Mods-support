@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #ifdef DEBUG
-
 #include "ode_include.h"
 #include "../xr_3da/StatGraph.h"
 #include "PHDebug.h"
@@ -18,6 +17,7 @@ void CCar::InitDebug()
     m_dbg_dynamic_plot = 0;
     b_plots = false;
 }
+
 void CCar::DbgSheduleUpdate()
 {
     if (ph_dbg_draw_mask.test(phDbgDrawCarPlots) && m_pPhysicsShell && OwnerActor() && static_cast<CObject*>(Owner()) == Level().CurrentViewEntity())
@@ -37,9 +37,9 @@ void CCar::DbgCreatePlots()
 {
     if (b_plots)
         return;
+
     eStateDrive state = e_state_drive;
     e_state_drive = drive;
-    //////////////////////////////
     int y_pos = 0, y_w = 100;
     m_dbg_power_rpm.Init(fastdelegate::MakeDelegate(this, &CCar::Parabola), m_min_rpm, m_max_rpm, 0, y_pos, 500, y_w, 1000, D3DCOLOR_XRGB(0, 0, 255));
     m_dbg_power_rpm.AddMarker(CStatGraph::stVert, 0, D3DCOLOR_XRGB(255, 0, 0));
@@ -74,7 +74,7 @@ void CCar::DbgCreatePlots()
             m_dbg_power_rpm.AddMarker(CStatGraph::stVert, (*i)[2] + r, D3DCOLOR_XRGB(0, 255, 255));
         }
     }
-    //--------------------------------------
+
     m_dbg_dynamic_plot = xr_new<CStatGraph>();
     m_dbg_dynamic_plot->SetRect(0, y_pos, 500, y_w, D3DCOLOR_XRGB(255, 255, 255), D3DCOLOR_XRGB(255, 255, 255));
     m_dbg_dynamic_plot->SetMinMax(Parabola(m_min_rpm), m_max_power, 1000);
@@ -83,7 +83,7 @@ void CCar::DbgCreatePlots()
 
     m_dbg_dynamic_plot->AppendSubGraph(CStatGraph::stCurve);
     rpm_pow_max_ratio = m_max_rpm / m_max_power;
-    //--------------------------------------
+
     m_dbg_dynamic_plot->AddMarker(CStatGraph::stHor, 0, D3DCOLOR_XRGB(255, 0, 0));
     xr_vector<Fvector>::iterator i = m_gear_ratious.begin() + 1, e = m_gear_ratious.end();
     for (; i < e; i++)
@@ -91,19 +91,20 @@ void CCar::DbgCreatePlots()
         m_dbg_dynamic_plot->AddMarker(CStatGraph::stHor, (*i)[1] / rpm_pow_max_ratio, D3DCOLOR_XRGB(127, 0, 0));
         m_dbg_dynamic_plot->AddMarker(CStatGraph::stHor, (*i)[2] / rpm_pow_max_ratio, D3DCOLOR_XRGB(0, 0, 127));
     }
-    //////////////////////////////
+
     e_state_drive = state;
     b_plots = true;
 }
+
 void CCar::DBgClearPlots()
 {
     if (!b_plots)
         return;
-    ////////////////////////////////
+
     m_dbg_power_rpm.Clear();
     m_dbg_torque_rpm.Clear();
     xr_delete(m_dbg_dynamic_plot);
-    ////////////////////////////////
+
     b_plots = false;
 }
 
@@ -159,8 +160,6 @@ void CCar::DbgUbdateCl()
                 HUD().Font().pFontStat->OutNext("BREAKS");
                 HUD().Font().pFontStat->SetColor(color_rgba(0xff, 0xff, 0xff, 0xff));
             }
-            // HUD().pFontStat->OutNext("Vel Magnitude: [%3.2f]",m_PhysicMovementControl->GetVelocityMagnitude());
-            // HUD().pFontStat->OutNext("Vel Actual:    [%3.2f]",m_PhysicMovementControl->GetVelocityActual());
         }
 
         if (ph_dbg_draw_mask.test(phDbgDrawCarPlots) && b_plots)
@@ -187,5 +186,4 @@ void CCar::DbgUbdateCl()
         }
     }
 }
-
 #endif

@@ -18,7 +18,7 @@
 LPCSTR script_section = "script";
 LPCSTR current_version = "current_server_entity_version";
 
-/*IC*/ u16 script_server_object_version()
+u16 script_server_object_version()
 {
     static bool initialized = false;
     static u16 script_version = 0;
@@ -56,10 +56,9 @@ CSE_Abstract::CSE_Abstract(LPCSTR caSection)
     ID_Phantom = 0xffff;
     owner = 0;
     s_gameid = 0;
-    s_RP = 0xFE; // Use supplied coords
     s_flags.assign(0);
     s_name = caSection;
-    s_name_replace = 0; // xr_strdup("");
+    s_name_replace = 0;
     o_Angle.set(0.f, 0.f, 0.f);
     o_Position.set(0.f, 0.f, 0.f);
     m_bALifeControl = false;
@@ -67,20 +66,13 @@ CSE_Abstract::CSE_Abstract(LPCSTR caSection)
     m_script_version = 0;
     m_tClassID = TEXT2CLSID(pSettings->r_string(caSection, "class"));
 
-    //	m_spawn_probability			= 1.f;
     m_spawn_flags.zero();
     m_spawn_flags.set(flSpawnEnabled, TRUE);
     m_spawn_flags.set(flSpawnOnSurgeOnly, TRUE);
     m_spawn_flags.set(flSpawnSingleItemOnly, TRUE);
     m_spawn_flags.set(flSpawnIfDestroyedOnly, TRUE);
     m_spawn_flags.set(flSpawnInfiniteCount, TRUE);
-    //	m_max_spawn_count			= 1;
-    //	m_spawn_control				= "";
-    //	m_spawn_count				= 0;
-    //	m_last_spawn_time			= 0;
-    //	m_next_spawn_time			= 0;
-    //	m_min_spawn_interval		= 0;
-    //	m_max_spawn_interval		= 0;
+
     m_ini_file = 0;
 
     if (pSettings->line_exist(caSection, "custom_data"))
@@ -133,7 +125,6 @@ void CSE_Abstract::Spawn_Write(NET_Packet& tNetPacket, BOOL bLocal)
     tNetPacket.w_stringZ(s_name);
     tNetPacket.w_stringZ(s_name_replace ? s_name_replace : "");
     tNetPacket.w_u8(s_gameid);
-    tNetPacket.w_u8(s_RP);
     tNetPacket.w_vec3(o_Position);
     tNetPacket.w_vec3(o_Angle);
     tNetPacket.w_u16(RespawnTime);
@@ -154,19 +145,13 @@ void CSE_Abstract::Spawn_Write(NET_Packet& tNetPacket, BOOL bLocal)
     // client object custom data serialization SAVE
     u16 client_data_size = (u16)client_data.size(); //не может быть больше 256 байт
     tNetPacket.w_u16(client_data_size);
-    //	Msg							("SERVER:saving:save:%d bytes:%d:%s",client_data_size,ID,s_name_replace ? s_name_replace : "");
+
     if (client_data_size > 0)
     {
         tNetPacket.w(&*client_data.begin(), client_data_size);
     }
 
     tNetPacket.w(&m_tSpawnID, sizeof(m_tSpawnID));
-    //	tNetPacket.w_float			(m_spawn_probability);
-    //	tNetPacket.w_u32			(m_spawn_flags.get());
-    //	tNetPacket.w_stringZ		(m_spawn_control);
-    //	tNetPacket.w_u32			(m_max_spawn_count);
-    //	tNetPacket.w_u64			(m_min_spawn_interval);
-    //	tNetPacket.w_u64			(m_max_spawn_interval);
 
     // write specific data
     u32 position = tNetPacket.w_tell();
@@ -189,7 +174,6 @@ BOOL CSE_Abstract::Spawn_Read(NET_Packet& tNetPacket)
     tNetPacket.r_stringZ(temp);
     set_name_replace(temp);
     tNetPacket.r_u8(s_gameid);
-    tNetPacket.r_u8(s_RP);
     tNetPacket.r_vec3(o_Position);
     tNetPacket.r_vec3(o_Angle);
     tNetPacket.r_u16(RespawnTime);

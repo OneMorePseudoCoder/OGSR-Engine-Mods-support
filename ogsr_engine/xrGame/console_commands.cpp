@@ -60,13 +60,12 @@ extern int x_m_z;
 #ifdef DEBUG
 extern BOOL g_ShowAnimationInfo;
 #endif // DEBUG
-extern BOOL g_bShowHitSectors;
 extern BOOL g_bDebugDumpPhysicsStep;
 extern ESingleGameDifficulty g_SingleGameDifficulty;
 extern BOOL g_show_wnd_rect;
 extern BOOL g_show_wnd_rect2;
 extern BOOL g_show_wnd_rect_text;
-    //-----------------------------------------------------------
+//-----------------------------------------------------------
 extern float g_fTimeFactor;
 extern BOOL g_bCopDeathAnim;
 extern int g_bHudAdjustMode;

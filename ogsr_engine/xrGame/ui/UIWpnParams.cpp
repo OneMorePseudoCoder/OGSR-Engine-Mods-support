@@ -79,7 +79,7 @@ void CUIWpnParams::InitFromXml(CUIXml& xml_doc)
     m_progressRPM.SetRange(0, 100);
 }
 
-void CUIWpnParams::SetInfo(CPhysicsShellHolder& obj /*const shared_str& wpn_section*/)
+void CUIWpnParams::SetInfo(CPhysicsShellHolder& obj)
 {
     if (!g_lua_wpn_params)
         g_lua_wpn_params = xr_new<SLuaWpnParams>();
@@ -92,7 +92,7 @@ void CUIWpnParams::SetInfo(CPhysicsShellHolder& obj /*const shared_str& wpn_sect
     m_progressHandling.SetProgressPos(g_lua_wpn_params->m_functorHandling(*wpn_section, obj.lua_game_object()));
 }
 
-bool CUIWpnParams::Check(CPhysicsShellHolder& obj /*const shared_str& wpn_section*/)
+bool CUIWpnParams::Check(CPhysicsShellHolder& obj)
 {
     if (!READ_IF_EXISTS(pSettings, r_bool, obj.cNameSect(), "show_wpn_properties", true)) // allow to suppress default wpn params
     {
@@ -101,16 +101,7 @@ bool CUIWpnParams::Check(CPhysicsShellHolder& obj /*const shared_str& wpn_sectio
 
     if (pSettings->line_exist(obj.cNameSect(), "fire_dispersion_base"))
     {
-        /*
-        if (0==xr_strcmp(wpn_section, "wpn_addon_silencer"))
-            return false;
-        if (0==xr_strcmp(wpn_section, "wpn_binoc"))
-            return false;
-        if (0==xr_strcmp(wpn_section, "mp_wpn_binoc"))
-            return false;*/
-
-        if (obj.CLS_ID == CLSID_OBJECT_W_BINOCULAR || obj.CLS_ID == CLSID_OBJECT_W_KNIFE || obj.CLS_ID == CLSID_OBJECT_W_SILENCER || obj.CLS_ID == CLSID_OBJECT_W_SCOPE ||
-            obj.CLS_ID == CLSID_OBJECT_W_GLAUNCHER)
+        if (obj.CLS_ID == CLSID_OBJECT_W_BINOCULAR || obj.CLS_ID == CLSID_OBJECT_W_KNIFE || obj.CLS_ID == CLSID_OBJECT_W_SILENCER || obj.CLS_ID == CLSID_OBJECT_W_SCOPE || obj.CLS_ID == CLSID_OBJECT_W_GLAUNCHER)
             return false;
 
         return true;

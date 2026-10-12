@@ -221,12 +221,10 @@ public:
     virtual void IR_OnMouseWheel(int direction);
     virtual void IR_OnActivate(void);
 
-   // Real Wolf. Start. 14.10.2014
+    // Real Wolf. Start. 14.10.2014
     void block_action(EGameActions cmd);
     void unblock_action(EGameActions cmd);
     // Real Wolf. End. 14.10.2014
-
-    int get_RPID(LPCSTR name);
 
     // Game
     void InitializeClientGame(NET_Packet& P);
@@ -297,9 +295,6 @@ protected:
 public:
     IC CBulletManager& BulletManager() { return *m_pBulletManager; }
 
-    // by Mad Max
-    //bool IsServer();
-    //bool IsClient();
     CSE_Abstract* spawn_item(LPCSTR section, const Fvector& position, u32 level_vertex_id, u16 parent_id, bool return_item = false);
 
 protected:
@@ -326,7 +321,7 @@ add_to_type_list(CLevel)
 #undef script_type_list
 #define script_type_list save_type_list(CLevel)
 
-    IC CLevel& Level()
+IC CLevel& Level()
 {
     return *((CLevel*)g_pGameLevel);
 }
@@ -372,14 +367,12 @@ IC CPHCommander& CLevel::ph_commander()
     VERIFY(m_ph_commander);
     return *m_ph_commander;
 }
+
 IC CPHCommander& CLevel::ph_commander_scripts()
 {
     VERIFY(m_ph_commander_scripts);
     return *m_ph_commander_scripts;
 }
-// by Mad Max
-//IC bool OnServer() { return Level().IsServer(); }
-//IC bool OnClient() { return Level().IsClient(); }
 
 class CPHWorld;
 extern CPHWorld* ph_world;

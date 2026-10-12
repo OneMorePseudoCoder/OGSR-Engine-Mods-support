@@ -8,10 +8,6 @@
 #include "game_sv_base.h"
 #include "id_generator.h"
 
-/*#ifdef DEBUG
-//. #define SLOW_VERIFY_ENTITIES
-#endif*/
-
 class CSE_Abstract;
 
 const u32 NET_Latency = 50; // time in (ms)
@@ -38,18 +34,10 @@ public:
 };
 
 // main
-struct svs_respawn
-{
-    u32 timestamp;
-    u16 phantom;
-};
-IC bool operator<(const svs_respawn& A, const svs_respawn& B) { return A.timestamp < B.timestamp; }
-
 class xrServer : public IPureServer
 {
 private:
     xrS_entities entities;
-    xr_multiset<svs_respawn> q_respawn;
 
     u16 m_iCurUpdatePacket;
     xr_vector<NET_Packet> m_aUpdatePackets;
@@ -71,17 +59,7 @@ private:
     void SendUpdatesToAll();
 
 private:
-    typedef CID_Generator<u32, // time identifier type
-                          u8, // compressed id type
-                          u16, // id type
-                          u8, // block id type
-                          u16, // chunk id type
-                          0, // min value
-                          u16(-2), // max value
-                          256, // block size
-                          u16(-1) // invalid id
-                          >
-        id_generator_type;
+    typedef CID_Generator<u32, u8, u16, u8, u16, 0, u16(-2), 256, u16(-1)> id_generator_type;
 
 private:
     id_generator_type m_tID_Generator;
