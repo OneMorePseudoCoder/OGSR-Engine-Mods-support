@@ -54,8 +54,6 @@ public:
     void load_draw_internal() const;
     void SetLoadingScreen(ILoadingScreen* newScreen);
     void DestroyLoadingScreen();
-
-    static bool CheckCsCopMode();
 };
 
 extern ENGINE_API CApplication* pApp;

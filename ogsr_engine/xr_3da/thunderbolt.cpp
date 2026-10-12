@@ -157,8 +157,6 @@ CEffect_Thunderbolt::~CEffect_Thunderbolt()
     for (auto& d_it : collection)
         xr_delete(d_it);
     collection.clear();
-    // hGeom_model.destroy			();
-    // hGeom_gradient.destroy		();
 }
 
 shared_str CEffect_Thunderbolt::AppendDef(CEnvironment& environment, CInifile* pIni, CInifile* thunderbolts, LPCSTR sect)

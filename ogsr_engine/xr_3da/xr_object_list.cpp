@@ -70,6 +70,7 @@ void CObjectList::o_activate(CObject* O)
     objects_active.push_back(O);
     O->MakeMeCrow();
 }
+
 void CObjectList::o_sleep(CObject* O)
 {
     VERIFY(O && !O->processing_enabled());
@@ -82,24 +83,17 @@ void CObjectList::SingleUpdate(CObject* O)
 {
     if (O->getDestroy() && (Device.dwFrame != O->dwFrame_UpdateCL))
     {
-        // Msg("- !!!processing_enabled ->destroy_queue.push_back %s[%d] frame [%d]", O->cName().c_str(), O->ID(), Device.dwFrame);
-        //  if (std::find(destroy_queue.begin(), destroy_queue.end(), O) == destroy_queue.end())
-        //      destroy_queue.push_back(O);
         return;
     }
     else if (O->H_Parent() && (O->H_Parent()->getDestroy() || O->H_Root()->getDestroy()))
     {
-        // Msg("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]", O->ID(), *O->cName(), *O->cNameSect(), O->H_Parent()->ID(),
-        // *O->H_Parent()->cName());
-        //  if (std::find(destroy_queue.begin(), destroy_queue.end(), O) == destroy_queue.end())
-        //      destroy_queue.push_back(O);
         return;
     }
 
     TracyMessageL(O->cNameSect().c_str());
 
     O->IAmNotACrowAnyMore(); // важно !! надо делать всегда даже если не нужно вызывать  UpdateCL
-    O->dwFrame_AsCrow = (u32)-1;
+    O->dwFrame_AsCrow = (u32) - 1;
 
     if (Device.dwFrame == O->dwFrame_UpdateCL)
     {
@@ -134,15 +128,12 @@ void CObjectList::SingleUpdate(CObject* O)
     if (O->getDestroy() && (Device.dwFrame != O->dwFrame_UpdateCL))
     {
         Msg("- !!!processing_enabled ->destroy_queue.push_back %s[%d] frame [%d]", O->cName().c_str(), O->ID(), Device.dwFrame);
-        // if (std::find(destroy_queue.begin(), destroy_queue.end(), O) == destroy_queue.end())
-        //     destroy_queue.push_back(O);
         return;
     }
     if (O->H_Parent() && (O->H_Parent()->getDestroy() || O->H_Root()->getDestroy()))
     {
         // Push to destroy-queue if it isn't here already
-        Msg("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]", O->ID(), *O->cName(), *O->cNameSect(), O->H_Parent()->ID(),
-            *O->H_Parent()->cName());
+        Msg("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]", O->ID(), *O->cName(), *O->cNameSect(), O->H_Parent()->ID(), *O->H_Parent()->cName());
     }
 
 #ifdef DEBUG
@@ -268,14 +259,13 @@ u32 CObjectList::net_Export(NET_Packet* _Packet, u32 start, u32 max_object_size,
 
     NET_Packet& Packet = *_Packet;
     u32 position;
-    for (; start < objects_active.size() + objects_sleeping.size(); start++)
+    while (start < objects_active.size() + objects_sleeping.size())
     {
         CObject* P = (start < objects_active.size()) ? objects_active[start] : objects_sleeping[start - objects_active.size()];
         if (P->net_Relevant() && !P->getDestroy())
         {
             Packet.w_u16(u16(P->ID()));
             Packet.w_chunk_open8(position);
-            // Msg						("cl_export: %d '%s'",P->ID(),*P->cName());
             P->net_Export(Packet);
 
             if (net_exported_objects)
@@ -293,16 +283,22 @@ u32 CObjectList::net_Export(NET_Packet* _Packet, u32 start, u32 max_object_size,
                 u32 size = u32(Packet.w_tell() - position) - sizeof(u8);
                 Msg("* %s : %d", *(P->cNameSect()), size);
             }
+
             Packet.w_chunk_close8(position);
-            //			if (0==(--count))
-            //				break;
-            if (max_object_size >= (NET_PacketSizeLimit - Packet.w_tell()))
-                break;
+
+			if (max_object_size > (NET_PacketSizeLimit - Packet.w_tell())) 
+			{
+				start++;
+				break;
+			}
         }
+		start++;
     }
+
     if (g_Dump_Export_Obj)
         Msg("------------------- ");
-    return start + 1;
+
+    return start;
 }
 
 constexpr bool g_Dump_Import_Obj{};
@@ -394,7 +390,6 @@ void CObjectList::Unload()
 CObject* CObjectList::Create(LPCSTR name)
 {
     CObject* O = g_pGamePersistent->ObjectPool.create(name);
-    //	Msg("CObjectList::Create [%x]%s", O, name);
     objects_sleeping.push_back(O);
     return O;
 }
@@ -403,6 +398,7 @@ void CObjectList::Destroy(CObject* O)
 {
     if (0 == O)
         return;
+
     net_Unregister(O);
 
     {
@@ -456,8 +452,7 @@ void CObjectList::dump_list(Objects& v, LPCSTR reason)
     auto it_e = v.end();
     Msg("----------------dump_list [%s]", reason);
     for (; it != it_e; ++it)
-        Msg("%x - name [%s] ID[%d] parent[%s] getDestroy()=[%s]", (*it), (*it)->cName().c_str(), (*it)->ID(), ((*it)->H_Parent()) ? (*it)->H_Parent()->cName().c_str() : "",
-            ((*it)->getDestroy()) ? "yes" : "no");
+        Msg("%x - name [%s] ID[%d] parent[%s] getDestroy()=[%s]", (*it), (*it)->cName().c_str(), (*it)->ID(), ((*it)->H_Parent()) ? (*it)->H_Parent()->cName().c_str() : "", ((*it)->getDestroy()) ? "yes" : "no");
 }
 
 bool CObjectList::dump_all_objects()
@@ -472,7 +467,6 @@ bool CObjectList::dump_all_objects()
 void CObjectList::register_object_to_destroy(CObject* object_to_destroy)
 {
     VERIFY(!registered_object_to_destroy(object_to_destroy));
-    //	Msg("CObjectList::register_object_to_destroy [%x]", object_to_destroy);
     destroy_queue.push_back(object_to_destroy);
 
     auto it = objects_active.begin();

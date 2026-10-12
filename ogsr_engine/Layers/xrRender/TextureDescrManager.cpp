@@ -177,7 +177,6 @@ void CTextureDescrMngr::LoadTHMFile(IReader* F, LPCSTR file_nm)
         }
 }
 
-
 void CTextureDescrMngr::EnsureTHMLoaded(const shared_str& tex_name)
 {
     if (tex_name.empty())

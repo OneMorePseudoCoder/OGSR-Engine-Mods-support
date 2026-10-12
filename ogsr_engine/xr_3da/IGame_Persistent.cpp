@@ -69,6 +69,7 @@ void IGame_Persistent::PreStart(LPCSTR op)
         OnGameEnd();
     }
 }
+
 void IGame_Persistent::Start(LPCSTR op)
 {
     string256 prev_type;
@@ -95,7 +96,7 @@ void IGame_Persistent::Disconnect()
     if (g_hud)
         g_hud->OnDisconnected();
 
-    if (CApplication::CheckCsCopMode() || !g_prefetch) // очистка при выходе из игры в главное меню
+    if (!g_prefetch) // очистка при выходе из игры в главное меню
     {
         ObjectPool.clear();
     }
@@ -146,7 +147,8 @@ void IGame_Persistent::OnFrame()
     Device.Statistic->Particles_destroy = ps_destroy.size();
 
     // Play req particle systems
-    std::erase_if(ps_needtoplay, [](auto* psi) {
+    std::erase_if(ps_needtoplay, [](auto* psi) 
+	{
         psi->Play(false);
         return true;
     });
@@ -561,7 +563,8 @@ void IGame_Persistent::UpdateHudRaindrops() const
         float size = ps_ssfx_hud_drops_2_cfg.z; // Size of the drops
         float gloss = ps_ssfx_hud_drops_2_cfg.w; // Raindrops gloss intensity
         float extra_gloss{ps_ssfx_gloss_minmax.z}; // Extra gloss to the weapons HUD elements when raining
-    } ssfx_default_settings;
+    } 
+	ssfx_default_settings;
 
     const float ssfx_hud_raindrops_density = ssfx_default_settings.density;
     const float ssfx_hud_raindrops_refle = 30.f * ssfx_default_settings.reflection_str;
@@ -577,9 +580,6 @@ void IGame_Persistent::UpdateHudRaindrops() const
     const float val_texsize = 2.0f - ssfx_hud_raindrops_size;
 
     ps_ssfx_hud_drops_2.set(val_density, val_texsize, ssfx_hud_raindrops_extragloss, ssfx_hud_raindrops_gloss);
-    // Msg("--ps_ssfx_hud_drops_2: [%f, %f, %f, %f]", val_density, val_texsize, ssfx_hud_raindrops_extragloss, ssfx_hud_raindrops_gloss);
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static float drops_int{}, drops_anim{};
 
@@ -619,7 +619,6 @@ void IGame_Persistent::UpdateHudRaindrops() const
 
     // Update shader data
     ps_ssfx_hud_drops_1.set(drops_anim, psDeviceFlags.test(rs_SSFX_HUD_RAINDROPS) ? drops_int : 0.f, ssfx_hud_raindrops_refle, ssfx_hud_raindrops_refra);
-    // Msg("~~ps_ssfx_hud_drops_1: [%f, %f, %f, %f]", drops_anim, drops_int, ssfx_hud_raindrops_refle, ssfx_hud_raindrops_refra);
 }
 
 void IGame_Persistent::UpdateRainGloss() const
@@ -638,13 +637,12 @@ void IGame_Persistent::UpdateRainGloss() const
         float waterfall_speed{ps_ssfx_wetsurfaces_2_cfg.y};
         float waterfall_min_speed{ps_ssfx_wetsurfaces_2_cfg.z};
         float waterfall_intensity{ps_ssfx_wetsurfaces_2_cfg.w};
-    } ssfx_default_settings;
+    } 
+	ssfx_default_settings;
 
     if (ssfx_default_settings.auto_gloss)
     {
-        const float Wetness_gloss =
-            ps_ssfx_gloss_minmax.x + std::max(ssfx_default_settings.auto_gloss_max - ps_ssfx_gloss_minmax.x, 0.f) * pEnvironment->wetness_factor;
-
+        const float Wetness_gloss = ps_ssfx_gloss_minmax.x + std::max(ssfx_default_settings.auto_gloss_max - ps_ssfx_gloss_minmax.x, 0.f) * pEnvironment->wetness_factor;
         ps_ssfx_gloss_factor = Wetness_gloss * 0.96f;
     }
     else
@@ -655,8 +653,7 @@ void IGame_Persistent::UpdateRainGloss() const
     const float ripples_size = std::max(2.0f - ssfx_default_settings.ripples_size, 0.01f); // Change how the value works to be more intuitive(<1.0 smaller |> 1.0 bigger)
     ps_ssfx_wetsurfaces_1.set(ripples_size, ssfx_default_settings.ripples_speed, ssfx_default_settings.ripples_min_speed, ssfx_default_settings.ripples_intensity);
 
-    const float waterfall_size =
-        std::max(2.0f - ssfx_default_settings.waterfall_size, 0.01f); // Change how the value works to be more intuitive(<1.0 smaller |> 1.0 bigger)
+    const float waterfall_size = std::max(2.0f - ssfx_default_settings.waterfall_size, 0.01f); // Change how the value works to be more intuitive(<1.0 smaller |> 1.0 bigger)
     ps_ssfx_wetsurfaces_2.set(waterfall_size, ssfx_default_settings.waterfall_speed, ssfx_default_settings.waterfall_min_speed, ssfx_default_settings.waterfall_intensity);
 }
 

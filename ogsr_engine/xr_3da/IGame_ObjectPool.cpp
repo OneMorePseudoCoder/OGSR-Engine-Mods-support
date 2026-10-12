@@ -11,10 +11,6 @@ IGame_ObjectPool::~IGame_ObjectPool(void) { R_ASSERT(m_PrefetchObjects.empty());
 
 void IGame_ObjectPool::prefetch()
 {
-    // в огср замороченный префетч объектов (не моделей), требует много переделок в xrGame, потому пусть работает только в тч-режиме.
-    if (CApplication::CheckCsCopMode())
-        return;
-
     R_ASSERT(m_PrefetchObjects.empty());
 
     int p_count = 0;
@@ -57,7 +53,8 @@ void IGame_ObjectPool::clear()
     // Clear POOL
     ObjectVecIt it = m_PrefetchObjects.begin();
     ObjectVecIt itE = m_PrefetchObjects.end();
-    for (; it != itE; it++) {
+    for (; it != itE; it++) 
+	{
         (*it)->cNameVisual_set(0);
         xr_delete(*it);
     }

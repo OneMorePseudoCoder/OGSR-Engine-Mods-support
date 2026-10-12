@@ -11,11 +11,8 @@
 
 #include "xr_input.h"
 
-//#include "resourcemanager.h"
-
 #include "IGame_Level.h"
 
-//#include "D3DUtils.h"
 #include "../xrcore/xrCore.h"
 
 #include "../Include/xrRender/EnvironmentRender.h"
@@ -219,11 +216,8 @@ float CEnvironment::NormalizeTime(float tm)
 
 void CEnvironment::SetWeather(const shared_str& name, const bool forced)
 {
-    //.	static BOOL bAlready = FALSE;
-    //.	if(bAlready)	return;
     if (!name.empty())
     {
-        //.		bAlready = TRUE;
         EnvsMapIt it = WeatherCycles.find(name);
         if (it == WeatherCycles.end())
         {

@@ -77,7 +77,6 @@ void InitSettings()
     shader_exports.set_custom_params("s3ds_param_2", {});
     shader_exports.set_custom_params("s3ds_param_3", {});
     shader_exports.set_custom_params("s3ds_param_4", {});
-    //
 
     if (pSettings->section_exist("shader_params_export"))
     {
@@ -99,6 +98,7 @@ void InitSettings()
 
     FS.init_gamedata_unused();
 }
+
 void InitConsole()
 {
     Console = xr_new<CConsole>();
@@ -161,8 +161,8 @@ void InitInput() { pInput = xr_new<CInput>(); }
 void destroyInput() { xr_delete(pInput); }
 
 void InitSound1() { CSound_manager_interface::_create(0); }
-
 void InitSound2() { CSound_manager_interface::_create(1); }
+
 void destroySound() { CSound_manager_interface::_destroy(); }
 
 void destroySettings()
@@ -170,11 +170,12 @@ void destroySettings()
     xr_delete(pSettings);
     xr_delete(pGameIni);
 }
+
 void destroyConsole()
 {
-    //Console->Destroy();
     xr_delete(Console);
 }
+
 void destroyEngine()
 {
     Device.Destroy();
@@ -277,7 +278,6 @@ struct damn_keys_filter
     BOOL bScreenSaverState;
 
     // Sticky & Filter & Toggle keys
-
     STICKYKEYS StickyKeysStruct;
     FILTERKEYS FilterKeysStruct;
     TOGGLEKEYS ToggleKeysStruct;
@@ -289,7 +289,6 @@ struct damn_keys_filter
     damn_keys_filter()
     {
         // Screen saver stuff
-
         bScreenSaverState = FALSE;
 
         // Saveing current state
@@ -397,10 +396,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
 
     Debug._initialize();
 
-    // SetThreadAffinityMask		(GetCurrentThread(),1);
-
     // Title window
-
     DisableProcessWindowsGhosting();
 
     ShowSplash(hInstance);
@@ -558,7 +554,7 @@ void CApplication::LoadBegin(bool quick)
         if (quick)
             max_load_stage = 4; // при быстром сохранении меньше фаз загрузки. 4 вроде б
         else 
-            max_load_stage = 16; // 17; //KRodin: пересчитал кол-во стадий, у нас их 15 при создании НИ + 1 на автопаузу
+            max_load_stage = 16; //KRodin: пересчитал кол-во стадий, у нас их 15 при создании НИ + 1 на автопаузу
     }
 }
 
@@ -592,6 +588,7 @@ void CApplication::LoadDraw() const
 {
     if (g_appLoaded)
         return;
+
     Device.dwFrame += 1;
 
     if (!Device.Begin())
@@ -616,11 +613,9 @@ void CApplication::LoadStage()
     phase_timer.Start();
     Msg("* phase cmem: %d K", Memory.mem_usage() / 1024);
 
-
     LoadDraw();
 
     ++load_stage;
-    // Msg("--LoadStage is [%d]", load_stage);
 }
 
 // Sequential
@@ -665,6 +660,7 @@ void CApplication::Level_Scan()
     {
         xr_free(lvl.folder);
     }
+
     Levels.clear();
 
     xr_vector<char*>* folder = FS.file_list_open("$game_levels$", FS_ListFolders | FS_RootOnly);
@@ -695,10 +691,6 @@ void CApplication::Level_Scan()
 void generate_logo_path(string_path& path, pcstr level_name, int num = -1)
 {
     strconcat(sizeof(path), path, "intro\\intro_", level_name);
-
-   // const auto len = xr_strlen(path);
-  //  if (path[len - 1] == '\\')
-  //      path[len - 1] = 0;
 
     if (num < 0)
         return;
@@ -797,33 +789,13 @@ void CApplication::load_draw_internal() const
     loadingScreen->Update(load_stage, max_load_stage);
 }
 
-bool CApplication::CheckCsCopMode()
-{
-#pragma todo("Simp: на будущее, активировать эту функцию когда будет надо!")
-    if constexpr (true)
-        return false;
-
-    // Определять, что мы запускаем ЧН/ЗП будем по названию папки конфигов. Решение так себе, но ничего лучше пока не придумал.
-    static const char* cfg_path{FS.get_path("$game_config$")->m_Path};
-    static const char* cfg_dir_name{cfg_path + (strlen(cfg_path) - (strlen("configs") + 1))};
-    static const bool res{!!strstr(cfg_dir_name, "configs")};
-
-    static bool first_call{true};
-    if (first_call)
-    {
-        Msg("~~[%s] Configs dir name: [%s]", __FUNCTION__, cfg_dir_name);
-        first_call = false;
-    }
-
-    return res;
-}
-
 #pragma todo("Simp: нужно ли это? сомневаюсь.")
 // Always request high performance GPU
-extern "C" {
-// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
-_declspec(dllexport) u32 NvOptimusEnablement = 0x00000001; // NVIDIA Optimus
+extern "C" 
+{
+	// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+	_declspec(dllexport) u32 NvOptimusEnablement = 0x00000001; // NVIDIA Optimus
 
-// https://gpuopen.com/amdpowerxpressrequesthighperformance/
-_declspec(dllexport) u32 AmdPowerXpressRequestHighPerformance = 0x00000001; // PowerXpress or Hybrid Graphics
+	// https://gpuopen.com/amdpowerxpressrequesthighperformance/
+	_declspec(dllexport) u32 AmdPowerXpressRequestHighPerformance = 0x00000001; // PowerXpress or Hybrid Graphics
 }

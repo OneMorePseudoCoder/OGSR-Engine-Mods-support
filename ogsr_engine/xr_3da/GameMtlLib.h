@@ -127,18 +127,6 @@ protected:
     int ID_parent;
 
 public:
-    enum
-    {
-        //flFlotation		= (1<<0),
-        //flBreakingSounds = (1 << 1),
-        //flStepSounds = (1 << 2),
-        //flCollideSounds	= (1<<3),
-        //flCollideSounds = (1 << 4),
-        //flCollideParticles = (1 << 5),
-        //flCollideMarks = (1 << 6)
-    };
-    Flags32 OwnProps; // unused in game
-    //	properties
     SoundVec BreakingSounds;
     SoundVec StepSounds;
     SoundVec CollideSounds;
@@ -199,14 +187,7 @@ class ENGINE_API CGameMtlLibrary
 
 public:
     CGameMtlLibrary();
-    ~CGameMtlLibrary()
-    {
-        /*
-        R_ASSERT		(0==material_pairs_rt.size());
-        R_ASSERT		(0==material_pairs.size());
-        R_ASSERT		(0==materials.size());
-        */
-    }
+    ~CGameMtlLibrary();
     IC void Unload()
     {
         material_count = 0;

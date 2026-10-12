@@ -68,9 +68,7 @@ void R_dsgraph_structure::r_dsgraph_render_graph_static(const u32 _priority, con
 
                 auto& normal_items = *items.items;
                 // sort by SSA
-                std::ranges::sort(normal_items, [](const auto& lhs, const auto& rhs) {
-                    return lhs.ssa > rhs.ssa;
-                });
+                std::ranges::sort(normal_items, [](const auto& lhs, const auto& rhs) { return lhs.ssa > rhs.ssa; });
                 for (const auto& item : normal_items)
                 {
                     const float lod = calcLOD(item.ssa);
@@ -85,9 +83,7 @@ void R_dsgraph_structure::r_dsgraph_render_graph_static(const u32 _priority, con
 
                 if (!items.trees->empty())
                 {
-                    cmd_list.set_c("benders_setup",
-                                   Fvector4{ps_ssfx_int_grass_params_1.x, ps_ssfx_int_grass_params_1.y, ps_ssfx_int_grass_params_1.z,
-                                            ps_r2_ls_flags_ext.test(R2FLAGEXT_SSFX_INTER_BRANCHES) ? ps_ssfx_grass_interactive.y : 0.f});
+                    cmd_list.set_c("benders_setup", Fvector4{ps_ssfx_int_grass_params_1.x, ps_ssfx_int_grass_params_1.y, ps_ssfx_int_grass_params_1.z, ps_r2_ls_flags_ext.test(R2FLAGEXT_SSFX_INTER_BRANCHES) ? ps_ssfx_grass_interactive.y : 0.f});
 
                     if (ps_r2_ls_flags_ext.test(R2FLAGEXT_SSFX_INTER_BRANCHES))
                     {
@@ -102,8 +98,8 @@ void R_dsgraph_structure::r_dsgraph_render_graph_static(const u32 _priority, con
                         }
 
                         Fvector4* b_pos_old{};
-                        cmd_list.get_ConstantDirect(benders_pos_old, sizeof grass_shader_data_old.pos + sizeof grass_shader_data_old.dir, reinterpret_cast<void**>(&b_pos_old),
-                                                    nullptr, nullptr);
+                        cmd_list.get_ConstantDirect(benders_pos_old, sizeof grass_shader_data_old.pos + sizeof grass_shader_data_old.dir, reinterpret_cast<void**>(&b_pos_old), nullptr, nullptr);
+
                         if (b_pos_old)
                         {
                             std::memcpy(b_pos_old, &grass_shader_data_old.pos, sizeof grass_shader_data_old.pos);

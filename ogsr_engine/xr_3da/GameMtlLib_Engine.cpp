@@ -1,6 +1,4 @@
-//---------------------------------------------------------------------------
 #include "stdafx.h"
-
 #include "GameMtlLib.h"
 
 void DestroySounds(SoundVec& lst)
@@ -8,19 +6,8 @@ void DestroySounds(SoundVec& lst)
     for (auto& it : lst)
         it.destroy();
 }
-/*
-void DestroyMarks(ShaderVec& lst)
-{
-    for (ShaderIt it=lst.begin(); lst.end() != it; ++it)
-        it->destroy();
-}
-*/
 
-void DestroyPSs(PSVec& lst)
-{
-    //	for (PSIt it=lst.begin(); lst.end() != it; ++it)
-    //		Device.Resources->Delete(*it);
-}
+void DestroyPSs(PSVec& lst) {}
 
 void CreateSounds(SoundVec& lst, xr_vector<std::string>& buf)
 {
@@ -110,7 +97,7 @@ void SGameMtlPair::CreateAllParticles()
 {
     for (const auto& collide_particle : CollideParticles)
     {
-        for (u32 i = 0; i < 4; i++) // 16 ??
+        for (u32 i = 0; i < 4; i++)
         {
             IRenderVisual* vis = Render->model_CreateParticles(collide_particle.c_str(), TRUE);
             Render->model_Delete(vis);

@@ -19,7 +19,6 @@ void CObject::cNameSect_set(shared_str N)
     spatial.dbg_name = NameSection;
 }
 
-//#include "SkeletonCustom.h"
 void CObject::cNameVisual_set(shared_str N)
 {
     // check if equal
@@ -62,6 +61,7 @@ void CObject::processing_activate()
     if (0 == (Props.bActiveCounter - 1))
         g_pGameLevel->Objects.o_activate(this);
 }
+
 void CObject::processing_deactivate()
 {
     VERIFY(0 != Props.bActiveCounter, "Invalid sequence of processing enable/disable calls: underflow", *cName());
@@ -84,6 +84,7 @@ void CObject::setEnabled(BOOL _enabled)
         spatial.type &= ~STYPE_COLLIDEABLE;
     }
 }
+
 void CObject::setVisible(BOOL _visible)
 {
     if (_visible)
@@ -215,7 +216,7 @@ void CObject::net_Destroy()
         shedule_unregister();
 
     spatial_unregister();
-    //	setDestroy					(true);
+
     // remove visual
     cNameVisual_set(nullptr);
 }
@@ -226,7 +227,6 @@ const float base_spu_epsR = 0.05f;
 
 void CObject::spatial_update(float eps_P, float eps_R)
 {
-    //
     BOOL bUpdate = FALSE;
     if (PositionStack.empty())
     {
@@ -367,21 +367,23 @@ CObject* CObject::H_SetParent(CObject* new_parent, bool just_before_destroy)
 
     VERIFY((new_parent == 0) || (old_parent == 0), "Before set parent - execute H_SetParent(0)");
 
-    // if (Parent) Parent->H_ChildRemove	(this);
     if (nullptr == old_parent)
         OnH_B_Chield(); // before attach
     else
         OnH_B_Independent(just_before_destroy); // before detach
+
     if (new_parent)
         spatial_unregister();
     else
         spatial_register();
+
     Parent = new_parent;
+
     if (nullptr == old_parent)
         OnH_A_Chield(); // after attach
     else
         OnH_A_Independent(); // after detach
-    // if (Parent)	Parent->H_ChildAdd		(this);
+
     MakeMeCrow();
     return old_parent;
 }

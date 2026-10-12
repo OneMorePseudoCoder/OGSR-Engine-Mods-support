@@ -19,14 +19,12 @@
 CRender RImplementation;
 
 float r_dtex_paralax_range = 50.f;
-//////////////////////////////////////////////////////////////////////////
+
 ShaderElement* CRender::rimp_select_sh_dynamic(dxRender_Visual* pVisual, float cdist_sq, bool hud, u32 phase)
 {
     u32 id;
     if (CRender::PHASE_NORMAL == phase)
     {
-        // if (hud)
-        //     Msg("--[%s] Detected hud model: [%s]", __FUNCTION__, pVisual->dbg_name.c_str());
         id = (hud || ((_sqrt(cdist_sq) - pVisual->getVisData().sphere.R) < r_dtex_paralax_range)) ? SE_R2_NORMAL_HQ : SE_R2_NORMAL_LQ;
     }
     else
@@ -36,7 +34,6 @@ ShaderElement* CRender::rimp_select_sh_dynamic(dxRender_Visual* pVisual, float c
     return pVisual->shader->E[id]._get();
 }
 
-//////////////////////////////////////////////////////////////////////////
 ShaderElement* CRender::rimp_select_sh_static(dxRender_Visual* pVisual, float cdist_sq, u32 phase)
 {
     if (!pVisual->shader)
@@ -82,14 +79,14 @@ void CRender::create()
 
     // options (smap-pool-size)
     o.sun_cascades_smapsize[0] = r2_SmapCascade0Size;
-    o.sun_cascades_smapsize[1] = r2_SmapCascade0Size; // r2_SmapCascade1Size;
+    o.sun_cascades_smapsize[1] = r2_SmapCascade0Size;
     o.sun_cascades_smapsize[2] = r2_SmapCascade2Size;
     o.rain_smapsize = r2_SmapRainSize;
     o.lights_smapsize = r2_SmapLightsSize;
 
     // options
     o.noshadows = (strstr(Core.Params, "-noshadows")) ? TRUE : FALSE;
-    o.distortion_enabled = TRUE; // !strstr(Core.Params, "-nodistort");
+    o.distortion_enabled = !strstr(Core.Params, "-nodistort");
     o.distortion = o.distortion_enabled;
     o.disasm = (strstr(Core.Params, "-disasm")) ? TRUE : FALSE;
 
@@ -119,7 +116,6 @@ void CRender::create()
 
 #ifdef DX10_FLUID_ENABLE
     FluidManager.Initialize(70, 70, 70);
-    //	FluidManager.Initialize( 100, 100, 100 );
     FluidManager.SetScreenSize(Target->GetRenderWidth(), Target->GetRenderHeight());
 #endif
 }
@@ -163,15 +159,9 @@ void CRender::reset_begin()
         {
             if (nullptr == it)
                 continue;
-            //try
-            //{
+
             for (int id = 0; id < R__NUM_CONTEXTS; ++id)
                 it->svis[id].finish();
-            /*}
-            catch (...)
-            {
-                Msg("! Failed to flush-OCCq on light [%d] %X", it, *(u32*)(&Lights_LastFrame[it]));
-            }*/
         }
         Lights_LastFrame.clear();
     }
@@ -796,6 +786,8 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
 
     appendShaderOption(ps_r2_ls_flags.test(R2FLAGEXT_SSFX_INTER_BRANCHES), "SSFX_INTER_BRANCHES", "1");
 
+    appendShaderOption(strstr(Core.Params, "-cscoplmap"), "USE_CS_COP_LMAP", "1");
+
     if (ps_ssfx_rain_1.w > 0.f)
     {
         sprintf_s(c_rain_quality, "%.0f", ps_ssfx_rain_1.w);
@@ -814,9 +806,6 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         defines.emplace_back("SSFX_TERRA_POM_REFINE", c_ssfx_terrain_pom_refine);
     }
     
-    if (CApplication::CheckCsCopMode())
-        defines.emplace_back("USE_CS_COP_LMAP", "1");
-
     // finish
     defines.emplace_back(nullptr, nullptr);
 
@@ -1064,14 +1053,14 @@ void CRender::End()
         ZoneScopedN("Present");
 
         if (psDeviceFlags.test(rsVSync))
-            {
-                // 512: DXGI_PRESENT_ALLOW_TEARING - allows for true V-Sync off with flip model
-                HW.m_pSwapChain->Present(1, 0);
-            }
+        {
+            // 512: DXGI_PRESENT_ALLOW_TEARING - allows for true V-Sync off with flip model
+            HW.m_pSwapChain->Present(1, 0);
+        }
         else
-            {
-                HW.m_pSwapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
-            }
+        {
+            HW.m_pSwapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+        }
     }
 
     TracyD3D11Collect(HW.profiler_ctx);
