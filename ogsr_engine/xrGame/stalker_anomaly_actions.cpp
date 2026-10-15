@@ -22,7 +22,7 @@
 #include "enemy_manager.h"
 #include "sight_manager.h"
 #include "restricted_object.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "sound_player.h"
 #include "ai/stalker/ai_stalker_space.h"
 
@@ -48,8 +48,7 @@ void CStalkerActionGetOutOfAnomaly::initialize()
     object().movement().set_movement_type(eMovementTypeWalk);
     object().movement().set_mental_state(eMentalStateDanger);
     object().sight().setup(SightManager::eSightTypeCurrentDirection);
-    if (object().memory().enemy().selected() && object().inventory().ActiveItem() && object().best_weapon() &&
-        (object().inventory().ActiveItem()->object().ID() == object().best_weapon()->object().ID()))
+    if (object().memory().enemy().selected() && object().inventory().ActiveItem() && object().best_weapon() && (object().inventory().ActiveItem()->object().ID() == object().best_weapon()->object().ID()))
         object().CObjectHandler::set_goal(eObjectActionIdle, object().best_weapon());
     else
         object().CObjectHandler::set_goal(eObjectActionIdle);

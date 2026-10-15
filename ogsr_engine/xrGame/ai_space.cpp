@@ -18,6 +18,8 @@
 #include "script_engine.h"
 #include "patrol_path_storage.h"
 #include "alife_simulator.h"
+#include "moving_objects.h"
+#include "doors_manager.h"
 
 CAI_Space* g_ai_space = 0;
 
@@ -31,6 +33,8 @@ CAI_Space::CAI_Space()
     m_alife_simulator = 0;
     m_patrol_path_storage = 0;
     m_script_engine = 0;
+	m_moving_objects = 0;
+	m_doors_manager = 0;
 }
 
 void CAI_Space::init()
@@ -39,13 +43,16 @@ void CAI_Space::init()
     m_ef_storage = xr_new<CEF_Storage>();
 
     VERIFY(!m_graph_engine);
-    m_graph_engine = xr_new<CGraphEngine>(1024); // game_graph().header().vertex_count() ???
+    m_graph_engine = xr_new<CGraphEngine>(1024);
 
     VERIFY(!m_cover_manager);
     m_cover_manager = xr_new<CCoverManager>();
 
     VERIFY(!m_patrol_path_storage);
     m_patrol_path_storage = xr_new<CPatrolPathStorage>();
+
+	VERIFY(!m_moving_objects);
+	m_moving_objects = xr_new<::moving_objects>();
 
     VERIFY(!m_script_engine);
     m_script_engine = xr_new<CScriptEngine>();
@@ -59,9 +66,12 @@ CAI_Space::~CAI_Space()
 
     script_engine().unload();
 
-    xr_delete(m_patrol_path_storage);
+	xr_delete(m_doors_manager);
+	xr_delete(m_moving_objects);
 
     xr_delete(m_patrol_path_storage);
+    xr_delete(m_patrol_path_storage);
+
     xr_delete(m_ef_storage);
     xr_delete(m_graph_engine);
 
@@ -110,6 +120,11 @@ void CAI_Space::load(LPCSTR level_name)
 
     m_cover_manager->compute_static_cover();
 
+	m_moving_objects->on_level_load();
+
+	VERIFY(!m_doors_manager);
+	m_doors_manager = xr_new<::doors::manager>(ai().level_graph().header().box());
+
 #ifdef DEBUG
     Msg("* Loading ai space is successfully completed (%.3fs, %7.3f Mb)", timer.GetElapsed_sec(), float(Memory.mem_usage() - mem_usage) / 1048576.0);
 #endif
@@ -119,6 +134,7 @@ void CAI_Space::unload(bool reload)
 {
     xr_delete(m_graph_engine);
     xr_delete(m_level_graph);
+	xr_delete(m_doors_manager);
 
     if (!reload)
     {
@@ -128,10 +144,6 @@ void CAI_Space::unload(bool reload)
         xr_delete(m_patrol_path_storage);
         m_cover_manager->clear();
     }
-
-    // ???
-    /*if (!reload && m_game_graph)
-        m_graph_engine = xr_new<CGraphEngine>(game_graph().header().vertex_count());*/
 }
 
 #ifdef DEBUG

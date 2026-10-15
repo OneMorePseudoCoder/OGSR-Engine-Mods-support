@@ -3,8 +3,6 @@
 #include "DetailManager.h"
 #include "../xrCDB/cl_intersect.h"
 
-
-//--------------------------------------------------- Decompression
 IC float Interpolate(float* base, u32 x, u32 y, u32 size)
 {
     const float f = float(size);
@@ -36,9 +34,7 @@ IC bool InterpolateAndDither(float* alpha255, u32 x, u32 y, u32 sx, u32 sy, u32 
     return c > dither[col][row];
 }
 
-
 #ifdef DEBUG
-//#include "../../Include/xrRender/DebugRender.h"
 #include "dxDebugRender.h"
 static void draw_obb(const Fmatrix& matrix, const u32& color)
 {
@@ -80,7 +76,7 @@ void CDetailManager::cache_Decompress(Slot* S)
     D.vis.box.get_CD(bC, bD);
 
     xrc.box_query(CDB::OPT_FULL_TEST, g_pGameLevel->ObjectSpace.GetStaticModel(), bC, bD);
-    u32 triCount = xrc.r_count();
+    size_t triCount = xrc.r_count();
     CDB::TRI* tris = g_pGameLevel->ObjectSpace.GetStaticTris();
     Fvector* verts = g_pGameLevel->ObjectSpace.GetStaticVerts();
 

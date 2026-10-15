@@ -15,7 +15,7 @@
 #include "danger_manager.h"
 #include "agent_manager.h"
 #include "agent_member_manager.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "cover_evaluators.h"
 #include "ai_space.h"
 #include "cover_manager.h"
@@ -81,10 +81,6 @@ _value_type CStalkerPropertyEvaluatorDangerInDirection::evaluate()
     case CDangerObject::eDangerTypeAttackSound:
     case CDangerObject::eDangerTypeEntityAttacked:
     case CDangerObject::eDangerTypeAttacked:
-        // fakes, temporarily
-        //		case CDangerObject::eDangerTypeBulletRicochet :
-        //		case CDangerObject::eDangerTypeEntityDeath :
-        //		case CDangerObject::eDangerTypeFreshEntityCorpse :
     case CDangerObject::eDangerTypeEnemySound: return (true);
     default: return (false);
     };
@@ -120,7 +116,6 @@ _value_type CStalkerPropertyEvaluatorDangerBySound::evaluate()
         return (false);
 
     return (false);
-    //	return				(CDangerObject::eDangerTypeEnemySound == m_object->memory().danger().selected()->type());
 }
 
 //////////////////////////////////////////////////////////////////////////

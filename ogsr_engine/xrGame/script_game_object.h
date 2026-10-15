@@ -28,26 +28,12 @@ enum EPdaMsg;
 enum ESoundTypes;
 enum ETaskState;
 
-namespace ALife
-{
-enum ERelationType;
-};
-namespace ScriptEntity
-{
-enum EActionType;
-};
-namespace MovementManager
-{
-enum EPathType;
-};
-namespace DetailPathManager
-{
-enum EDetailPathType;
-};
-namespace SightManager
-{
-enum ESightType;
-};
+namespace ALife { enum ERelationType; };
+namespace ScriptEntity { enum EActionType; };
+namespace MovementManager { enum EPathType; };
+namespace DetailPathManager { enum EDetailPathType; };
+namespace SightManager { enum ESightType; };
+namespace doors { class door; }
 
 class NET_Packet;
 class CGameTask;
@@ -86,10 +72,7 @@ enum EMonsterHeadAnimType;
 struct SBoneRotation;
 }; // namespace MonsterSpace
 
-namespace GameObject
-{
-enum ECallbackType;
-};
+namespace GameObject { enum ECallbackType; };
 
 class CGameObject;
 class CScriptHit;
@@ -121,17 +104,12 @@ class CPropertyEvaluator;
 template <typename _object_type, bool _reverse_search, typename _world_operator, typename _condition_evaluator, typename _world_operator_ptr, typename _condition_evaluator_ptr>
 class CActionPlanner;
 
-typedef CActionPlanner<CScriptGameObject, false, CActionBase<CScriptGameObject>, CPropertyEvaluator<CScriptGameObject>, CActionBase<CScriptGameObject>*,
-                       CPropertyEvaluator<CScriptGameObject>*>
-    script_planner;
+typedef CActionPlanner<CScriptGameObject, false, CActionBase<CScriptGameObject>, CPropertyEvaluator<CScriptGameObject>, CActionBase<CScriptGameObject>*, CPropertyEvaluator<CScriptGameObject>*> script_planner;
 #endif
 
 class CScriptGameObject;
 
-namespace SightManager
-{
-enum ESightType;
-}
+namespace SightManager { enum ESightType; }
 
 struct CSightParams
 {
@@ -830,13 +808,25 @@ public:
 
     void setVisible(bool value);
 
+	void register_door();
+	void unregister_door();
+	bool is_door_registered() const;
+	void on_door_is_open();
+	void on_door_is_closed();
+	bool is_door_locked_for_npc() const;
+	void lock_door_for_npc();
+	void unlock_door_for_npc();
+	bool is_door_blocked_by_npc() const;
+
+	doors::door* m_door;
+
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CScriptGameObject)
 #undef script_type_list
 #define script_type_list save_type_list(CScriptGameObject)
 
-    extern void sell_condition(CInifile* ini_file, LPCSTR section);
+extern void sell_condition(CInifile* ini_file, LPCSTR section);
 extern void sell_condition(float friend_factor, float enemy_factor);
 extern void buy_condition(CInifile* ini_file, LPCSTR section);
 extern void buy_condition(float friend_factor, float enemy_factor);

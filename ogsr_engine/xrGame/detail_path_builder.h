@@ -17,8 +17,9 @@ private:
     typedef CMovementManager::CLevelPathManager CLevelPathManager;
     typedef CLevelPathManager::PATH PATH;
 
-private:
+protected:
     CMovementManager* m_object;
+private:
     const PATH* m_level_path;
     u32 m_path_vertex_index;
 
@@ -31,15 +32,20 @@ public:
 
     IC void setup(const PATH& level_path, const u32& path_vertex_index)
     {
-        m_object->m_wait_for_distributed_computation = true;
         m_level_path = &level_path;
         m_path_vertex_index = path_vertex_index;
+	}
+
+	void register_to_process()
+	{
+        m_object->m_wait_for_distributed_computation = true;
         Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this, &CDetailPathBuilder::process_detail));
     }
 
-    void process()
+    void process_impl(bool separate_computing = true)
     {
-        m_object->detail().build_path(*m_level_path, m_path_vertex_index);
+		if (separate_computing)
+			m_object->detail().build_path(*m_level_path, m_path_vertex_index);
 
         m_object->on_build_path();
 
@@ -55,10 +61,14 @@ public:
         process();
     }
 
+	void __stdcall process()
+	{
+		process_impl();
+	}
+
     IC void remove()
     {
         m_object->m_wait_for_distributed_computation = false;
-
         Device.remove_from_seq_parallel(fastdelegate::MakeDelegate(this, &CDetailPathBuilder::process_detail));
     }
 };

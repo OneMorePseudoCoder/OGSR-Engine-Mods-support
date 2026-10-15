@@ -16,7 +16,11 @@
 #include "custommonster.h"
 #endif
 
-CDetailPathManager::CDetailPathManager(CRestrictedObject* object) { m_restricted_object = object; }
+CDetailPathManager::CDetailPathManager(CRestrictedObject* object) 
+{ 
+	m_restricted_object = object;
+	m_dest_vertex_id = u32(-1);
+}
 
 CDetailPathManager::~CDetailPathManager() {}
 
@@ -48,7 +52,7 @@ bool CDetailPathManager::valid() const
         b = b && (fis_zero(m_path[m_last_patrol_point].position.distance_to_xz_sqr(m_corrected_dest_position)));
     else
         b = b && fis_zero(m_path.back().position.distance_to_xz_sqr(m_corrected_dest_position));
-    //		b					= b && fis_zero(m_path.back().position.distance_to_xz_sqr(m_dest_position));
+
     return (b);
 }
 

@@ -16,13 +16,16 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range)
 {
     if (!g_bLoaded)
         return;
+
     if (!S)
         return;
+
     if (S->g_object && S->g_object->getDestroy())
     {
         S->g_object = nullptr;
         return;
     }
+
     if (nullptr == S->feedback)
         return;
 

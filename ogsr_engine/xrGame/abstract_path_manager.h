@@ -37,8 +37,6 @@ protected:
     IC _vertex_id_type intermediate_vertex_id() const;
 
     IC void build_path(const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id);
-    IC const _VertexEvaluator* evaluator() const;
-    IC void make_inactual();
     IC virtual void before_search(const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id);
     IC virtual void after_search();
     IC virtual bool check_vertex(const _vertex_id_type vertex_id) const;
@@ -47,8 +45,10 @@ public:
     IC CAbstractPathManager(CRestrictedObject* object);
     IC virtual ~CAbstractPathManager();
     IC void reinit(const _Graph* graph = 0);
+	IC void make_inactual();
     IC bool actual(const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id) const;
     IC void set_evaluator(_VertexEvaluator* evaluator);
+	IC const _VertexEvaluator* evaluator() const;
     IC void set_dest_vertex(const _vertex_id_type vertex_id);
     IC _vertex_id_type dest_vertex_id() const;
     IC virtual bool completed() const;
@@ -56,6 +56,7 @@ public:
     IC void reset();
     IC virtual void select_intermediate_vertex();
     IC CRestrictedObject& object() const;
+	IC void invalidate_failed_info();
 
 public:
     IC const PATH& path() const;
@@ -68,4 +69,10 @@ public:
 
 template <typename _Graph, typename _VertexEvaluator, typename _vertex_id_type, typename _index_type>
 class CBasePathManager : public CAbstractPathManager<_Graph, _VertexEvaluator, _vertex_id_type, _index_type>
-{};
+{
+private:
+	typedef CAbstractPathManager<_Graph, _VertexEvaluator, _vertex_id_type, _index_type> inherited;
+
+public:
+	IC CBasePathManager(CRestrictedObject* object) : inherited(object) {}
+};

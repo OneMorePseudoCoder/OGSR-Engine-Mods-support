@@ -32,7 +32,7 @@
 #include "ai/stalker/ai_stalker_space.h"
 #include "stalker_planner.h"
 #include "stalker_kill_wounded_planner.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 
 using namespace StalkerSpace;
 using namespace StalkerDecisionSpace;
@@ -83,11 +83,6 @@ void CStalkerCombatPlanner::update()
 
     object().react_on_grenades();
     object().react_on_member_death();
-
-    //	const CEntityAlive				*enemy = object().memory().enemy().selected();
-    //	VERIFY							(enemy);
-    //	const CAI_Stalker				*stalker = smart_cast<const CAI_Stalker*>(enemy);
-    //	m_last_wounded					= stalker && stalker->wounded();
 }
 
 void CStalkerCombatPlanner::initialize()
@@ -130,9 +125,6 @@ void CStalkerCombatPlanner::initialize()
     if (!object().agent_manager().member().combat_members().empty())
         CScriptActionPlanner::m_storage.set_property(eWorldPropertyUseSuddenness, false);
 
-    //  this is possible when i enter combat when it is wait after combat stage
-    //	VERIFY					(object().memory().enemy().selected());
-
     if (m_object->memory().visual().visible_now(m_object->memory().enemy().selected()))
     {
         if (m_object->memory().enemy().selected()->human_being())
@@ -153,12 +145,11 @@ void CStalkerCombatPlanner::finalize()
         return;
 
     object().memory().danger().time_line(Device.dwTimeGlobal + 3000);
+
     if (object().agent_manager().member().registered_in_combat(m_object))
         object().agent_manager().member().unregister_in_combat(m_object);
 
     object().m_clutched_hammer_enabled = false;
-
-    //	object().sound().remove_active_sounds					(eStalkerSoundMaskNoDanger);
 }
 
 void CStalkerCombatPlanner::add_evaluators()
@@ -184,10 +175,8 @@ void CStalkerCombatPlanner::add_evaluators()
     add_evaluator(eWorldPropertyPositionHolded, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyPositionHolded, true, true, "position holded"));
     add_evaluator(eWorldPropertyEnemyDetoured, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyEnemyDetoured, true, true, "enemy detoured"));
     add_evaluator(eWorldPropertyUseSuddenness, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyUseSuddenness, true, true, "use suddenness"));
-    add_evaluator(eWorldPropertyCriticallyWounded,
-                  xr_new<CStalkerPropertyEvaluatorMember>(&object().brain().CStalkerPlanner::m_storage, eWorldPropertyCriticallyWounded, true, true, "critically wounded"));
-    add_evaluator(eWorldPropertyKilledWounded,
-                  xr_new<CStalkerPropertyEvaluatorMember>(&object().brain().CStalkerPlanner::m_storage, eWorldPropertyKilledWounded, true, true, "killed critically wounded"));
+    add_evaluator(eWorldPropertyCriticallyWounded, xr_new<CStalkerPropertyEvaluatorMember>(&object().brain().CStalkerPlanner::m_storage, eWorldPropertyCriticallyWounded, true, true, "critically wounded"));
+    add_evaluator(eWorldPropertyKilledWounded, xr_new<CStalkerPropertyEvaluatorMember>(&object().brain().CStalkerPlanner::m_storage, eWorldPropertyKilledWounded, true, true, "killed critically wounded"));
 }
 
 void CStalkerCombatPlanner::add_actions()

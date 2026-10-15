@@ -19,7 +19,7 @@
 #include "item_manager.h"
 #include "sight_manager.h"
 #include "ai_object_location.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "patrol_path_manager.h"
 #include "sound_player.h"
 #include "ai/stalker/ai_stalker_space.h"
@@ -57,7 +57,6 @@ void CStalkerActionNoALife::initialize()
     m_stop_weapon_handling_time = Device.dwTimeGlobal;
     if (object().inventory().ActiveItem() && object().best_weapon() && (object().inventory().ActiveItem()->object().ID() == object().best_weapon()->object().ID()))
         m_stop_weapon_handling_time += ::Random32.random(30000) + 30000;
-
 #else
     object().movement().set_mental_state(eMentalStateDanger);
     object().movement().set_movement_type(eMovementTypeStand);
@@ -68,7 +67,6 @@ void CStalkerActionNoALife::initialize()
     object().movement().set_nearest_accessible_position();
     object().sight().setup(CSightAction(SightManager::eSightTypeCurrentDirection));
     object().CObjectHandler::set_goal(eObjectActionFire1, object().inventory().m_slots[1].m_pIItem, 0, 1, 2500, 3000);
-//	object().movement().patrol().set_path		("way_0000",PatrolPathManager::ePatrolStartTypeNearest);
 #endif
 }
 
@@ -96,8 +94,6 @@ void CStalkerActionNoALife::execute()
             object().CObjectHandler::set_goal(eObjectActionStrapped, object().best_weapon());
     else
         object().CObjectHandler::set_goal(eObjectActionIdle, object().best_weapon());
-#else
-//	object().movement().set_movement_type		(eMovementTypeRun);
 #endif
 }
 
@@ -143,16 +139,7 @@ void CStalkerActionGatherItems::execute()
         return;
 
     u32 level_vertex_id = object().memory().item().selected()->ai_location().level_vertex_id();
-    //	if (object().movement().restrictions().accessible(level_vertex_id)) {
     object().movement().set_level_dest_vertex(level_vertex_id);
     object().movement().set_desired_position(&object().memory().item().selected()->Position());
-    //	}
-    //	else {
-    //		object().movement().set_nearest_accessible_position	(
-    //			object().memory().item().selected()->Position(),
-    //			level_vertex_id
-    //		);
-    //	}
-
     object().sight().setup(SightManager::eSightTypePosition, &object().memory().item().selected()->Position());
 }

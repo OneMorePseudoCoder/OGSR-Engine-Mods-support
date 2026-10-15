@@ -29,6 +29,7 @@ class CSoundPlayer;
 class CAI_Stalker;
 class CDangerObject;
 class CCustomMonsterScript;
+class moving_object;
 
 class CCustomMonster : public CEntityAlive, public CScriptEntity, public Feel::Vision, public Feel::Sound, public Feel::Touch
 {
@@ -294,13 +295,21 @@ public:
     IC bool critically_wounded();
     IC const u32& critical_wound_type() const;
 
-    //////////////////////////////////////////////////////////////////////////
 private:
     bool m_invulnerable;
 
 public:
     IC void invulnerable(const bool& invulnerable);
     IC bool invulnerable() const;
+
+private:
+    moving_object* m_moving_object;
+
+public:
+    IC moving_object* get_moving_object() const;
+    virtual void spatial_move();
+    virtual Fvector predict_position(const float& time_to_check) const;
+    virtual Fvector target_position() const;
 
 protected:
     bool m_update_rotation_on_frame;

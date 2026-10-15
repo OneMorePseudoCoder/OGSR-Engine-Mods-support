@@ -185,16 +185,13 @@ public:
 
     ICF CBoneInstance& LL_GetBoneInstance(u16 bone_id)
     {
-        //Msg("visual_name: %s, bone_id: %d", dbg_name.c_str(), bone_id);
-
         ASSERT_FMT(bone_id < LL_BoneCount(), "visual_name: %s, bone_id: %d", dbg_name.c_str(), bone_id);
         R_ASSERT(bone_instances);
         return bone_instances[bone_id];
     }
+
     ICF const CBoneInstance& LL_GetBoneInstance(u16 bone_id) const
     {
-        //Msg("visual_name: %s, bone_id: %d", dbg_name.c_str(), bone_id);
-
         ASSERT_FMT(bone_id < LL_BoneCount(), "visual_name: %s, bone_id: %d", dbg_name.c_str(), bone_id);
         R_ASSERT(bone_instances);
         return bone_instances[bone_id];
@@ -215,6 +212,7 @@ public:
         CBoneData& bd = *((*bones)[bone_id]);
         return bd;
     }
+
     CBoneData* LL_GetBoneData(u16 bone_id)
     {
         ASSERT_FMT(bone_id < LL_BoneCount(), "visual_name: %s, bone_id: %d", dbg_name.c_str(), bone_id);
@@ -226,8 +224,9 @@ public:
         CBoneData* bd = ((*bones)[bone_id]);
         return bd;
     }
+
     u16 LL_BoneCount() const { return static_cast<u16>(bones->size()); }
-    u16 LL_VisibleBoneCount(); /*{ return visimask.count(); }*/
+    u16 LL_VisibleBoneCount();
     ICF Fmatrix& LL_GetTransform(u16 bone_id) { return LL_GetBoneInstance(bone_id).mTransform; }
     ICF const Fmatrix& LL_GetTransform(u16 bone_id) const { return LL_GetBoneInstance(bone_id).mTransform; }
     ICF Fmatrix& LL_GetTransform_R_old(u16 bone_id) { return LL_GetBoneInstance(bone_id).mRenderTransform_old; }

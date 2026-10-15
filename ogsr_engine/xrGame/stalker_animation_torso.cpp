@@ -15,7 +15,7 @@
 #include "clsid_game.h"
 #include "object_handler_space.h"
 #include "object_handler_planner.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h" 
 #include "entitycondition.h"
 #include "stalker_animation_data.h"
 #include "stalker_animation_manager_impl.h"
@@ -41,7 +41,7 @@ void CStalkerAnimationManager::torso_play_callback(CBlend* blend)
 MotionID CStalkerAnimationManager::no_object_animation(const EBodyState& body_state) const
 {
     const CAI_Stalker& stalker = object();
-    const CStalkerMovementManager& movement = stalker.movement();
+    const stalker_movement_manager_obstacles& movement = stalker.movement();
     const xr_vector<CAniVector>& animation = m_data_storage->m_part_animations.A[body_state].m_torso.A[0].A;
 
     if (eMentalStateFree == movement.mental_state() && eBodyStateStand == body_state)
@@ -72,7 +72,7 @@ MotionID CStalkerAnimationManager::unknown_object_animation(u32 slot, const EBod
 
     // stalker shortcuts
     const CAI_Stalker& stalker = object();
-    const CStalkerMovementManager& movement = stalker.movement();
+    const stalker_movement_manager_obstacles& movement = stalker.movement();
     u32 id = stalker.CObjectHandler::planner().current_action_state_id();
 
     switch (id)
@@ -84,7 +84,8 @@ MotionID CStalkerAnimationManager::unknown_object_animation(u32 slot, const EBod
     case ObjectHandlerSpace::eWorldOperatorAimingReady1:
     case ObjectHandlerSpace::eWorldOperatorAimingReady2:
     case ObjectHandlerSpace::eWorldOperatorQueueWait1:
-    case ObjectHandlerSpace::eWorldOperatorQueueWait2: {
+    case ObjectHandlerSpace::eWorldOperatorQueueWait2: 
+	{
         if (standing())
             return (animation[6].A[0]);
 
@@ -137,7 +138,8 @@ MotionID CStalkerAnimationManager::weapon_animation(u32 slot, const EBodyState& 
 
     switch (m_weapon->GetState())
     {
-    case CWeapon::eReload: {
+    case CWeapon::eReload: 
+	{
         switch (m_weapon->GetReloadState())
         {
         case CWeapon::eSubstateReloadBegin: return (animation[4].A[0]);
@@ -154,18 +156,19 @@ MotionID CStalkerAnimationManager::weapon_animation(u32 slot, const EBodyState& 
     case CWeapon::eHiding: return (torso().select(animation[3].A));
     case CWeapon::eHidden: return (no_object_animation(body_state));
     case CWeapon::eFire:
-    case CWeapon::eFire2: {
+    case CWeapon::eFire2: 
+	{
         CAI_Stalker& stalker = object();
-        CStalkerMovementManager& movement = stalker.movement();
+        stalker_movement_manager_obstacles& movement = stalker.movement();
         if (standing())
             return (animation[1].A[0]);
 
         if (eMovementTypeWalk == movement.movement_type())
         {
             if ((body_state == eBodyStateStand) && (slot == 2) && need_look_back())
-                return (animation[13 + m_looking_back - 1].A[1 /**1/**/]);
+                return (animation[13 + m_looking_back - 1].A[1]);
             else
-                return (animation[1].A[0 /**2/**/]);
+                return (animation[1].A[0]);
         }
 
         if ((body_state == eBodyStateStand) && (slot == 2) && need_look_back())

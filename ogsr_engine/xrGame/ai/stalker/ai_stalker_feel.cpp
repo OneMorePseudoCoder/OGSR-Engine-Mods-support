@@ -12,7 +12,7 @@
 #include "../../memory_manager.h"
 #include "../../visual_memory_manager.h"
 #include "../../sight_manager.h"
-#include "../../stalker_movement_manager.h"
+#include "../../stalker_movement_manager_obstacles.h" 
 #include "../../stalker_animation_manager.h"
 #include "../../holder_custom.h"
 
@@ -34,7 +34,7 @@ BOOL CAI_Stalker::feel_vision_isRelevant(CObject* O)
     CInventoryItem* I = smart_cast<CInventoryItem*>(O);
     if (!E && !I)
         return (FALSE);
-    //	if (E && (E->g_Team() == g_Team()))			return FALSE;
+
     return (TRUE);
 }
 

@@ -24,7 +24,7 @@
 CRestrictedObject::~CRestrictedObject() {}
 
 template <typename StrType>
-static void construct_string(StrType& result, xr_vector<ALife::_OBJECT_ID>& restrictions, const CSE_ALifeMonsterAbstract* monster)
+static void construct_string(StrType& result, u32 const result_size, xr_vector<ALife::_OBJECT_ID>& restrictions, const CSE_ALifeMonsterAbstract* monster)
 {
     u32 count = strlen(result) ? _GetItemCount(result) : 0;
 
@@ -36,9 +36,9 @@ static void construct_string(StrType& result, xr_vector<ALife::_OBJECT_ID>& rest
             if (ai().game_graph().vertex(object->m_tGraphID)->level_id() == ai().level_graph().level_id())
             {
                 if (count)
-                    strcat_s(result, ",");
+                    xr_strcat(result, result_size, ",");
 
-                strcat_s(result, object->name_replace());
+                xr_strcat(result, result_size, object->name_replace());
                 ++count;
             }
 
@@ -62,13 +62,13 @@ BOOL CRestrictedObject::net_Spawn(CSE_Abstract* data)
 
     string4096 temp0{}, temp1{};
 
-    strcpy_s(temp0, *monster->m_out_space_restrictors);
-    strcpy_s(temp1, *monster->m_in_space_restrictors);
+    xr_strcpy(temp0, *monster->m_out_space_restrictors);
+    xr_strcpy(temp1, *monster->m_in_space_restrictors);
 
     if (ai().get_alife())
     {
-        construct_string(temp0, monster->m_dynamic_out_restrictions, monster);
-        construct_string(temp1, monster->m_dynamic_in_restrictions, monster);
+        construct_string(temp0, sizeof(temp0), monster->m_dynamic_out_restrictions, monster);
+        construct_string(temp1, sizeof(temp1), monster->m_dynamic_in_restrictions, monster);
     }
 
     Level().space_restriction_manager().restrict(monster->ID, temp0, temp1);
@@ -83,7 +83,7 @@ void CRestrictedObject::net_Destroy() { Level().space_restriction_manager().unre
 u32 CRestrictedObject::accessible_nearest(const Fvector& position, Fvector& result) const
 {
     START_PROFILE("Restricted Object/Accessible Nearest");
-    VERIFY(!accessible(position));
+	VERIFY2(!accessible(position), make_string("[%s] [%f][%f][%f]", object().cName().c_str(), VPUSH(position)));
     return (Level().space_restriction_manager().accessible_nearest(object().ID(), position, result));
     STOP_PROFILE;
 }
@@ -233,8 +233,7 @@ IC void CRestrictedObject::remove_object_restriction(ALife::_OBJECT_ID id, const
 }
 
 template <typename P, const bool value, typename StrType>
-static void construct_restriction_string(StrType& temp_restrictions, const xr_vector<ALife::_OBJECT_ID>& restrictions, const shared_str& current_restrictions, const P& p,
-                                         CRestrictedObject* RObj)
+static void construct_restriction_string(StrType& temp_restrictions, const xr_vector<ALife::_OBJECT_ID>& restrictions, const shared_str& current_restrictions, const P& p, CRestrictedObject* RObj)
 {
     xr_vector<xr_string> cur_restrs;
     const int cnt = _GetItemCount(current_restrictions.c_str());
@@ -272,8 +271,7 @@ static void construct_restriction_string(StrType& temp_restrictions, const xr_ve
                 s += ",";
             s += it;
         }
-        ASSERT_FMT(s.length() < std::size(temp_restrictions), "!![%s]: resulted string too long: object[%s] temp_restrictions_size[%u] s.length[%u]", __FUNCTION__,
-                   RObj->object().cName().c_str(), std::size(temp_restrictions), s.length());
+        ASSERT_FMT(s.length() < std::size(temp_restrictions), "!![%s]: resulted string too long: object[%s] temp_restrictions_size[%u] s.length[%u]", __FUNCTION__, RObj->object().cName().c_str(), std::size(temp_restrictions), s.length());
         strcpy_s(temp_restrictions, s.c_str());
     }
 }

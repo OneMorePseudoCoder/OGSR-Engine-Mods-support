@@ -40,3 +40,5 @@ IC void CStalkerAnimationManager::clear_script_animations()
 }
 
 IC bool CStalkerAnimationManager::non_script_need_update() const { return (m_global.need_update() || m_head.need_update() || m_torso.need_update() || m_legs.need_update()); }
+
+IC const float &CStalkerAnimationManager::target_speed() const { return (m_last_non_zero_speed); }

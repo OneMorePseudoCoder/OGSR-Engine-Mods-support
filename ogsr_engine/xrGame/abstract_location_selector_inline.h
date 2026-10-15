@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 #include "ai_space.h"
 
 #define TEMPLATE_SPECIALIZATION template <typename _Graph, typename _VertexEvaluator, typename _vertex_id_type>

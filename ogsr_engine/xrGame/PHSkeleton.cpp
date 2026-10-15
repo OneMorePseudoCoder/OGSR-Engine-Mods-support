@@ -16,6 +16,7 @@
 #include "game_graph.h"
 #include "PHDestroyable.h"
 #include "PHElement.h"
+
 #define F_MAX 3.402823466e+38F
 
 u32 CPHSkeleton::existence_time = 5000;
@@ -347,7 +348,7 @@ void CPHSkeleton::CopySpawnInit()
         SetAutoRemove();
 }
 
-void CPHSkeleton::SetAutoRemove(u32 time /*=CSE_PHSkeleton::existence_time*/)
+void CPHSkeleton::SetAutoRemove(u32 time)
 {
     b_removing = true;
     m_remove_time = Device.dwTimeGlobal + iFloor(time / phTimefactor);
@@ -364,16 +365,16 @@ void CPHSkeleton::RecursiveBonesCheck(u16 id)
     const CPhysicsShellHolder* obj = PPhysicsShellHolder();
     IKinematics* K = smart_cast<IKinematics*>(obj->Visual());
     CBoneData& BD = K->LL_GetData(u16(id));
-    //////////////////////////////////////////
+
     VisMask mask;
     mask = K->LL_GetBonesVisible();
-    ///////////////////////////////////////////
+
     if (mask.is(id) && !(BD.shape.flags.is(SBoneShape::sfRemoveAfterBreak)))
     {
         removable = false;
         return;
     }
-    ///////////////////////////////////////////////
+
     for (vecBonesIt it = BD.children.begin(); BD.children.end() != it; ++it)
     {
         RecursiveBonesCheck((*it)->GetSelfID());

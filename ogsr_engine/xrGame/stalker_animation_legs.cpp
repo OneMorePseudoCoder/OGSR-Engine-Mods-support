@@ -10,7 +10,7 @@
 #include "stalker_animation_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "sight_manager.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "stalker_animation_data.h"
 
 #include "weapon.h"
@@ -27,12 +27,7 @@ const u32 direction_switch_interval = 500;
 
 const u32 need_look_back_time_delay = 0;
 
-const float direction_angles[] = {
-    0.f, //	eMovementDirectionForward
-    PI, //	eMovementDirectionBackward
-    PI_DIV_2, //	eMovementDirectionLeft
-    -PI_DIV_2 //	eMovementDirectionRight
-};
+const float direction_angles[] = { 0.f, PI, PI_DIV_2, -PI_DIV_2 };
 
 void CStalkerAnimationManager::legs_play_callback(CBlend* blend)
 {
@@ -101,7 +96,7 @@ void CStalkerAnimationManager::legs_assign_direction(float switch_factor, const 
 void CStalkerAnimationManager::legs_process_direction(float yaw)
 {
     float switch_factor = legs_switch_factor();
-    CStalkerMovementManager& movement = object().movement();
+    stalker_movement_manager_obstacles& movement = object().movement();
     float head_current = movement.head_orientation().current.yaw;
     float left = left_angle(yaw, head_current);
     float test_angle_forward = right_forward_angle;
@@ -111,6 +106,7 @@ void CStalkerAnimationManager::legs_process_direction(float yaw)
         test_angle_forward = left_forward_angle;
         test_angle_backward = right_forward_angle;
     }
+
     test_angle_backward = PI - test_angle_backward;
 
     float difference = angle_difference(yaw, head_current);
@@ -134,14 +130,14 @@ MotionID CStalkerAnimationManager::legs_move_animation()
 {
     m_no_move_actual = false;
 
-    CStalkerMovementManager& movement = object().movement();
+    stalker_movement_manager_obstacles& movement = object().movement();
 
     VERIFY((movement.body_state() == eBodyStateStand) || (movement.mental_state() != eMentalStateFree));
 
     if (eMentalStateDanger != movement.mental_state())
     {
-        m_current_speed = movement.speed(eMovementDirectionForward);
-
+		m_target_speed = movement.speed(eMovementDirectionForward);
+		m_last_non_zero_speed = m_target_speed;
         return (m_data_storage->m_part_animations.A[body_state()].m_movement.A[movement.movement_type()].A[eMovementDirectionForward].A[1]);
     }
 
@@ -149,7 +145,6 @@ MotionID CStalkerAnimationManager::legs_move_animation()
     object().sight().GetDirectionAngles(yaw, pitch);
 
     yaw = angle_normalize_signed(-yaw);
-    ;
     legs_process_direction(yaw);
 
     float body_current = movement.body_orientation().current.yaw;
@@ -161,6 +156,7 @@ MotionID CStalkerAnimationManager::legs_move_animation()
         test_angle_forward = left_forward_angle;
         test_angle_backward = right_forward_angle;
     }
+
     test_angle_backward = PI - test_angle_backward;
 
     EMovementDirection speed_direction;
@@ -189,13 +185,13 @@ MotionID CStalkerAnimationManager::legs_move_animation()
         if (!legs_switch_factor())
         {
             m_previous_speed = 0.f;
-            m_current_speed = 0.f;
+            m_target_speed = 0.f;
         }
 
         m_previous_speed_direction = speed_direction;
     }
 
-    m_current_speed = movement.speed(speed_direction);
+    m_target_speed = movement.speed(speed_direction);
 
     return (m_data_storage->m_part_animations.A[body_state()].m_movement.A[movement.movement_type()].A[speed_direction].A[0]);
 }
@@ -203,7 +199,7 @@ MotionID CStalkerAnimationManager::legs_move_animation()
 MotionID CStalkerAnimationManager::legs_no_move_animation()
 {
     m_previous_speed = 0.f;
-    m_current_speed = 0.f;
+    m_target_speed = 0.f;
 
     if (!m_no_move_actual)
     {
@@ -215,12 +211,11 @@ MotionID CStalkerAnimationManager::legs_no_move_animation()
     }
 
     m_change_direction_time = Device.dwTimeGlobal;
-    m_current_speed = 0.f;
 
     EBodyState body_state = this->body_state();
     const xr_vector<MotionID>& animation = m_data_storage->m_part_animations.A[body_state].m_in_place->A;
 
-    CStalkerMovementManager& movement = object().movement();
+    stalker_movement_manager_obstacles& movement = object().movement();
     const SBoneRotation& body_orientation = movement.body_orientation();
     float current = body_orientation.current.yaw;
     float target = body_orientation.target.yaw;

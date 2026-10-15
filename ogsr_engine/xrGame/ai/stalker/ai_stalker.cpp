@@ -40,7 +40,7 @@
 #include "../../memory_manager.h"
 #include "../../sight_manager.h"
 #include "../../ai_object_location.h"
-#include "../../stalker_movement_manager.h"
+#include "../../stalker_movement_manager_obstacles.h" 
 #include "../../entitycondition.h"
 #include "script_engine.h"
 #include "ai_stalker_impl.h"
@@ -874,7 +874,10 @@ void CAI_Stalker::net_Relcase(CObject* O)
     m_pPhysics_support->in_NetRelcase(O);
 }
 
-CMovementManager* CAI_Stalker::create_movement_manager() { return (m_movement_manager = xr_new<CStalkerMovementManager>(this)); }
+CMovementManager* CAI_Stalker::create_movement_manager()
+{ 
+	return (m_movement_manager = xr_new<stalker_movement_manager_obstacles>(this));
+}
 
 CSound_UserDataVisitor* CAI_Stalker::create_sound_visitor() { return (m_sound_user_data_visitor = xr_new<CStalkerSoundDataVisitor>(this)); }
 

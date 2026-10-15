@@ -17,6 +17,9 @@ CPhysicObject::CPhysicObject(void)
     m_type = epotBox;
     m_mass = 10.f;
     m_collision_hit_callback = NULL;
+	m_just_after_spawn = false;
+	m_activated = false;
+	m_is_ai_obstacle = true;
 }
 
 CPhysicObject::~CPhysicObject(void) {}
@@ -37,7 +40,6 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
     case epotFixedChain:
     case epotFreeChain:
     case epotSkeleton: collidable.model = xr_new<CCF_Skeleton>(this); break;
-
     default: NODEFAULT;
     }
 
@@ -57,6 +59,17 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
 
     PHObjectPositionUpdate();
 
+    if (Visual()) 
+	{
+		IKinematics* K = Visual()->dcast_PKinematics();
+		VERIFY(K);
+		u16 door_bone = K->LL_BoneID("door");
+		if (door_bone != BI_NONE)
+			m_is_ai_obstacle = false;
+    }
+
+    m_is_ai_obstacle = READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", m_is_ai_obstacle);
+
     // приложить небольшую силу для того, чтобы объект начал падать
     PPhysicsShell()->applyImpulse(Fvector().set(0.f, -1.0f, 0.f), 0.5f * PPhysicsShell()->getMass());
 
@@ -68,11 +81,11 @@ void CPhysicObject::SpawnInitPhysics(CSE_Abstract* D)
     CreatePhysicsShell(D);
     RunStartupAnim(D);
 }
+
 void CPhysicObject::RunStartupAnim(CSE_Abstract* D)
 {
     if (Visual() && smart_cast<IKinematics*>(Visual()))
     {
-        //		CSE_PHSkeleton	*po	= smart_cast<CSE_PHSkeleton*>(D);
         IKinematicsAnimated* PKinematicsAnimated = NULL;
         R_ASSERT(Visual() && smart_cast<IKinematics*>(Visual()));
         PKinematicsAnimated = smart_cast<IKinematicsAnimated*>(Visual());
@@ -87,6 +100,7 @@ void CPhysicObject::RunStartupAnim(CSE_Abstract* D)
         smart_cast<IKinematics*>(Visual())->CalculateBones();
     }
 }
+
 void CPhysicObject::net_Destroy()
 {
 #ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
@@ -105,6 +119,7 @@ void CPhysicObject::net_Save(NET_Packet& P)
     inherited::net_Save(P);
     CPHSkeleton::SaveNetState(P);
 }
+
 void CPhysicObject::CreatePhysicsShell(CSE_Abstract* e)
 {
     CSE_ALifeObjectPhysic* po = smart_cast<CSE_ALifeObjectPhysic*>(e);
@@ -134,6 +149,7 @@ void CPhysicObject::shedule_Update(u32 dt)
     inherited::shedule_Update(dt);
     CPHSkeleton::Update(dt);
 }
+
 void CPhysicObject::UpdateCL()
 {
     inherited::UpdateCL();
@@ -149,6 +165,7 @@ void CPhysicObject::UpdateCL()
 
     PHObjectPositionUpdate();
 }
+
 void CPhysicObject::PHObjectPositionUpdate()
 {
     if (m_pPhysicsShell)
@@ -207,7 +224,8 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
     IKinematics* pKinematics = smart_cast<IKinematics*>(Visual());
     switch (m_type)
     {
-    case epotBox: {
+    case epotBox: 
+	{
         m_pPhysicsShell = P_build_SimpleShell(this, m_mass, !po->_flags.test(CSE_ALifeObjectPhysic::flActive));
         {
             // для SimpleShell нет привязки к костям и вообще не работают параметры из секцции collide
@@ -234,22 +252,21 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
     }
     break;
     case epotFixedChain:
-    case epotFreeChain: {
+    case epotFreeChain: 
+	{
         m_pPhysicsShell = P_create_Shell();
         m_pPhysicsShell->set_Kinematics(pKinematics);
         AddElement(0, pKinematics->LL_GetBoneRoot()); //-V595
         m_pPhysicsShell->setMass1(m_mass);
     }
     break;
-
-    case epotSkeleton: {
-        // pKinematics->LL_SetBoneRoot(0);
+    case epotSkeleton: 
+	{
         CreateSkeleton(po);
     }
     break;
-
-    default: {
-    }
+    default: 
+	{}
     break;
     }
 
@@ -261,13 +278,11 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
         disable_params.Load(pKinematics->LL_UserData());
         m_pPhysicsShell->set_DisableParams(disable_params);
     }
-    // m_pPhysicsShell->SetAirResistance(0.002f, 0.3f);
 }
 
-BOOL CPhysicObject::net_SaveRelevant()
-{
-    return TRUE; //! m_flags.test(CSE_ALifeObjectPhysic::flSpawnCopy);
-}
+bool CPhysicObject::is_ai_obstacle() const { return m_is_ai_obstacle; }
+
+BOOL CPhysicObject::net_SaveRelevant() { return TRUE; }
 
 BOOL CPhysicObject::UsedAI_Locations() { return (FALSE); }
 
@@ -279,9 +294,77 @@ void CPhysicObject::InitServerObject(CSE_Abstract* D)
         return;
     l_tpALifePhysicObject->type = u32(m_type);
 }
+
 ICollisionHitCallback* CPhysicObject::get_collision_hit_callback() { return m_collision_hit_callback; }
+
 void CPhysicObject::set_collision_hit_callback(ICollisionHitCallback* cc)
 {
     xr_delete(m_collision_hit_callback);
     m_collision_hit_callback = cc;
+}
+
+bool CPhysicObject::get_door_vectors(Fvector& closed, Fvector& open) const
+{
+	VERIFY(Visual());
+	IKinematics *K = Visual()->dcast_PKinematics();
+	VERIFY(K);
+	u16 door_bone = K->LL_BoneID("door");
+	if (door_bone == BI_NONE)
+		return false;
+	const CBoneData &bd = K->LL_GetData(door_bone);
+	const SBoneShape &shape = bd.shape;
+	if (shape.type != SBoneShape::stBox)
+		return false;
+
+	if (shape.flags.test(SBoneShape::sfNoPhysics))
+		return false;
+	
+	Fmatrix start_bone_pos;
+	K->Bone_GetAnimPos(start_bone_pos, door_bone, u8(-1), true);
+	
+	Fmatrix start_pos = Fmatrix().mul_43(XFORM(), start_bone_pos);
+	
+	const Fobb &box = shape.box;
+
+	Fvector center_pos;
+	start_pos.transform_tiny(center_pos, box.m_translate);
+
+	Fvector door_dir;
+	start_pos.transform_dir(door_dir, box.m_rotate.i);
+	Fvector door_dir_local = box.m_rotate.i;
+	//Fvector door_dir_bone;
+	//start_bone_pos.transform_dir(door_dir_bone, box.m_rotate.i);
+
+	const Fvector det_vector = Fvector().sub(center_pos, start_pos.c);
+	
+	if (door_dir.dotproduct(det_vector) < 0.f)
+	{
+		door_dir.invert();
+		door_dir_local.invert();
+		//door_dir_bone.invert();
+	}
+
+	const SJointIKData &joint = bd.IK_data;
+
+	if (joint.type != jtJoint)
+		return false;
+
+	const Fvector2& limits = joint.limits[1].limit;
+
+	//if (limits.y < EPS) //limits.y - limits.x < EPS
+	//	return false;
+
+	if (M_PI - limits.y < EPS && M_PI + limits.x < EPS)
+		return false;
+
+	Fmatrix to_hi = Fmatrix().rotateY(-limits.x); 
+	to_hi.transform_dir(open, door_dir_local);
+
+	Fmatrix to_lo = Fmatrix().rotateY(-limits.y);
+	to_lo.transform_dir(closed, door_dir_local);
+
+	start_pos.transform_dir(open);
+	start_pos.transform_dir(closed);
+
+	return true;
 }

@@ -46,6 +46,7 @@
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
 #include "client_spawn_manager.h"
+#include "moving_object.h"
 
 #ifdef DEBUG
 #include "debug_renderer.h"
@@ -80,6 +81,7 @@ CCustomMonster::CCustomMonster()
     m_invulnerable = false;
     m_visible_for_zones = true;
     m_anomaly_detector = xr_new<CAnomalyDetector>(this);
+	m_moving_object = 0;
 }
 
 CCustomMonster::~CCustomMonster()
@@ -98,8 +100,8 @@ CCustomMonster::~CCustomMonster()
     Msg("dumping client spawn manager stuff for object with id %d", ID());
     Level().client_spawn_manager().dump(ID());
 #endif // DEBUG
-	if ( g_pGameLevel )
-	  Level().client_spawn_manager().clear(ID());
+	if (g_pGameLevel)
+		Level().client_spawn_manager().clear(ID());
 }
 
 void CCustomMonster::Load(LPCSTR section)
@@ -246,9 +248,7 @@ void CCustomMonster::shedule_Update(u32 DT)
     m_dwCurrentTime = Device.dwTimeGlobal;
 
     VERIFY(_valid(Position()));
-    if (Remote())
-    {}
-    else
+    if (!Remote())
     {
         // here is monster AI call
         m_fTimeUpdateDelta = dt;
@@ -597,6 +597,8 @@ BOOL CCustomMonster::net_Spawn(CSE_Abstract* DC)
     shedule.t_min = 100;
     shedule.t_max = 250; // This equaltiy is broken by Dima :-( // 30 * NET_Latency / 4;
 
+	m_moving_object = xr_new<moving_object>(this);
+
     return TRUE;
 }
 
@@ -625,6 +627,8 @@ void CCustomMonster::net_Destroy()
 #ifdef DEBUG
     DBG().on_destroy_object(this);
 #endif
+
+	xr_delete(m_moving_object);
 }
 
 BOOL CCustomMonster::UsedAI_Locations() { return (TRUE); }
@@ -743,6 +747,7 @@ void CCustomMonster::net_Relcase(CObject* object)
 {
     inherited::net_Relcase(object);
     memory().remove_links(object);
+	movement().remove_links(object);
 }
 
 void CCustomMonster::set_fov(float new_fov)
@@ -945,6 +950,19 @@ void CCustomMonster::OnRender()
         smart_cast<IKinematics*>(Visual())->DebugRender(XFORM());
 }
 #endif // DEBUG
+
+void CCustomMonster::spatial_move()
+{
+    inherited::spatial_move();
+    get_moving_object()->on_object_move();
+}
+
+Fvector CCustomMonster::predict_position(const float& time_to_check) const
+{
+    return (movement().predict_position(time_to_check));
+}
+
+Fvector CCustomMonster::target_position() const { return (movement().target_position()); }
 
 void CCustomMonster::create_anim_mov_ctrl(CBlend* b)
 {

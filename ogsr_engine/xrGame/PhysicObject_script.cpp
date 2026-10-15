@@ -3,5 +3,12 @@
 
 using namespace luabind;
 
-
-void CPhysicObject::script_register(lua_State* L) { module(L)[class_<CPhysicObject, CGameObject>("CPhysicObject").def(constructor<>())]; }
+void CPhysicObject::script_register(lua_State* L) 
+{ 
+	module(L)
+	[
+		class_<CPhysicObject, CGameObject>("CPhysicObject")
+		.def(constructor<>())
+		.def("set_ai_obstacle", &CPhysicObject::set_ai_obstacle)
+	]; 
+}

@@ -10,7 +10,7 @@
 #include "stalker_animation_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "sight_manager.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "game_object_space.h"
 #include "effectorshot.h"
 
@@ -62,8 +62,7 @@ void _detail::callback(CBoneInstance* B)
     VERIFY(_valid(A->movement().body_orientation().current.yaw));
     VERIFY(_valid(A->NET_Last.o_torso.pitch));
 
-    float yaw =
-        angle_normalize_signed(-yaw_factor * angle_normalize_signed(A->movement().head_orientation().current.yaw + effector_yaw - (A->movement().body_orientation().current.yaw)));
+    float yaw = angle_normalize_signed(-yaw_factor * angle_normalize_signed(A->movement().head_orientation().current.yaw + effector_yaw - (A->movement().body_orientation().current.yaw)));
     float pitch = angle_normalize_signed(-pitch_factor * angle_normalize_signed(A->NET_Last.o_torso.pitch + effector_pitch));
     VERIFY(_valid(yaw));
     VERIFY(_valid(pitch));

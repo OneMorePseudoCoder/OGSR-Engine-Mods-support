@@ -75,7 +75,7 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect(float x1, float y1, /*
      */
 
     if ((r3 * r4 > EPS) && !fis_zero(r3, EPS_L) && !fis_zero(r4, EPS_L))
-        return (eLineIntersectionNone);
+        return (LevelGraph::eLineIntersectionNone);
 
     /* Compute a2, b2, c2 */
 
@@ -94,18 +94,18 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect(float x1, float y1, /*
      */
 
     if ((r1 * r2 > EPS) && !fis_zero(r1, EPS_L) && !fis_zero(r2, EPS_L))
-        return (eLineIntersectionNone);
+        return LevelGraph::eLineIntersectionNone;
 
     // Check for equality
     if (fis_zero(r1 * r2) && fis_zero(r3 * r4))
-        return eLineIntersectionEqual;
+        return LevelGraph::eLineIntersectionEqual;
 
     /* Line segments intersect: compute intersection point.
      */
 
     denom = a1 * b2 - a2 * b1;
     if (fis_zero(denom))
-        return (eLineIntersectionCollinear);
+        return LevelGraph::eLineIntersectionCollinear;
 
     num = b1 * c2 - b2 * c1;
     *x = num / denom;
@@ -113,7 +113,7 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect(float x1, float y1, /*
     num = a2 * c1 - a1 * c2;
     *y = num / denom;
 
-    return (eLineIntersectionIntersect);
+    return LevelGraph::eLineIntersectionIntersect;
 } /* lines_intersect */
 
 IC CLevelGraph::ELineIntersections CLevelGraph::intersect_no_check(float x1, float y1, /* First line segment */
@@ -164,7 +164,7 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect_no_check(float x1, flo
     {
         *x = x4;
         *y = y4;
-        return (eLineIntersectionEqual);
+        return LevelGraph::eLineIntersectionEqual;
     }
 
     /* Line segments intersect: compute intersection point.
@@ -175,7 +175,7 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect_no_check(float x1, flo
     {
         *x = x4;
         *y = y4;
-        return (eLineIntersectionEqual);
+        return LevelGraph::eLineIntersectionEqual;
     }
 
     num = b1 * c2 - b2 * c1;
@@ -184,7 +184,7 @@ IC CLevelGraph::ELineIntersections CLevelGraph::intersect_no_check(float x1, flo
     num = a2 * c1 - a1 * c2;
     *y = num / denom;
 
-    return (eLineIntersectionIntersect);
+    return LevelGraph::eLineIntersectionIntersect;
 } /* lines_intersect */
 
 IC bool CLevelGraph::similar(const Fvector& tPoint0, const Fvector& tPoint1) const { return ((_abs(tPoint0.x - tPoint1.x) < EPS_L) && (_abs(tPoint0.z - tPoint1.z) < EPS_L)); }
@@ -342,6 +342,7 @@ IC float CLevelGraph::nearest(Fvector& Dest, const Fvector& P, const Fvector& A,
         Dest.set(A);
         return P.distance_to_sqr(Dest);
     }
+
     if (t >= d)
     {
         Dest.set(B);
@@ -476,14 +477,12 @@ IC float CLevelGraph::compute_square(float fAngle, float fAngleOfView, float b1,
 
 IC float CLevelGraph::compute_high_square(float fAngle, float fAngleOfView, const CLevelGraph::CVertex* vertex) const
 {
-    return (compute_square(fAngle, fAngleOfView, NORMALIZE_NODE_COVER_HIGH(vertex, 0), NORMALIZE_NODE_COVER_HIGH(vertex, 1), NORMALIZE_NODE_COVER_HIGH(vertex, 2),
-                           NORMALIZE_NODE_COVER_HIGH(vertex, 3)));
+    return (compute_square(fAngle, fAngleOfView, NORMALIZE_NODE_COVER_HIGH(vertex, 0), NORMALIZE_NODE_COVER_HIGH(vertex, 1), NORMALIZE_NODE_COVER_HIGH(vertex, 2), NORMALIZE_NODE_COVER_HIGH(vertex, 3)));
 }
 
 IC float CLevelGraph::compute_low_square(float fAngle, float fAngleOfView, const CLevelGraph::CVertex* vertex) const
 {
-    return (compute_square(fAngle, fAngleOfView, NORMALIZE_NODE_COVER_LOW(vertex, 0), NORMALIZE_NODE_COVER_LOW(vertex, 1), NORMALIZE_NODE_COVER_LOW(vertex, 2),
-                           NORMALIZE_NODE_COVER_LOW(vertex, 3)));
+    return (compute_square(fAngle, fAngleOfView, NORMALIZE_NODE_COVER_LOW(vertex, 0), NORMALIZE_NODE_COVER_LOW(vertex, 1), NORMALIZE_NODE_COVER_LOW(vertex, 2), NORMALIZE_NODE_COVER_LOW(vertex, 3)));
 }
 
 IC float CLevelGraph::compute_high_square(float fAngle, float fAngleOfView, u32 dwNodeID) const { return (compute_high_square(fAngle, fAngleOfView, vertex(dwNodeID))); }
@@ -511,17 +510,17 @@ IC float CLevelGraph::vertex_low_cover(const CLevelGraph::CVertex* vertex) const
 }
 
 IC float CLevelGraph::vertex_high_cover(const u32 vertex_id) const { return (vertex_high_cover(vertex(vertex_id))); }
+
 IC float CLevelGraph::vertex_low_cover(const u32 vertex_id) const { return (vertex_low_cover(vertex(vertex_id))); }
+
 IC float CLevelGraph::high_cover_in_direction(float angle, const CLevelGraph::CVertex* vertex) const
 {
-    return (cover_in_direction(angle, NORMALIZE_NODE_COVER_HIGH(vertex, 0), NORMALIZE_NODE_COVER_HIGH(vertex, 1), NORMALIZE_NODE_COVER_HIGH(vertex, 2),
-                               NORMALIZE_NODE_COVER_HIGH(vertex, 3)));
+    return (cover_in_direction(angle, NORMALIZE_NODE_COVER_HIGH(vertex, 0), NORMALIZE_NODE_COVER_HIGH(vertex, 1), NORMALIZE_NODE_COVER_HIGH(vertex, 2), NORMALIZE_NODE_COVER_HIGH(vertex, 3)));
 }
 
 IC float CLevelGraph::low_cover_in_direction(float angle, const CLevelGraph::CVertex* vertex) const
 {
-    return (cover_in_direction(angle, NORMALIZE_NODE_COVER_LOW(vertex, 0), NORMALIZE_NODE_COVER_LOW(vertex, 1), NORMALIZE_NODE_COVER_LOW(vertex, 2),
-                               NORMALIZE_NODE_COVER_LOW(vertex, 3)));
+    return (cover_in_direction(angle, NORMALIZE_NODE_COVER_LOW(vertex, 0), NORMALIZE_NODE_COVER_LOW(vertex, 1), NORMALIZE_NODE_COVER_LOW(vertex, 2), NORMALIZE_NODE_COVER_LOW(vertex, 3)));
 }
 
 #undef NORMALIZE_NODE_COVER_HIGH

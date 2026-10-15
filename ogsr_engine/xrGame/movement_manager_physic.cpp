@@ -14,14 +14,12 @@
 #include "custommonster.h"
 #include "IColisiondamageInfo.h"
 
-
 // Lain: added
 #include "steering_behaviour.h"
 
 #ifdef DEBUG
 #include "PHDebug.h"
 #define DBG_PH_MOVE_CONDITIONS(c) c
-
 #else
 #define DBG_PH_MOVE_CONDITIONS(c)
 #endif
@@ -40,11 +38,31 @@ float CMovementManager::speed(CPHMovementControl* movement_control) const
     return (m_speed);
 }
 
+#ifdef DEBUG
+BOOL dbg_dump_collision_hit = FALSE;
+void dump_collision_hit(CPHMovementControl* movement_control)
+{
+    if (!dbg_dump_collision_hit)
+        return;
+
+    VERIFY(movement_control);
+
+    IPhysicsShellHolder* iobj = movement_control->PhysicsRefObject();
+    VERIFY(iobj);
+    VERIFY(smart_cast<CPhysicsShellHolder*>(iobj));
+    CPhysicsShellHolder* obj = static_cast<CPhysicsShellHolder*>(iobj);
+    Msg("ai unit: %s hited by collision; power: %f, spawn frame %d, current frame %d ", obj->cName().c_str(), movement_control->gcontact_HealthLost, obj->spawn_time(), Device.dwFrame);
+}
+#endif
+
 void CMovementManager::apply_collision_hit(CPHMovementControl* movement_control)
 {
     VERIFY(movement_control);
     if (object().g_Alive() && !fsimilar(0.f, movement_control->gcontact_HealthLost))
     {
+#ifdef DEBUG
+        dump_collision_hit(movement_control);
+#endif
         const ICollisionDamageInfo* di = movement_control->CollisionDamageInfo();
         VERIFY(di);
         Fvector dir;
@@ -60,7 +78,9 @@ void CMovementManager::apply_collision_hit(CPHMovementControl* movement_control)
     }
 }
 
-bool CMovementManager::move_along_path() const
+bool CMovementManager::move_along_path() const { return move_along_path(object().Position()); }
+
+bool CMovementManager::move_along_path(const Fvector& pos) const
 {
     if (!enabled())
         return (false);
@@ -71,7 +91,7 @@ bool CMovementManager::move_along_path() const
     if (detail().path().empty())
         return (false);
 
-    if (detail().completed(object().Position(), true))
+    if (detail().completed(pos, true))
         return (false);
 
     if (detail().curr_travel_point_index() >= detail().path().size() - 1)
@@ -83,15 +103,11 @@ bool CMovementManager::move_along_path() const
     return (true);
 }
 
-Fvector CMovementManager::path_position(const float& velocity, const Fvector& position, const float& time_delta, u32& current_travel_point, float& dist, float& dist_to_target,
-                                        Fvector& dir_to_target)
+Fvector CMovementManager::path_position(const float& velocity, const Fvector& position, const float& time_delta, u32& current_travel_point, float& dist, float& dist_to_target, Fvector& dir_to_target, float& desirable_dist)
 {
     VERIFY(current_travel_point < (detail().path().size() - 1));
 
     Fvector dest_position = position;
-
-    // Вычислить пройденную дистанцию, определить целевую позицию на маршруте,
-    //			 изменить detail().m_current_travel_point
 
     float desirable_speed = velocity; // желаемая скорость объекта
     dist = desirable_speed * time_delta; // пройденное расстояние в соостветствие с желаемой скоростью
@@ -115,28 +131,29 @@ Fvector CMovementManager::path_position(const float& velocity, const Fvector& po
     }
 
     target.set(detail().path()[current_travel_point + 1].position);
+
     // определить направление к целевой точке
     dir_to_target.sub(target, dest_position);
 
     // дистанция до целевой точки
     dist_to_target = dir_to_target.magnitude();
 
+    desirable_dist = 0.f;
     while (dist > dist_to_target)
     {
         dest_position.set(target);
         dist -= dist_to_target;
+        desirable_dist += dist_to_target;
 
         if (current_travel_point + 1 >= detail().path().size())
         {
+            dir_to_target.set(0.f, 0.f, 0.f);
+            dist = 0.f;
+            dist_to_target = 0.f;
             return (dest_position);
         }
 
         ++current_travel_point;
-        if ((current_travel_point + 1) >= detail().path().size())
-        {
-            dist = 0.f;
-            return (dest_position);
-        }
 
         target.set(detail().path()[current_travel_point + 1].position);
         dir_to_target.sub(target, dest_position);
@@ -160,9 +177,9 @@ Fvector CMovementManager::path_position(const float& time_to_check)
 
     Fvector dir_to_target;
     float dist_to_target;
-    float dist;
+    float dist, desirable_dist;
     u32 current_travel_point = detail().m_current_travel_point;
-    return (path_position(old_desirable_speed(), object().Position(), time_to_check, current_travel_point, dist, dist_to_target, dir_to_target));
+    return (path_position(old_desirable_speed(), object().Position(), time_to_check, current_travel_point, dist, dist_to_target, dir_to_target, desirable_dist));
 }
 
 void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fvector& dest_position, float time_delta)
@@ -181,11 +198,13 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
     {
         m_speed = 0.f;
 
-        DBG_PH_MOVE_CONDITIONS(if (ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove)) {
+        DBG_PH_MOVE_CONDITIONS(if (ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove)) 
+		{
             movement_control->SetPosition(dest_position);
             if (movement_control->CharacterExist())
                 movement_control->DisableCharacter();
         })
+
         if (movement_control->IsCharacterEnabled())
         {
             movement_control->Calculate(detail().path(), 0.f, detail().m_current_travel_point, precision);
@@ -204,31 +223,20 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
         return;
 
     float desirable_speed = old_desirable_speed(); // желаемая скорость объекта
-    float desirable_dist = desirable_speed * time_delta;
+    float desirable_dist;
     float dist;
 
     // position_computation
     Fvector dir_to_target;
     float dist_to_target;
     u32 current_travel_point = detail().m_current_travel_point;
-    dest_position = path_position(old_desirable_speed(), object().Position(), time_delta, current_travel_point, dist, dist_to_target, dir_to_target);
+    dest_position = path_position(old_desirable_speed(), object().Position(), time_delta, current_travel_point, dist, dist_to_target, dir_to_target, desirable_dist);
 
     // Lain: added steering behaviour
-
     if (detail().m_current_travel_point != current_travel_point)
         on_travel_point_change(detail().m_current_travel_point);
-    detail().m_current_travel_point = current_travel_point;
 
-    if (dist_to_target < EPS_L)
-    {
-#pragma todo("Dima to ? : is this correct?")
-        if (current_travel_point + 1 < detail().path().size())
-            detail().m_current_travel_point = current_travel_point + 1;
-        else
-            detail().m_current_travel_point = (u32)detail().path().size() - 1;
-        m_speed = 0.f;
-        return;
-    }
+    detail().m_current_travel_point = current_travel_point;
 
     // Физика устанавливает новую позицию
     Device.Statistic->Physics.Begin();
@@ -240,8 +248,14 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
     // установить позицию
     VERIFY(dist >= 0.f);
     VERIFY(dist_to_target >= 0.f);
-    motion.mul(dir_to_target, dist / dist_to_target);
-    dest_position.add(motion);
+
+    if (!fis_zero(dist_to_target)) 
+	{
+		motion.mul(dir_to_target, dist / dist_to_target);
+		dest_position.add(motion);
+    }
+    else
+		motion.set(0.f, 0.f, 0.f);
 
     Fvector velocity = dir_to_target;
     velocity.normalize_safe();
@@ -250,14 +264,13 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
     if (velocity.y < -0.9f)
         velocity.y = -0.8f;
     velocity.normalize_safe(); //как не странно, mdir - не нормирован
-    velocity.mul(desirable_speed); //*1.25f
+    velocity.mul(desirable_speed);
 
     if (!movement_control->PhysicsOnlyMode())
         movement_control->SetCharacterVelocity(velocity);
 
     if (DBG_PH_MOVE_CONDITIONS(ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove) || !ph_dbg_draw_mask.test(phDbgAlwaysUseAiPhMove) &&) !(m_nearest_objects.empty()))
     { //  физ. объект
-
         if (DBG_PH_MOVE_CONDITIONS(!ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove) &&) !movement_control->TryPosition(dest_position))
         {
             movement_control->GetPosition(dest_position);
@@ -268,7 +281,8 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
         }
         else
         {
-            DBG_PH_MOVE_CONDITIONS(if (ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove)) {
+            DBG_PH_MOVE_CONDITIONS(if (ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove)) 
+			{
                 movement_control->SetPosition(dest_position);
                 movement_control->DisableCharacter();
             })
@@ -284,7 +298,7 @@ void CMovementManager::move_along_path(CPHMovementControl* movement_control, Fve
     }
 
     // установить скорость
-    float real_motion = motion.magnitude() + desirable_dist - dist;
+    float real_motion = motion.magnitude() + desirable_dist;
     float real_speed = real_motion / time_delta;
 
     m_speed = 0.5f * desirable_speed + 0.5f * real_speed;

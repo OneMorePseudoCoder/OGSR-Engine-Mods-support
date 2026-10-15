@@ -73,3 +73,9 @@ IC void CCustomMonster::critical_wounded_state_stop() { m_critical_wound_type = 
 IC void CCustomMonster::invulnerable(const bool& invulnerable) { m_invulnerable = invulnerable; }
 
 IC bool CCustomMonster::invulnerable() const { return (m_invulnerable); }
+
+IC moving_object* CCustomMonster::get_moving_object() const
+{
+    VERIFY2(m_moving_object, make_string("object [%d][%s]", ID(), *cName()));
+    return (m_moving_object);
+}

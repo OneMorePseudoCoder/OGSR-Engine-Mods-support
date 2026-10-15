@@ -134,13 +134,15 @@ void CHOM::Render_DB(CFrustum& base)
 
     // Prepare
     CDB::RESULT* it = xrc.r_begin();
-    CDB::RESULT* end = std::remove_if(it, xrc.r_end(), [&](const CDB::RESULT& _1) {
+    CDB::RESULT* end = std::remove_if(it, xrc.r_end(), [&](const CDB::RESULT& _1) 
+	{
         const occTri& T = m_pTris[_1.id];
         return T.skip > Device.dwFrame;
     });
 
     const Fvector& COP = Device.vCameraPosition;
-    std::sort(it, end, [&](const CDB::RESULT& _1, const CDB::RESULT& _2) {
+    std::sort(it, end, [&](const CDB::RESULT& _1, const CDB::RESULT& _2) 
+	{
         const occTri& t0 = m_pTris[_1.id];
         const occTri& t1 = m_pTris[_2.id];
         return COP.distance_to_sqr(t0.center) < COP.distance_to_sqr(t1.center);
@@ -361,10 +363,7 @@ void CHOM::OnRender()
                 pairs[(i * 6) + 5] = static_cast<u16>(T->verts[0]);
             }
 
-            DebugRenderImpl.add_lines(
-				m_pModel->get_verts(), m_pModel->get_verts_count(),
-				pairs.data(), (u32)pairs.size() / 2, 0xFFFFFFFF
-			);
+            DebugRenderImpl.add_lines(m_pModel->get_verts(), m_pModel->get_verts_count(), pairs.data(), (u32)pairs.size() / 2, 0xFFFFFFFF);
         }
     }
 }

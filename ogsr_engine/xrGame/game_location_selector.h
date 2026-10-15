@@ -25,6 +25,7 @@ class CBaseLocationSelector<CGameGraph, _VertexEvaluator, _vertex_id_type> : pub
     typedef CGameGraph _Graph;
     typedef CAbstractLocationSelector<CGameGraph, _VertexEvaluator, _vertex_id_type> inherited;
 
+public:
     using inherited::m_failed;
     using inherited::m_graph;
     using inherited::m_restricted_object;

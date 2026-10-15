@@ -14,7 +14,7 @@
 #include "stalker_property_evaluators.h"
 #include "script_game_object.h"
 #include "ai/stalker/ai_stalker.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h" 
 #include "memory_manager.h"
 #include "enemy_manager.h"
 
@@ -39,11 +39,6 @@ void CStalkerKillWoundedPlanner::setup(CAI_Stalker* object, CPropertyStorage* st
 void CStalkerKillWoundedPlanner::update()
 {
     inherited::update();
-
-    //	if (current_action_id() == eWorldOperatorKillWoundedEnemy)
-    //		inherited_action::m_storage->set_property	(eWorldPropertyKilledWounded,true);
-    //	else
-    //		inherited_action::m_storage->set_property	(eWorldPropertyKilledWounded,false);
 }
 
 void CStalkerKillWoundedPlanner::initialize()
@@ -75,11 +70,9 @@ void CStalkerKillWoundedPlanner::add_evaluators()
     add_evaluator(eWorldPropertyEnemy, xr_new<CStalkerPropertyEvaluatorEnemies>(m_object, "is_there_enemies_delayed"));
     add_evaluator(eWorldPropertyWoundedEnemyReached, xr_new<CStalkerPropertyEvaluatorEnemyReached>(m_object, "is enemy reached"));
 
-    add_evaluator(eWorldPropertyWoundedEnemyPrepared,
-                  xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyWoundedEnemyPrepared, true, true, "is enemy prepared"));
+    add_evaluator(eWorldPropertyWoundedEnemyPrepared, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyWoundedEnemyPrepared, true, true, "is enemy prepared"));
     add_evaluator(eWorldPropertyWoundedEnemyAimed, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyWoundedEnemyAimed, true, true, "is enemy aimed"));
-    add_evaluator(eWorldPropertyPausedAfterKill,
-                  xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyPausedAfterKill, true, true, "is paused after enemy kill"));
+    add_evaluator(eWorldPropertyPausedAfterKill, xr_new<CStalkerPropertyEvaluatorMember>((CPropertyStorage*)0, eWorldPropertyPausedAfterKill, true, true, "is paused after enemy kill"));
 }
 
 void CStalkerKillWoundedPlanner::add_actions()

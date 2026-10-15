@@ -42,39 +42,41 @@ void CLevelGraph::choose_point(const Fvector& start_point, const Fvector& finish
     Fvector tCheckPoint1 = start_point, tCheckPoint2 = start_point, tIntersectPoint;
     contour(tNextContour, node_id);
     intersect(tNextSegment, tNextContour, _contour);
-    u32 dwIntersect = intersect(start_point.x, start_point.z, finish_point.x, finish_point.z, tNextSegment.v1.x, tNextSegment.v1.z, tNextSegment.v2.x, tNextSegment.v2.z,
-                                &tIntersectPoint.x, &tIntersectPoint.z);
+    u32 dwIntersect = intersect(start_point.x, start_point.z, finish_point.x, finish_point.z, tNextSegment.v1.x, tNextSegment.v1.z, tNextSegment.v2.x, tNextSegment.v2.z, &tIntersectPoint.x, &tIntersectPoint.z);
     if (!dwIntersect)
         return;
     for (int i = 0; i < 4; ++i)
     {
         switch (i)
         {
-        case 0: {
+        case 0: 
+		{
             tCheckPoint1 = tNextContour.v1;
             tCheckPoint2 = tNextContour.v2;
             break;
         }
-        case 1: {
+        case 1: 
+		{
             tCheckPoint1 = tNextContour.v2;
             tCheckPoint2 = tNextContour.v3;
             break;
         }
-        case 2: {
+        case 2: 
+		{
             tCheckPoint1 = tNextContour.v3;
             tCheckPoint2 = tNextContour.v4;
             break;
         }
-        case 3: {
+        case 3: 
+		{
             tCheckPoint1 = tNextContour.v4;
             tCheckPoint2 = tNextContour.v1;
             break;
         }
         default: NODEFAULT;
         }
-        dwIntersect = intersect(start_point.x, start_point.z, finish_point.x, finish_point.z, tCheckPoint1.x, tCheckPoint1.z, tCheckPoint2.x, tCheckPoint2.z, &tIntersectPoint.x,
-                                &tIntersectPoint.z);
-        if (dwIntersect == eLineIntersectionIntersect)
+        dwIntersect = intersect(start_point.x, start_point.z, finish_point.x, finish_point.z, tCheckPoint1.x, tCheckPoint1.z, tCheckPoint2.x, tCheckPoint2.z, &tIntersectPoint.x, &tIntersectPoint.z);
+        if (dwIntersect == LevelGraph::eLineIntersectionIntersect)
         {
             if (finish_point.distance_to_xz(tIntersectPoint) < finish_point.distance_to_xz(temp_point) + EPS_L)
             {
@@ -82,7 +84,7 @@ void CLevelGraph::choose_point(const Fvector& start_point, const Fvector& finish
                 saved_index = node_id;
             }
         }
-        else if (dwIntersect == eLineIntersectionEqual)
+        else if (dwIntersect == LevelGraph::eLineIntersectionEqual)
         {
             if (start_point.distance_to_xz(tCheckPoint1) > start_point.distance_to_xz(temp_point))
                 if (start_point.distance_to_xz(tCheckPoint1) > start_point.distance_to_xz(tCheckPoint2))

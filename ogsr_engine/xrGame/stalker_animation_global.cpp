@@ -12,7 +12,7 @@
 #include "inventory.h"
 #include "fooditem.h"
 #include "property_storage.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "ai/stalker/ai_stalker_space.h"
 #include "stalker_animation_data.h"
 #include "weapon.h"
@@ -45,8 +45,7 @@ MotionID CStalkerAnimationManager::global_critical_hit()
     VERIFY(animation_slot >= 1);
     VERIFY(animation_slot <= 3);
 
-    return (global().select(m_data_storage->m_part_animations.A[eBodyStateStand].m_global.A[object().critical_wound_type() + 6 * (animation_slot - 1)].A,
-                            &object().critical_wound_weights()));
+    return (global().select(m_data_storage->m_part_animations.A[eBodyStateStand].m_global.A[object().critical_wound_type() + 6 * (animation_slot - 1)].A, &object().critical_wound_weights()));
 }
 
 MotionID CStalkerAnimationManager::assign_global_animation()

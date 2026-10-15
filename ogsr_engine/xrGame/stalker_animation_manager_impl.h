@@ -15,7 +15,7 @@ IC CStalkerAnimationManager::EBodyState CStalkerAnimationManager::body_state() c
 IC bool CStalkerAnimationManager::standing() const
 {
     CAI_Stalker& obj = object();
-    CStalkerMovementManager& movement = obj.movement();
+    stalker_movement_manager_obstacles& movement = obj.movement();
 
     if (movement.speed(obj.character_physics_support()->movement()) < EPS_L)
         return (true);

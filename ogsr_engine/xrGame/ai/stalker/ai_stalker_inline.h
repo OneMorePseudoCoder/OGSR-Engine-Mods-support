@@ -28,7 +28,7 @@ IC CSightManager& CAI_Stalker::sight() const
     return (*m_sight_manager);
 }
 
-IC CStalkerMovementManager& CAI_Stalker::movement() const
+IC stalker_movement_manager_obstacles& CAI_Stalker::movement() const
 {
     VERIFY(m_movement_manager);
     return (*m_movement_manager);

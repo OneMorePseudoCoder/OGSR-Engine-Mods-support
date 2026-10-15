@@ -25,6 +25,14 @@ class CHeader;
 class CVertex;
 struct SSegment;
 struct SContour;
+
+enum ELineIntersections
+{
+	eLineIntersectionNone = u32(0),
+	eLineIntersectionCollinear = u32(0),
+	eLineIntersectionIntersect = u32(1),
+	eLineIntersectionEqual = u32(2)
+};
 }; // namespace LevelGraph
 
 class CCoverPoint;
@@ -38,15 +46,7 @@ public:
     typedef LevelGraph::CVertexStorage CVertexStorage;
     typedef LevelGraph::SSegment SSegment;
     typedef LevelGraph::SContour SContour;
-
-private:
-    enum ELineIntersections
-    {
-        eLineIntersectionNone = u32(0),
-        eLineIntersectionCollinear = u32(0),
-        eLineIntersectionIntersect = u32(1),
-        eLineIntersectionEqual = u32(2)
-    };
+	typedef LevelGraph::ELineIntersections ELineIntersections;
 
 private:
     IReader* m_reader; // level graph virtual storage
@@ -72,7 +72,6 @@ private:
     struct vertex
     {
         static IC bool predicate(const u32& value, const CVertex& vertex) { return (value < vertex.position().xz()); }
-
         static IC bool predicate2(const CVertex& vertex, const u32& value) { return (vertex.position().xz() < value); }
     };
 
@@ -85,10 +84,14 @@ public:
 
     IC const_vertex_iterator begin() const;
     IC const_vertex_iterator end() const;
+	IC void set_mask_no_check(const xr_vector<u32> &mask);
     IC void set_mask(const xr_vector<u32>& mask);
+	IC void	set_mask_no_check(u32 vertex_id);
     IC void set_mask(u32 vertex_id);
     IC void clear_mask(const xr_vector<u32>& mask);
+	IC void clear_mask_no_check(const xr_vector<u32> &mask);
     IC void clear_mask(u32 vertex_id);
+	IC void	clear_mask_no_check(u32 vertex_id);
     IC bool is_accessible(const u32 vertex_id) const;
     IC void level_id(const GameGraph::_LEVEL_ID& level_id);
     IC u32 max_x() const;
@@ -188,8 +191,7 @@ public:
     float farthest_vertex_in_direction(u32 start_vertex_id, const Fvector& start_point, const Fvector& finish_point, u32& finish_vertex_id, xr_vector<bool>* tpaMarks, bool check_accessability = false) const;
 
     template <bool bAssignY, typename T>
-    IC bool create_straight_path(u32 start_vertex_id, const Fvector2& start_point, const Fvector2& finish_point, xr_vector<T>& tpaOutputPoints, const T& example,
-                                 bool bAddFirstPoint, bool bClearPath = true) const;
+    IC bool create_straight_path(u32 start_vertex_id, const Fvector2& start_point, const Fvector2& finish_point, xr_vector<T>& tpaOutputPoints, const T& example, bool bAddFirstPoint, bool bClearPath = true) const;
 
     template <typename T>
     IC void assign_y_values(xr_vector<T>& path);
@@ -212,13 +214,10 @@ public:
     void render();
 
 #ifndef DEBUG
-
 private:
     void draw_nodes();
     void draw_restrictions();
-
 #else
-
 private:
     int m_current_level_id;
     bool m_current_actual;
@@ -243,7 +242,6 @@ private:
     void draw_game_graph();
     void draw_objects();
     void draw_debug_node();
-
 #endif
 
     DECLARE_SCRIPT_REGISTER_FUNCTION

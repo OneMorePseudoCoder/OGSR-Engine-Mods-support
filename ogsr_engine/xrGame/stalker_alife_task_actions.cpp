@@ -25,7 +25,7 @@
 #include "game_location_selector.h"
 #include "sight_manager.h"
 #include "ai_object_location.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "ai/stalker/ai_stalker_space.h"
 #include "ai_space.h"
 #include "xrServer_Objects_ALife_Monsters.h"
@@ -56,7 +56,6 @@ void CStalkerActionSolveZonePuzzle::initialize()
     if (object().inventory().ActiveItem() && object().best_weapon() && (object().inventory().ActiveItem()->object().ID() == object().best_weapon()->object().ID()))
         m_stop_weapon_handling_time += ::Random32.random(30000) + 30000;
 
-    //	object().movement().set_desired_position	(0);
     object().movement().set_desired_direction(0);
     object().movement().set_path_type(MovementManager::ePathTypeGamePath);
     object().movement().set_detail_path_type(DetailPathManager::eDetailPathTypeSmooth);
@@ -65,35 +64,19 @@ void CStalkerActionSolveZonePuzzle::initialize()
     object().movement().set_mental_state(eMentalStateFree);
     object().sight().setup(CSightAction(SightManager::eSightTypeCover, false, true));
 #else
-#if 1
-    //		object().movement().set_desired_position	(0);
     object().movement().set_desired_direction(0);
     object().movement().set_path_type(MovementManager::ePathTypeLevelPath);
     object().movement().set_detail_path_type(DetailPathManager::eDetailPathTypeSmooth);
     object().movement().set_body_state(eBodyStateStand);
     object().movement().set_movement_type(eMovementTypeStand);
     object().movement().set_mental_state(eMentalStateFree);
-    //		object().sight().setup						(CSightAction(g_actor,true));
     object().sight().setup(CSightAction(SightManager::eSightTypeCurrentDirection));
-#else
-    object().movement().set_mental_state(eMentalStateDanger);
-    object().movement().set_movement_type(eMovementTypeStand);
-    object().movement().set_body_state(eBodyStateStand);
-    object().movement().set_desired_direction(0);
-    object().movement().set_path_type(MovementManager::ePathTypeLevelPath);
-    object().movement().set_detail_path_type(DetailPathManager::eDetailPathTypeSmooth);
-    object().movement().set_nearest_accessible_position();
-    object().sight().setup(CSightAction(SightManager::eSightTypeCurrentDirection));
-    object().CObjectHandler::set_goal(eObjectActionFire1, object().inventory().m_slots[1].m_pIItem, 0, 1, 2500, 3000);
-#endif
 #endif
 }
 
 void CStalkerActionSolveZonePuzzle::finalize()
 {
     inherited::finalize();
-
-    //	object().movement().set_desired_position	(0);
 
     if (!object().g_Alive())
         return;
@@ -114,21 +97,8 @@ void CStalkerActionSolveZonePuzzle::execute()
     else
         object().CObjectHandler::set_goal(eObjectActionIdle, object().best_weapon());
 #else
-#if 0
-		object().throw_target					(g_actor->Position());
-		object().CObjectHandler::set_goal		(eObjectActionFire1,object().inventory().m_slots[3].m_pIItem);
-#else
-#if 0
-			const CWeapon							*weapon = smart_cast<const CWeapon*>(object().best_weapon());
-			VERIFY									(weapon);
-			if (!weapon->strapped_mode())
-				object().CObjectHandler::set_goal	(eObjectActionStrapped,object().best_weapon());
-			else
-				object().CObjectHandler::set_goal	(eObjectActionIdle,object().best_weapon());
-#else
     const CWeapon* weapon = smart_cast<const CWeapon*>(object().best_weapon());
     VERIFY(weapon);
-    //			Msg										("weapon %s is strapped : %c",*weapon->cName(),weapon->strapped_mode() ? '+' : '-');
 
     static u32 m_time_to_strap = 0;
     static u32 m_time_to_idle = 0;
@@ -157,9 +127,6 @@ void CStalkerActionSolveZonePuzzle::execute()
             }
         }
     }
-
-#endif
-#endif
 #endif
 }
 
@@ -172,7 +139,6 @@ CStalkerActionSmartTerrain::CStalkerActionSmartTerrain(CAI_Stalker* object, LPCS
 void CStalkerActionSmartTerrain::initialize()
 {
     inherited::initialize();
-    //	object().movement().set_desired_position		(0);
     object().movement().set_desired_direction(0);
     object().movement().game_selector().set_selection_type(eSelectionTypeMask);
     object().movement().set_detail_path_type(DetailPathManager::eDetailPathTypeSmooth);
@@ -199,7 +165,6 @@ void CStalkerActionSmartTerrain::initialize()
 void CStalkerActionSmartTerrain::finalize()
 {
     inherited::finalize();
-    //	object().movement().set_desired_position	(0);
     object().movement().game_selector().set_selection_type(eSelectionTypeRandomBranching);
 }
 

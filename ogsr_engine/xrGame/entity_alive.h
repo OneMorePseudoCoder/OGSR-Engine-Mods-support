@@ -11,6 +11,7 @@ class CCharacterPhysicsSupport;
 class CMaterialManager;
 class CVisualMemoryManager;
 class CBlend;
+
 class CEntityAlive : public CEntity
 {
 private:
@@ -30,8 +31,6 @@ public:
 private:
     bool m_is_agresive;
     bool m_is_start_attack;
-    // m_PhysicMovementControl
-    // CPHMovementControl		*m_PhysicMovementControl;
 
 public:
     // General
@@ -62,12 +61,6 @@ public:
     void set_lock_corpse(bool b_l_corpse);
     bool is_locked_corpse();
 
-    //	virtual float			GetfHealth				() const;
-    //	virtual float			SetfHealth				(float value);
-
-    //	virtual float			g_Health				()	const;
-    //	virtual float			g_MaxHealth				()	const;
-
     virtual float g_Radiation() const;
     virtual float SetfRadiation(float value);
 
@@ -80,8 +73,6 @@ public:
     virtual bool human_being() const { return (false); }
 
 public:
-    // IC	CPHMovementControl*					PMovement					()						{return m_PhysicMovementControl;}
-
     virtual u16 PHGetSyncItemsNumber();
     virtual CPHSynchronize* PHGetSyncItem(u16 item);
     virtual void PHUnFreeze();
@@ -183,6 +174,8 @@ public:
     virtual void net_Relcase(CObject* O);
 
 public:
+    virtual Fvector predict_position(const float& time_to_check) const;
+    virtual Fvector target_position() const;
     IC bool const& is_agresive() const;
     IC void is_agresive(bool const& value);
     IC bool const& is_start_attack() const;

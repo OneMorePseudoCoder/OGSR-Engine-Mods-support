@@ -15,12 +15,16 @@ class CPhysicObject : public CPhysicsShellHolder, public CPHSkeleton
     EPOType m_type;
     float m_mass;
     ICollisionHitCallback* m_collision_hit_callback;
+    bool m_is_ai_obstacle;
 
 private:
     // Creating
     void CreateBody(CSE_ALifeObjectPhysic* po);
     void CreateSkeleton(CSE_ALifeObjectPhysic* po);
     void AddElement(CPhysicsElement* root_e, int id);
+
+public:
+	bool get_door_vectors(Fvector& closed, Fvector& open) const;
 
 public:
     CPhysicObject(void);
@@ -30,13 +34,15 @@ public:
     virtual void CreatePhysicsShell(CSE_Abstract* e);
     virtual void net_Destroy();
     virtual void Load(LPCSTR section);
-    virtual void shedule_Update(u32 dt); //
+    virtual void shedule_Update(u32 dt);
     virtual void UpdateCL();
     virtual void net_Save(NET_Packet& P);
     virtual BOOL net_SaveRelevant();
     virtual BOOL UsedAI_Locations();
     virtual ICollisionHitCallback* get_collision_hit_callback();
     virtual void set_collision_hit_callback(ICollisionHitCallback* cc);
+    virtual bool is_ai_obstacle() const;
+    void set_ai_obstacle(bool flag) { m_is_ai_obstacle = flag; }
 
 protected:
     virtual void SpawnInitPhysics(CSE_Abstract* D);
@@ -45,6 +51,9 @@ protected:
     virtual CPHSkeleton* PHSkeleton() { return this; }
     virtual void InitServerObject(CSE_Abstract* po);
     virtual void PHObjectPositionUpdate();
+
+    bool m_just_after_spawn;
+    bool m_activated;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

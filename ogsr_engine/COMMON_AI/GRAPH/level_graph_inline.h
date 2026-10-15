@@ -26,11 +26,7 @@ ICF CLevelGraph::CVertex* CLevelGraph::vertex(const u32 vertex_id) const
     ASSERT_FMT(valid_vertex_id(vertex_id), "invalid vertex_id %u", vertex_id);
     return (m_nodes->begin() + vertex_id);
 #else
-#if _M_X64
     return (valid_vertex_id(vertex_id)) ? (m_nodes->begin() + vertex_id) : (m_nodes->end() - 1);
-#else
-    return (m_nodes->begin() + vertex_id);
-#endif
 #endif
 }
 
@@ -477,6 +473,14 @@ IC void CLevelGraph::set_mask(const xr_vector<u32>& mask)
         set_mask(*I);
 }
 
+IC void CLevelGraph::set_mask_no_check(const xr_vector<u32> &mask)
+{
+	xr_vector<u32>::const_iterator I = mask.begin();
+	xr_vector<u32>::const_iterator E = mask.end();
+	for ( ; I != E; ++I)
+		set_mask_no_check(*I);
+}
+
 IC void CLevelGraph::clear_mask(const xr_vector<u32>& mask)
 {
     xr_vector<u32>::const_iterator I = mask.begin();
@@ -485,16 +489,34 @@ IC void CLevelGraph::clear_mask(const xr_vector<u32>& mask)
         clear_mask(*I);
 }
 
+IC void CLevelGraph::clear_mask_no_check(const xr_vector<u32> &mask)
+{
+	xr_vector<u32>::const_iterator I = mask.begin();
+	xr_vector<u32>::const_iterator E = mask.end();
+	for ( ; I != E; ++I)
+		clear_mask_no_check(*I);
+}
+
 IC void CLevelGraph::set_mask(u32 vertex_id)
 {
     VERIFY(m_access_mask[vertex_id]);
     m_access_mask[vertex_id] = false;
 }
 
+IC void CLevelGraph::set_mask_no_check(u32 vertex_id)
+{
+	m_access_mask[vertex_id] = false;
+}
+
 IC void CLevelGraph::clear_mask(u32 vertex_id)
 {
     VERIFY(!m_access_mask[vertex_id]);
     m_access_mask[vertex_id] = true;
+}
+
+IC void CLevelGraph::clear_mask_no_check(u32 vertex_id)
+{
+	m_access_mask[vertex_id] = true;
 }
 
 template <typename P>

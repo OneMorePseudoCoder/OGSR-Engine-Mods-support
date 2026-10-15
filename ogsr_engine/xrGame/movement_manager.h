@@ -12,6 +12,9 @@
 #include "graph_engine_space.h"
 #include "game_graph_space.h"
 
+class CObject;
+class CSE_Abstract;
+
 namespace MovementManager
 {
 enum EPathType;
@@ -46,6 +49,11 @@ class CLevelGraph;
 class CRestrictedObject;
 class CLocationManager;
 class CCustomMonster;
+
+namespace steering_behaviour
+{
+class manager;
+}
 
 namespace DetailPathManager
 {
@@ -180,6 +188,7 @@ public:
     IC const CBoneRotation& body_orientation() const;
     void update_path();
     virtual void move_along_path(CPHMovementControl* movement_control, Fvector& dest_position, float time_delta);
+    virtual void remove_links(CObject* object) {};
 
     IC float speed() const;
     float speed(CPHMovementControl* movement_control) const;
@@ -219,11 +228,27 @@ public:
 
 protected:
     bool move_along_path() const;
+    bool move_along_path(const Fvector& pos) const;
 
 protected:
     Fvector path_position(const float& time_to_check);
-    Fvector path_position(const float& velocity, const Fvector& position, const float& time_delta, u32& current_travel_point, float& dist, float& dist_to_target,
-                          Fvector& dir_to_target);
+    Fvector path_position(const float& velocity, const Fvector& position, const float& time_delta, u32& current_travel_point, float& dist, float& dist_to_target, Fvector& dir_to_target, float& desirable_dist);
+
+protected:
+    virtual CRestrictedObject* create_restricted_object();
+    xr_vector<u32>& level_path_path();
+
+public:
+    virtual void build_level_path();
+
+private:
+    void show_game_path_info();
+
+public:
+    virtual const float& prediction_speed() const;
+    Fvector predict_position(const float& time_delta, const Fvector& position, u32& current_travel_point, const float& prediction_speed) const;
+    Fvector predict_position(const float& time_delta) const;
+    Fvector target_position() const;
 };
 
 #include "movement_manager_inline.h"

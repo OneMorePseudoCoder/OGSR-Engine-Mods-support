@@ -39,33 +39,47 @@ extern CScriptActionPlanner* script_action_planner(CScriptGameObject* obj);
 class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>&& instance)
 {
     return std::move(instance)
-        .enum_("relation")[(value("friend", int(ALife::eRelationTypeFriend)), value("neutral", int(ALife::eRelationTypeNeutral)), value("enemy", int(ALife::eRelationTypeEnemy)),
-                           value("worst_enemy", int(ALife::eRelationTypeWorstEnemy)), value("dummy", int(ALife::eRelationTypeDummy)))]
-        .enum_("action_types")[(value("movement", int(ScriptEntity::eActionTypeMovement)), value("watch", int(ScriptEntity::eActionTypeWatch)),
-                               value("animation", int(ScriptEntity::eActionTypeAnimation)), value("sound", int(ScriptEntity::eActionTypeSound)),
-                               value("particle", int(ScriptEntity::eActionTypeParticle)), value("object", int(ScriptEntity::eActionTypeObject)),
-                               value("action_type_count", int(ScriptEntity::eActionTypeCount)))]
-        .enum_("EPathType")[(value("game_path", int(MovementManager::ePathTypeGamePath)), value("level_path", int(MovementManager::ePathTypeLevelPath)),
-                            value("patrol_path", int(MovementManager::ePathTypePatrolPath)), value("no_path", int(MovementManager::ePathTypeNoPath)))]
+        .enum_("relation")
+		[(
+			value("friend", int(ALife::eRelationTypeFriend)),
+			value("neutral", int(ALife::eRelationTypeNeutral)),
+			value("enemy", int(ALife::eRelationTypeEnemy)),
+            value("worst_enemy", int(ALife::eRelationTypeWorstEnemy)),
+			value("dummy", int(ALife::eRelationTypeDummy))
+		)]
 
-        //		.property("visible",				&CScriptGameObject::getVisible,			&CScriptGameObject::setVisible)
-        //		.property("enabled",				&CScriptGameObject::getEnabled,			&CScriptGameObject::setEnabled)
+        .enum_("action_types")
+		[(
+			value("movement", int(ScriptEntity::eActionTypeMovement)),
+			value("watch", int(ScriptEntity::eActionTypeWatch)),
+            value("animation", int(ScriptEntity::eActionTypeAnimation)),
+			value("sound", int(ScriptEntity::eActionTypeSound)),
+            value("particle", int(ScriptEntity::eActionTypeParticle)),
+			value("object", int(ScriptEntity::eActionTypeObject)),
+            value("action_type_count", int(ScriptEntity::eActionTypeCount))
+		)]
 
-        //		.def_readonly("health",				&CScriptGameObject::GetHealth,			&CScriptGameObject::SetHealth)
+        .enum_("EPathType")
+		[(
+			value("game_path", int(MovementManager::ePathTypeGamePath)),
+			value("level_path", int(MovementManager::ePathTypeLevelPath)),
+            value("patrol_path", int(MovementManager::ePathTypePatrolPath)),
+			value("no_path", int(MovementManager::ePathTypeNoPath))
+		)]
+
         .property("health", &CScriptGameObject::GetHealth, &CScriptGameObject::SetHealth)
         .property("psy_health", &CScriptGameObject::GetPsyHealth, &CScriptGameObject::SetPsyHealth)
         .property("power", &CScriptGameObject::GetPower, &CScriptGameObject::SetPower)
         .property("satiety", &CScriptGameObject::GetSatiety, &CScriptGameObject::SetSatiety)
         .property("radiation", &CScriptGameObject::GetRadiation, &CScriptGameObject::SetRadiation)
         .property("morale", &CScriptGameObject::GetMorale, &CScriptGameObject::SetMorale)
+
         // KD
         .property("alcohol", &CScriptGameObject::GetAlcohol, &CScriptGameObject::SetAlcohol)
         .property("thirst", &CScriptGameObject::GetThirst, &CScriptGameObject::SetThirst)
         .property("max_power", &CScriptGameObject::GetMaxPower, &CScriptGameObject::SetMaxPower)
 
         // Actor State
-        //.property("jump_speed",				&CScriptGameObject::GetActorJumpSpeed,	&CScriptGameObject::SetActorJumpSpeed)
-        //.property("walk_accel",				&CScriptGameObject::GetActorWalkAccel,	&CScriptGameObject::SetActorWalkAccel)
         .property("exo_factor", &CScriptGameObject::GetActorExoFactor, &CScriptGameObject::SetActorExoFactor)
 
         // Other
@@ -84,7 +98,6 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("condition", &CScriptGameObject::GetCondition)
         .def("set_condition", &CScriptGameObject::SetCondition)
         .def("death_time", &CScriptGameObject::DeathTime)
-        //		.def("armor",						&CScriptGameObject::Armor)
         .def("max_health", &CScriptGameObject::MaxHealth)
         .def("accuracy", &CScriptGameObject::Accuracy)
         .def("alive", &CScriptGameObject::Alive)
@@ -138,17 +151,12 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("get_ammo_total", &CScriptGameObject::GetAmmoCurrent)
         .def("set_ammo_elapsed", &CScriptGameObject::SetAmmoElapsed)
         .def("set_queue_size", &CScriptGameObject::SetQueueSize)
-        //		.def("best_hit",					&CScriptGameObject::GetBestHit)
-        //		.def("best_sound",					&CScriptGameObject::GetBestSound)
+
         .def("best_danger", &CScriptGameObject::GetBestDanger)
         .def("best_enemy", &CScriptGameObject::GetBestEnemy)
         .def("best_item", &CScriptGameObject::GetBestItem)
         .def("action_count", &CScriptGameObject::GetActionCount)
         .def("action_by_index", &CScriptGameObject::GetActionByIndex)
-
-        //.def("set_hear_callback",			(void (CScriptGameObject::*)(const luabind::object &, LPCSTR))(&CScriptGameObject::SetSoundCallback))
-        //.def("set_hear_callback",			(void (CScriptGameObject::*)(const luabind::functor<void> &))(&CScriptGameObject::SetSoundCallback))
-        //.def("clear_hear_callback",		&CScriptGameObject::ClearSoundCallback)
 
         /************************* Add by Zander *******************************/
         .def("dump_visual_to_log", &CScriptGameObject::GetModelDump)
@@ -278,5 +286,15 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("debug_planner", &CScriptGameObject::debug_planner)
 #endif // DEBUG
         .def("invulnerable", (bool(CScriptGameObject::*)() const) & CScriptGameObject::invulnerable)
-        .def("invulnerable", (void(CScriptGameObject::*)(bool)) & CScriptGameObject::invulnerable);
+        .def("invulnerable", (void(CScriptGameObject::*)(bool)) & CScriptGameObject::invulnerable)
+		
+		.def("register_door_for_npc", &CScriptGameObject::register_door)
+		.def("unregister_door_for_npc", &CScriptGameObject::unregister_door)
+		.def("is_door_registered_for_npc", &CScriptGameObject::is_door_registered)
+		.def("on_door_is_open", &CScriptGameObject::on_door_is_open)
+		.def("on_door_is_closed", &CScriptGameObject::on_door_is_closed)
+		.def("lock_door_for_npc", &CScriptGameObject::lock_door_for_npc)
+		.def("unlock_door_for_npc", &CScriptGameObject::unlock_door_for_npc)
+		.def("is_door_locked_for_npc", &CScriptGameObject::is_door_locked_for_npc)
+		.def("is_door_blocked_by_npc", &CScriptGameObject::is_door_blocked_by_npc);
 }

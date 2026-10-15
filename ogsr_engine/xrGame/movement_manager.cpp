@@ -31,26 +31,6 @@ CMovementManager::CMovementManager(CCustomMonster* object)
 {
     VERIFY(object);
     m_object = object;
-
-    m_restricted_object = xr_new<CRestrictedObject>(m_object);
-    m_location_manager = xr_new<CLocationManager>(m_object);
-
-    m_base_game_selector = xr_new<CGameVertexParams>(locations().vertex_types());
-    m_base_level_selector = xr_new<CBaseParameters>();
-
-    m_game_location_selector = xr_new<CGameLocationSelector>(m_restricted_object, m_location_manager);
-    m_game_path_manager = xr_new<CGamePathManager>(m_restricted_object);
-    m_level_path_manager = xr_new<CLevelPathManager>(m_restricted_object);
-    m_detail_path_manager = xr_new<CDetailPathManager>(m_restricted_object);
-    m_patrol_path_manager = xr_new<CPatrolPathManager>(m_restricted_object, m_object);
-
-    m_level_path_builder = xr_new<CLevelPathBuilder>(this);
-    m_detail_path_builder = xr_new<CDetailPathBuilder>(this);
-
-    extrapolate_path(false);
-
-    m_wait_for_distributed_computation = false;
-    m_wait_for_distributed_computation_2 = false;
 }
 
 CMovementManager::~CMovementManager()
@@ -71,7 +51,30 @@ CMovementManager::~CMovementManager()
     xr_delete(m_detail_path_builder);
 }
 
-void CMovementManager::Load(LPCSTR section) { locations().Load(section); }
+void CMovementManager::Load(LPCSTR section)
+{
+    m_restricted_object = xr_new<CRestrictedObject>(m_object);
+    m_location_manager = xr_new<CLocationManager>(m_object);
+
+    m_base_game_selector = xr_new<CGameVertexParams>(locations().vertex_types());
+    m_base_level_selector = xr_new<CBaseParameters>();
+
+    m_game_location_selector = xr_new<CGameLocationSelector>(m_restricted_object, m_location_manager);
+    m_game_path_manager = xr_new<CGamePathManager>(m_restricted_object);
+    m_level_path_manager = xr_new<CLevelPathManager>(m_restricted_object);
+    m_detail_path_manager = xr_new<CDetailPathManager>(m_restricted_object);
+    m_patrol_path_manager = xr_new<CPatrolPathManager>(m_restricted_object, m_object);
+
+    m_level_path_builder = xr_new<CLevelPathBuilder>(this);
+    m_detail_path_builder = xr_new<CDetailPathBuilder>(this);
+
+    extrapolate_path(false);
+
+    m_wait_for_distributed_computation = false;
+    m_wait_for_distributed_computation_2 = false;
+	
+	locations().Load(section); 
+}
 
 void CMovementManager::reinit()
 {
@@ -159,11 +162,13 @@ void CMovementManager::update_path()
         patrol().make_inactual();
         switch (m_path_type)
         {
-        case ePathTypeGamePath: {
+        case ePathTypeGamePath: 
+		{
             m_path_state = ePathStateSelectGameVertex;
             break;
         }
-        case ePathTypeLevelPath: {
+        case ePathTypeLevelPath: 
+		{
             m_path_state = ePathStateBuildLevelPath;
             if (!restrictions().accessible(level_path().dest_vertex_id()))
             {
@@ -180,11 +185,13 @@ void CMovementManager::update_path()
             }
             break;
         }
-        case ePathTypePatrolPath: {
+        case ePathTypePatrolPath: 
+		{
             m_path_state = ePathStateSelectPatrolPoint;
             break;
         }
-        case ePathTypeNoPath: {
+        case ePathTypeNoPath: 
+		{
             m_path_state = ePathStateDummy;
             break;
         }
@@ -195,19 +202,23 @@ void CMovementManager::update_path()
 
     switch (m_path_type)
     {
-    case ePathTypeGamePath: {
+    case ePathTypeGamePath: 
+	{
         process_game_path();
         break;
     }
-    case ePathTypeLevelPath: {
+    case ePathTypeLevelPath: 
+	{
         process_level_path();
         break;
     }
-    case ePathTypePatrolPath: {
+    case ePathTypePatrolPath: 
+	{
         process_patrol_path();
         break;
     }
-    case ePathTypeNoPath: {
+    case ePathTypeNoPath: 
+	{
         break;
     }
     default: NODEFAULT;
@@ -305,7 +316,6 @@ void CMovementManager::verify_detail_path()
 
 void CMovementManager::on_restrictions_change()
 {
-    //	Msg								("[%6d][%s][on_restrictions_change]",Device.dwTimeGlobal,*object().cName());
     m_path_actuality = false;
     level_path_builder().remove();
     detail_path_builder().remove();
@@ -329,7 +339,6 @@ void CMovementManager::on_travel_point_change(const u32& previous_travel_point_i
 
 void CMovementManager::enable_movement(bool enabled)
 {
-    //	m_path_actuality					= m_path_actuality && (m_enabled == enabled);
     if (!enabled && m_enabled)
         m_on_disable_object_position = object().Position();
     else
@@ -339,4 +348,89 @@ void CMovementManager::enable_movement(bool enabled)
     }
 
     m_enabled = enabled;
+}
+
+CRestrictedObject* CMovementManager::create_restricted_object() { return (new CRestrictedObject(m_object)); }
+
+CMovementManager::CLevelPathManager::PATH& CMovementManager::level_path_path() { return (level_path().m_path); }
+
+void CMovementManager::build_level_path() { level_path_builder().process_impl(); }
+
+Fvector CMovementManager::predict_position(const float& time_delta, const Fvector& start_position, u32& current_travel_point, const float& velocity) const
+{
+    typedef xr_vector<DetailPathManager::STravelPathPoint> PATH;
+    const PATH& path = detail().path();
+    if (path.empty())
+        return (start_position);
+
+    float distance_to_check = velocity * time_delta;
+
+    const u32& path_size = path.size();
+    if (current_travel_point == path_size - 1)
+        return (path.back().position);
+
+    {
+        const Fvector& next = path[current_travel_point + 1].position;
+        float distance = start_position.distance_to(next);
+        if (distance >= distance_to_check)
+        {
+            if (next.similar(start_position))
+                return (next);
+
+            Fvector result;
+            result.sub(next, start_position);
+            result.normalize();
+            result.mul(distance_to_check);
+            result.add(start_position);
+            return (result);
+        }
+
+        distance_to_check -= distance;
+        ++current_travel_point;
+    }
+
+    while (current_travel_point < (path_size - 1))
+    {
+        const Fvector& current = path[current_travel_point].position;
+        const Fvector& next = path[current_travel_point + 1].position;
+        float distance = current.distance_to(next);
+        if (distance > distance_to_check)
+            break;
+
+        distance_to_check -= distance;
+        ++current_travel_point;
+    }
+
+    if (current_travel_point == path_size - 1)
+        return (path.back().position);
+
+    const Fvector& current = path[current_travel_point].position;
+    const Fvector& next = path[current_travel_point + 1].position;
+
+    VERIFY(current.distance_to(next) > distance_to_check);
+
+    if (next.similar(current))
+        return (next);
+
+    Fvector direction = Fvector().sub(next, current);
+    direction.normalize();
+    direction.mul(distance_to_check);
+    direction.add(current);
+    return (direction);
+}
+
+Fvector CMovementManager::predict_position(const float& time_delta) const
+{
+    u32 travel_point = detail().m_current_travel_point;
+    return (predict_position(time_delta, object().Position(), travel_point, prediction_speed()));
+}
+
+const float& CMovementManager::prediction_speed() const { return (old_desirable_speed()); }
+
+Fvector CMovementManager::target_position() const
+{
+    if (detail().path().empty())
+        return (object().Position());
+
+    return (detail().path()[detail().last_patrol_point()].position);
 }

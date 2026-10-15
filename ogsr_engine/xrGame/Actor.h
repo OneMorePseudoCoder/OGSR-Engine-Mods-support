@@ -714,6 +714,9 @@ private:
 
 public:
     virtual bool register_schedule() const { return false; }
+	
+    virtual bool is_ai_obstacle() const;
+
     IC u32 get_state() const { return this->mstate_real; }
 
     IC void set_state(u32 state) { mstate_real = state; }

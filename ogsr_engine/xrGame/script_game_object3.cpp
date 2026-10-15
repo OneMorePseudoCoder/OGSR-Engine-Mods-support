@@ -27,7 +27,7 @@
 #include "sound_memory_manager.h"
 #include "hit_memory_manager.h"
 #include "sight_manager.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "movement_manager_space.h"
 #include "detail_path_manager_space.h"
 #include "level_debug.h"
@@ -54,13 +54,13 @@ const CCoverPoint* CScriptGameObject::best_cover(const Fvector& position, const 
     return (point);
 }
 
-const CCoverPoint* CScriptGameObject::best_cover(const Fvector& position, const Fvector& enemy_position, float radius, float min_enemy_distance, float max_enemy_distance,
-                                                 const luabind::functor<bool>& callback)
+const CCoverPoint* CScriptGameObject::best_cover(const Fvector& position, const Fvector& enemy_position, float radius, float min_enemy_distance, float max_enemy_distance, const luabind::functor<bool>& callback)
 {
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
     xr_vector<const CCoverPoint*> covers;
-    stalker->m_ce_best->setup(enemy_position, min_enemy_distance, max_enemy_distance, 0.f, [&](auto point) -> bool {
+    stalker->m_ce_best->setup(enemy_position, min_enemy_distance, max_enemy_distance, 0.f, [&](auto point) -> bool 
+	{
         covers.push_back(point);
         return true;
     });
@@ -88,7 +88,8 @@ const CCoverPoint* CScriptGameObject::safe_cover(const Fvector& position, float 
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
     xr_vector<const CCoverPoint*> covers;
-    stalker->m_ce_safe->setup(min_distance, [&](auto point) -> bool {
+    stalker->m_ce_safe->setup(min_distance, [&](auto point) -> bool 
+	{
         covers.push_back(point);
         return true;
     });
@@ -116,7 +117,8 @@ const CCoverPoint* CScriptGameObject::ambush_cover(const Fvector& position, cons
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
     xr_vector<const CCoverPoint*> covers;
-    stalker->m_ce_ambush->setup(position, enemy_position, min_distance, [&](auto point) -> bool {
+    stalker->m_ce_ambush->setup(position, enemy_position, min_distance, [&](auto point) -> bool 
+	{
         covers.push_back(point);
         return true;
     });
@@ -349,8 +351,7 @@ void CScriptGameObject::set_actor_relation_flags(Flags32 flags)
     stalker->m_actor_relation_flags = flags;
 }
 
-void CScriptGameObject::set_patrol_path(LPCSTR path_name, const PatrolPathManager::EPatrolStartType patrol_start_type, const PatrolPathManager::EPatrolRouteType patrol_route_type,
-                                        bool random)
+void CScriptGameObject::set_patrol_path(LPCSTR path_name, const PatrolPathManager::EPatrolStartType patrol_start_type, const PatrolPathManager::EPatrolRouteType patrol_route_type, bool random)
 {
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     if (!stalker)
@@ -369,8 +370,7 @@ void CScriptGameObject::set_dest_level_vertex_id(u32 level_vertex_id)
         if (!ai().level_graph().valid_vertex_id(level_vertex_id))
         {
 #ifdef DEBUG
-            ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CAI_Stalker : invalid vertex id being setup by action %s!",
-                                            stalker->brain().CStalkerPlanner::current_action().m_action_name);
+            ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CAI_Stalker : invalid vertex id being setup by action %s!", stalker->brain().CStalkerPlanner::current_action().m_action_name);
 #endif
             return;
         }
@@ -985,6 +985,7 @@ void CScriptGameObject::sound_prefix(LPCSTR sound_prefix)
 
     custom_monster->sound().sound_prefix(sound_prefix);
 }
+
 #include "Actor.h"
 #include "ActorCondition.h"
 void CScriptGameObject::SetMaxWeight(float _weight)
@@ -1019,6 +1020,7 @@ float CScriptGameObject::GetMaxWeight() const
 
     return e->MaxCarryWeight();
 }
+
 float CScriptGameObject::GetMaxWalkWeight() const
 {
     auto e = smart_cast<CActor*>(&object());
@@ -1034,6 +1036,7 @@ float CScriptGameObject::GetMaxWalkWeight() const
 
     return max_w;
 }
+
 float CScriptGameObject::GetInventoryWeight() const
 {
     auto e = smart_cast<CInventoryOwner*>(&object());
@@ -1178,8 +1181,7 @@ const char* CScriptGameObject::GetVisualName() const
     return *object().cNameVisual();
 }
 
-const CCoverPoint* CScriptGameObject::angle_cover(const Fvector& position, float radius, const Fvector& enemy_position, float min_enemy_distance, float max_enemy_distance,
-                                                  u32 enemy_vertex_id)
+const CCoverPoint* CScriptGameObject::angle_cover(const Fvector& position, float radius, const Fvector& enemy_position, float min_enemy_distance, float max_enemy_distance, u32 enemy_vertex_id)
 {
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
@@ -1188,13 +1190,13 @@ const CCoverPoint* CScriptGameObject::angle_cover(const Fvector& position, float
     return point;
 }
 
-const CCoverPoint* CScriptGameObject::angle_cover(const Fvector& position, float radius, const Fvector& enemy_position, float min_enemy_distance, float max_enemy_distance,
-                                                  u32 enemy_vertex_id, const luabind::functor<bool>& callback)
+const CCoverPoint* CScriptGameObject::angle_cover(const Fvector& position, float radius, const Fvector& enemy_position, float min_enemy_distance, float max_enemy_distance, u32 enemy_vertex_id, const luabind::functor<bool>& callback)
 {
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
     ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
     xr_vector<const CCoverPoint*> covers;
-    stalker->m_ce_angle->setup(enemy_position, min_enemy_distance, max_enemy_distance, enemy_vertex_id, [&](auto point) -> bool {
+    stalker->m_ce_angle->setup(enemy_position, min_enemy_distance, max_enemy_distance, enemy_vertex_id, [&](auto point) -> bool 
+	{
         covers.push_back(point);
         return true;
     });

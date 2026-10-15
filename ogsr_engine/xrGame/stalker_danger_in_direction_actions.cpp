@@ -10,7 +10,7 @@
 #include "stalker_danger_in_direction_actions.h"
 #include "ai/stalker/ai_stalker.h"
 #include "script_game_object.h"
-#include "stalker_movement_manager.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "sight_manager.h"
 #include "object_handler.h"
 #include "movement_manager_space.h"
@@ -76,18 +76,13 @@ void CStalkerActionDangerInDirectionTakeCover::execute()
     {
         object().movement().set_level_dest_vertex(point->level_vertex_id());
         object().movement().set_desired_position(&point->position());
-        //		if (object().movement().path_completed() && object().Position().distance_to(point->position()) < 1.f)
-        //			object().brain().affect_cover			(true);
-        //		else
-        //			object().brain().affect_cover			(false);
     }
     else
     {
         object().movement().set_nearest_accessible_position();
-        //		object().brain().affect_cover				(true);
     }
 
-    if (object().movement().path_completed()) // && (object().memory().enemy().selected()->Position().distance_to_sqr(object().Position()) >= 10.f))
+    if (object().movement().path_completed())
         m_storage->set_property(eWorldPropertyInCover, true);
 }
 
@@ -123,17 +118,12 @@ void CStalkerActionDangerInDirectionLookOut::initialize()
     object().CObjectHandler::set_goal(eObjectActionAimReady1, object().best_weapon(), min_queue_size, max_queue_size, min_queue_interval, max_queue_interval);
 
     set_inertia_time(1000);
-    //	object().brain().affect_cover				(true);
 }
 
 void CStalkerActionDangerInDirectionLookOut::execute()
 {
     inherited::execute();
 
-    //	CMemoryInfo							mem_object = object().memory().memory(object().memory().danger().selected()->object());
-    //
-    //	if (!mem_object.m_object)
-    //		return;
     Fvector position = object().memory().danger().selected()->position();
 
     object().sight().setup(CSightAction(SightManager::eSightTypePosition, position, true));
@@ -145,7 +135,6 @@ void CStalkerActionDangerInDirectionLookOut::execute()
         return;
     }
 
-    //	Fvector								position = mem_object.m_object_params.m_position;
     object().m_ce_close->setup(position, 10.f, 170.f, 10.f);
     const CCoverPoint* point = ai().cover_manager().best_cover(object().Position(), 10.f, *object().m_ce_close, CStalkerMovementRestrictor(m_object, true, false));
     if (!point || (point->position().similar(object().Position()) && object().movement().path_completed()))
@@ -195,17 +184,11 @@ void CStalkerActionDangerInDirectionHoldPosition::initialize()
     object().CObjectHandler::set_goal(eObjectActionAimReady1, object().best_weapon(), min_queue_size, max_queue_size, min_queue_interval, max_queue_interval);
 
     set_inertia_time(5000 + ::Random32.random(5000));
-    //	object().brain().affect_cover				(true);
 }
 
 void CStalkerActionDangerInDirectionHoldPosition::execute()
 {
     inherited::execute();
-
-    //	CMemoryInfo							mem_object = object().memory().memory(object().memory().danger().selected()->object());
-    //
-    //	if (!mem_object.m_object)
-    //		return;
 
     Fvector position = object().memory().danger().selected()->position();
 
