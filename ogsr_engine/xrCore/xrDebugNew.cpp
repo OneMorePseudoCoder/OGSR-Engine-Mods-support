@@ -192,12 +192,6 @@ void xrDebug::backend(const char* expression, const char* description, const cha
     string4096 assertion_info;
     gather_info(expression, description, argument0, argument1, file, line, function, assertion_info);
 
-    /* KRodin: у меня этот способ не работает - происходит исключение внутри функции save_mini_dump(). Если сильно надо будет тут получать минидампы - придумать другой способ.
-    #ifdef USE_OWN_MINI_DUMP
-        if ( !IsDebuggerPresent() )
-            save_mini_dump(nullptr);
-    #endif
-    */
     auto endline = "\r\n";
     auto buffer = assertion_info + xr_strlen(assertion_info);
     buffer += sprintf(buffer, "%sPress OK to abort execution%s", endline, endline);
@@ -223,10 +217,7 @@ const char* xrDebug::error2string(const DWORD code) const
 
 void xrDebug::error(const HRESULT hr, const char* expr, const char* file, int line, const char* function) { backend(DXerror2string(hr), expr, 0, 0, file, line, function); }
 
-void xrDebug::error(const HRESULT hr, const char* expr, const char* e2, const char* file, int line, const char* function)
-{
-    backend(DXerror2string(hr), expr, e2, 0, file, line, function);
-}
+void xrDebug::error(const HRESULT hr, const char* expr, const char* e2, const char* file, int line, const char* function) { backend(DXerror2string(hr), expr, e2, 0, file, line, function); }
 
 void xrDebug::fail(const char* e1, const char* file, int line, const char* function) { backend("assertion failed", e1, 0, 0, file, line, function); }
 
@@ -268,7 +259,6 @@ void xrDebug::on_exception_in_thread()
 
 static int out_of_memory_handler(size_t size)
 {
-    //Memory.mem_compact();
     size_t process_heap = mem_usage_impl(nullptr, nullptr);
     u32 eco_strings = g_pStringContainer->stat_economy();
     u32 eco_smem = g_pSharedMemoryContainer->stat_economy();
@@ -486,40 +476,6 @@ static void floating_point_handler(int signal) { handler_base("floating point er
 static void illegal_instruction_handler(int signal) { handler_base("illegal instruction"); }
 
 static void termination_handler(int signal) { handler_base("termination with exit code 3"); }
-
-/*static void segment_violation( int signal ) {
-  handler_base( "Segment violation error" );
-}*/
-
-/*
-// http://qaru.site/questions/441696/what-actions-do-i-need-to-take-to-get-a-crash-dump-in-all-error-scenarios
-static BOOL PreventSetUnhandledExceptionFilter()
-{
-    HMODULE hKernel32 = GetModuleHandle("kernel32.dll");
-    if (!hKernel32)
-        return FALSE;
-    void* pOrgEntry = GetProcAddress(hKernel32, "SetUnhandledExceptionFilter");
-    if (!pOrgEntry)
-        return FALSE;
-
-#ifdef _M_IX86
-    // Code for x86:
-    // 33 C0                xor         eax,eax
-    // C2 04 00             ret         4
-    constexpr unsigned char szExecute[] = {0x33, 0xC0, 0xC2, 0x04, 0x00};
-#elif _M_X64
-    // 33 C0                xor         eax,eax
-    // C3                   ret
-    constexpr unsigned char szExecute[] = {0x33, 0xC0, 0xC3};
-#else
-#error "The following code only works for x86 and x64!"
-#endif
-
-    SIZE_T bytesWritten = 0;
-    BOOL bRet = WriteProcessMemory(GetCurrentProcess(), pOrgEntry, szExecute, sizeof(szExecute), &bytesWritten);
-    return bRet;
-}
-*/
 
 void xrDebug::_initialize()
 {

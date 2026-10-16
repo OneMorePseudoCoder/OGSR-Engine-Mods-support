@@ -41,13 +41,20 @@ void manager::unregister_door(door*& door)
 
 bool manager::actualize_doors_state(actor& actor, float const average_speed)
 {
-    float const radius = average_speed * g_door_open_time + g_door_length;
-    Fvector const& position = actor.get_position();
-    m_doors.nearest(position, radius, m_nearest_doors);
-    if (m_nearest_doors.empty() && !actor.need_update())
-        return true;
+	float const radius = average_speed * g_door_open_time + g_door_length;
+	Fvector const& position = actor.get_position();
+    doors_type nearest_doors;
+    m_doors.nearest(position, radius, nearest_doors);
+    m_nearest_doors.clear();
+    for (const auto it : nearest_doors) 
+	{
+		if (_abs(it->position().y - position.y) < 1.2)
+			m_nearest_doors.push_back(it);
+    }
+	if (m_nearest_doors.empty() && !actor.need_update())
+		return true;
 
-    return actor.update_doors(m_nearest_doors, average_speed);
+	return actor.update_doors(m_nearest_doors, average_speed);
 }
 
 void manager::on_door_is_open(door* door) { door->on_change_state(door_state_open); }

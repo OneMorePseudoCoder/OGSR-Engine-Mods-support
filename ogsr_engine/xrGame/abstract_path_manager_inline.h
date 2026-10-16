@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "abstract_path_manager.h"
 #include "ai_space.h"
 #include "graph_engine.h"
 
@@ -137,10 +138,7 @@ IC CRestrictedObject& CPathManagerTemplate::object() const
 }
 
 TEMPLATE_SPECIALIZATION
-IC void CPathManagerTemplate::reset() 
-{ 
-	m_failed = false;
-}
+IC void CPathManagerTemplate::reset() { m_failed = false; }
 
 TEMPLATE_SPECIALIZATION
 IC void CPathManagerTemplate::invalidate_failed_info()

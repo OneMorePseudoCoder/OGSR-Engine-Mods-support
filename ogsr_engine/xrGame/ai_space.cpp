@@ -70,7 +70,6 @@ CAI_Space::~CAI_Space()
 	xr_delete(m_moving_objects);
 
     xr_delete(m_patrol_path_storage);
-    xr_delete(m_patrol_path_storage);
 
     xr_delete(m_ef_storage);
     xr_delete(m_graph_engine);
@@ -151,15 +150,11 @@ void CAI_Space::validate(const u32 level_id) const
 {
     VERIFY(level_graph().header().vertex_count() == cross_table().header().level_vertex_count());
     for (GameGraph::_GRAPH_ID i = 0, n = game_graph().header().vertex_count(); i < n; ++i)
-        if ((level_id == game_graph().vertex(i)->level_id()) &&
-            (!level_graph().valid_vertex_id(game_graph().vertex(i)->level_vertex_id()) || (cross_table().vertex(game_graph().vertex(i)->level_vertex_id()).game_vertex_id() != i) ||
-             !level_graph().inside(game_graph().vertex(i)->level_vertex_id(), game_graph().vertex(i)->level_point())))
+        if ((level_id == game_graph().vertex(i)->level_id()) && (!level_graph().valid_vertex_id(game_graph().vertex(i)->level_vertex_id()) || (cross_table().vertex(game_graph().vertex(i)->level_vertex_id()).game_vertex_id() != i) || !level_graph().inside(game_graph().vertex(i)->level_vertex_id(), game_graph().vertex(i)->level_point())))
         {
             Msg("! Graph doesn't correspond to the cross table");
             R_ASSERT2(false, "Graph doesn't correspond to the cross table");
         }
-
-    //	Msg						("death graph point id : %d",cross_table().vertex(455236).game_vertex_id());
 
     for (u32 i = 0, n = game_graph().header().vertex_count(); i < n; ++i)
     {
@@ -168,14 +163,12 @@ void CAI_Space::validate(const u32 level_id) const
 
         CGameGraph::const_spawn_iterator I, E;
         game_graph().begin_spawn(i, I, E);
-        //		Msg									("vertex [%d] has %d death points",i,game_graph().vertex(i)->death_point_count());
+
         for (; I != E; ++I)
         {
             VERIFY(cross_table().vertex((*I).level_vertex_id()).game_vertex_id() == i);
         }
     }
-
-    //	Msg						("* Graph corresponds to the cross table");
 }
 #endif
 

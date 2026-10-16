@@ -575,14 +575,13 @@ void stalker_movement_manager_base::on_travel_point_change(const u32 &previous_t
 void stalker_movement_manager_base::on_restrictions_change()
 {
 	inherited::on_restrictions_change();
-	if (m_current.desired_position() && !restrictions().accessible(!m_current.desired_position()))
+	if (!object().getDestroy() && m_current.desired_position() && (!ai().level_graph().valid_vertex_position(*m_current.desired_position()) || !restrictions().accessible(*m_current.desired_position())))
 		set_nearest_accessible_position();
 }
 
 float stalker_movement_manager_base::speed(const EMovementDirection &movement_direction)
 {
 	VERIFY(movement_type() != eMovementTypeStand);
-
 	return(m_velocities->velocity(mental_state(), body_state(), movement_type(), movement_direction));
 }
 

@@ -5,6 +5,7 @@
 #include "monster_velocity_space.h"
 
 void CControlAnimationBase::accel_init() { m_accel.active = false; }
+
 void CControlAnimationBase::accel_load(LPCSTR section)
 {
     m_accel.calm = pSettings->r_float(section, "Accel_Calm");
@@ -31,8 +32,6 @@ float CControlAnimationBase::accel_get(EAccelValue val)
     default: return m_accel.calm;
     }
 }
-
-// -----------------------------------------------------------------------------------------
 
 void CControlAnimationBase::accel_chain_add(EMotionAnim anim1, EMotionAnim anim2)
 {
@@ -119,8 +118,7 @@ bool CControlAnimationBase::accel_chain_test()
             float from = anim_from->velocity.velocity.linear * anim_from->velocity.max_factor;
             float to = anim_to->velocity.velocity.linear * anim_to->velocity.min_factor;
 
-            sprintf_s(error_msg, "Incompatible speed ranges. Monster[%s] From animation  [%s] To animation [%s]", *m_object->cName(), *anim_from->target_name,
-                      *anim_to->target_name);
+            sprintf_s(error_msg, "Incompatible speed ranges. Monster[%s] From animation  [%s] To animation [%s]", *m_object->cName(), *anim_from->target_name, *anim_to->target_name);
             VERIFY2(to < from, error_msg);
 #endif
             anim_from = anim_to;
@@ -134,6 +132,7 @@ bool CControlAnimationBase::accel_check_braking(float before_interval, float nom
 {
     if (!m_man->path_builder().is_moving_on_path())
         return (braking_mode = false);
+
     if (!accel_active(eAV_Braking))
         return (braking_mode = false);
 
