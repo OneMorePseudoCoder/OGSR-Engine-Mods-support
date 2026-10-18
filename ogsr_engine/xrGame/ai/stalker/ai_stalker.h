@@ -24,9 +24,7 @@ class CPropertyEvaluator;
 template <typename _object_type, bool _reverse_search, typename _world_operator, typename _condition_evaluator, typename _world_operator_ptr, typename _condition_evaluator_ptr>
 class CActionPlanner;
 
-typedef CActionPlanner<CScriptGameObject, false, CActionBase<CScriptGameObject>, CPropertyEvaluator<CScriptGameObject>, CActionBase<CScriptGameObject>*,
-                       CPropertyEvaluator<CScriptGameObject>*>
-    script_planner;
+typedef CActionPlanner<CScriptGameObject, false, CActionBase<CScriptGameObject>, CPropertyEvaluator<CScriptGameObject>, CActionBase<CScriptGameObject>*, CPropertyEvaluator<CScriptGameObject>*> script_planner;
 #endif
 
 namespace MonsterSpace

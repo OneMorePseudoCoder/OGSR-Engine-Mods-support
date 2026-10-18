@@ -19,6 +19,7 @@ private:
 
 protected:
     CMovementManager* m_object;
+
 private:
     const PATH* m_level_path;
     u32 m_path_vertex_index;
@@ -45,7 +46,9 @@ public:
     void process_impl(bool separate_computing = true)
     {
 		if (separate_computing)
-			m_object->detail().build_path(*m_level_path, m_path_vertex_index);
+			m_object->m_wait_for_distributed_computation = false;
+
+		m_object->detail().build_path(*m_level_path, m_path_vertex_index);
 
         m_object->on_build_path();
 
@@ -68,7 +71,8 @@ public:
 
     IC void remove()
     {
-        m_object->m_wait_for_distributed_computation = false;
+		if (m_object->m_wait_for_distributed_computation)
+			m_object->m_wait_for_distributed_computation = false;
         Device.remove_from_seq_parallel(fastdelegate::MakeDelegate(this, &CDetailPathBuilder::process_detail));
     }
 };

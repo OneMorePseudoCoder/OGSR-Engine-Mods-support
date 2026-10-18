@@ -16,6 +16,7 @@
 #include "IKLimbsController.h"
 #include "PHCapture.h"
 #include "PHCollideValidator.h"
+#include "stalker_movement_manager_obstacles.h"
 #include "ai/stalker/ai_stalker.h"
 #include "interactive_motion.h"
 #include "animation_movement_controller.h"
@@ -354,8 +355,6 @@ bool is_similar(const Fmatrix& m0, const Fmatrix& m1, float param)
     q.get_axis_angle(ax, ang);
     return _abs(ang) < M_PI / 2.f;
 }
-
-#include "stalker_movement_manager_obstacles.h" 
 
 void CCharacterPhysicsSupport::KillHit(SHit& H)
 {

@@ -301,10 +301,9 @@ void CRestrictedObject::add_restrictions(const xr_vector<ALife::_OBJECT_ID>& out
 
     string4096 temp_out_restrictions{}, temp_in_restrictions{};
 
-    construct_restriction_string<CRestrictionPredicate<true>, true>(temp_out_restrictions, out_restrictions, this->out_restrictions(),
-                                                                    CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeOut), this);
-    construct_restriction_string<CRestrictionPredicate<true>, true>(temp_in_restrictions, in_restrictions, this->in_restrictions(),
-                                                                    CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeIn), this);
+    construct_restriction_string<CRestrictionPredicate<true>, true>(temp_out_restrictions, out_restrictions, this->out_restrictions(), CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeOut), this);
+
+    construct_restriction_string<CRestrictionPredicate<true>, true>(temp_in_restrictions, in_restrictions, this->in_restrictions(), CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeIn), this);
 
     Level().space_restriction_manager().add_restrictions(object().ID(), temp_out_restrictions, temp_in_restrictions);
 

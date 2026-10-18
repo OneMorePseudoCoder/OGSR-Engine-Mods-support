@@ -346,6 +346,11 @@ public:
     virtual void SetMaxAABBRadius(float size){};
     virtual void AddTracedGeom(u16 element = 0, u16 geom = 0) = 0;
     virtual void SetAllGeomTraced() = 0;
+    virtual void ClearTracedGeoms() = 0;
+    virtual void DisableGeomTrace() = 0;
+    virtual void EnableGeomTrace() = 0;
+    virtual bool HasTracedGeoms() = 0;
+	
     virtual void RunSimulation(bool place_current_forms = true) = 0;
     virtual void UpdateRoot() = 0;
     virtual void ZeroCallbacks() = 0;
@@ -366,8 +371,8 @@ add_to_type_list(CPhysicsShell)
 #undef script_type_list
 #define script_type_list save_type_list(CPhysicsShell)
 
-    void get_box(CPhysicsShell* shell, const Fmatrix& form, Fvector& sz, Fvector& c);
-    void destroy_physics_shell(CPhysicsShell*& p);
+void get_box(CPhysicsShell* shell, const Fmatrix& form, Fvector& sz, Fvector& c);
+void destroy_physics_shell(CPhysicsShell*& p);
 
 // Implementation creator
 CPhysicsJoint* P_create_Joint(CPhysicsJoint::enumType type, CPhysicsElement* first, CPhysicsElement* second);

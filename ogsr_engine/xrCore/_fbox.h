@@ -167,6 +167,7 @@ public:
         merge(b2);
         return *this;
     }
+
     ICF SelfRef xform(SelfCRef B, const Tmatrix& m)
     {
         // The three edges transformed: you can efficiently transform an X-only vector3
@@ -220,6 +221,7 @@ public:
             max.z += vz.z;
         return *this;
     }
+
     ICF SelfRef xform(const Tmatrix& m)
     {
         Self b;

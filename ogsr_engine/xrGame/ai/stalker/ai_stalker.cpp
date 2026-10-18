@@ -171,7 +171,6 @@ void CAI_Stalker::reinit()
 
     {
         m_critical_wound_weights.clear();
-        //		LPCSTR							weights = pSettings->r_string(cNameSect(),"critical_wound_weights");
         LPCSTR weights = SpecificCharacter().critical_wound_weights();
         string16 temp;
         for (int i = 0, n = _GetItemCount(weights); i < n; ++i)
@@ -187,7 +186,7 @@ void CAI_Stalker::LoadSounds(LPCSTR section)
     if (!g_Alive())
         return;
 
-    LPCSTR	head_bone_name = pSettings->r_string(section, "bone_head");
+    LPCSTR head_bone_name = pSettings->r_string(section, "bone_head");
     sound().add_deferred(pSettings->r_string(section, "sound_death"), 100, SOUND_TYPE_MONSTER_DYING, 0, u32(eStalkerSoundMaskDie), eStalkerSoundDie, head_bone_name, xr_new<CStalkerSoundData>(this));
     sound().add_deferred(pSettings->r_string(section, "sound_anomaly_death"), 100, SOUND_TYPE_MONSTER_DYING, 0, u32(eStalkerSoundMaskDieInAnomaly), eStalkerSoundDieInAnomaly, head_bone_name, 0);
     sound().add_deferred(pSettings->r_string(section, "sound_hit"), 100, SOUND_TYPE_MONSTER_INJURING, 1, u32(eStalkerSoundMaskInjuring), eStalkerSoundInjuring, head_bone_name, xr_new<CStalkerSoundData>(this));

@@ -1,12 +1,15 @@
 #include "stdafx.h"
-#include "physicobject.h"
+#include "PhysicObject.h"
 #include "PhysicsShell.h"
 #include "Physics.h"
-#include "xrserver_objects_alife.h"
+#include "XrServer_objects_alife.h"
+#include "Level.h"
 #include "..\Include/xrRender/Kinematics.h"
 #include "..\Include/xrRender/KinematicsAnimated.h"
 #include "../xr_3da/xr_collide_form.h"
+#include "PHSynchronize.h"
 #include "game_object_space.h"
+#include "ExtendedGeom.h"
 
 #ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 #include "PhysicsShellAnimator.h"
@@ -16,7 +19,7 @@ CPhysicObject::CPhysicObject(void)
 {
     m_type = epotBox;
     m_mass = 10.f;
-    m_collision_hit_callback = NULL;
+    m_collision_hit_callback = nullptr;
 	m_just_after_spawn = false;
 	m_activated = false;
 	m_is_ai_obstacle = true;
@@ -31,17 +34,10 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
     R_ASSERT(po);
     m_type = EPOType(po->type);
     m_mass = po->mass;
-    m_collision_hit_callback = NULL;
+    m_collision_hit_callback = nullptr;
     inherited::net_Spawn(DC);
-    xr_delete(collidable.model);
-    switch (m_type)
-    {
-    case epotBox:
-    case epotFixedChain:
-    case epotFreeChain:
-    case epotSkeleton: collidable.model = xr_new<CCF_Skeleton>(this); break;
-    default: NODEFAULT;
-    }
+
+    create_collision_model();
 
     CPHSkeleton::Spawn(e);
     setVisible(TRUE);
@@ -74,6 +70,64 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
     PPhysicsShell()->applyImpulse(Fvector().set(0.f, -1.0f, 0.f), 0.5f * PPhysicsShell()->getMass());
 
     return TRUE;
+}
+
+void CPhysicObject::create_collision_model()
+{
+    xr_delete(collidable.model);
+    collidable.model = xr_new<CCF_Skeleton>(this);
+}
+
+static CPhysicsShellHolder* retrive_collide_object(bool bo1, dContact& c)
+{
+    CPhysicsShellHolder* collide_obj = 0;
+
+    dxGeomUserData* ud = 0;
+    if (bo1)
+        ud = retrieveGeomUserData(c.geom.g2);
+    else
+        ud = retrieveGeomUserData(c.geom.g1);
+
+    if (ud)
+        collide_obj = static_cast<CPhysicsShellHolder*>(ud->ph_ref_object);
+    else
+        collide_obj = 0;
+
+    return collide_obj;
+}
+
+static void door_ignore(bool& do_collide, bool bo1, dContact& c, SGameMtl* /*material_1*/, SGameMtl* /*material_2*/)
+{
+    CPhysicsShellHolder* collide_obj = retrive_collide_object(bo1, c);
+    if (!collide_obj || collide_obj->cast_actor())
+        return;
+
+    CPhysicsShell* ph_shell = collide_obj->PPhysicsShell();
+    if (!ph_shell)
+    {
+        do_collide = false; //? must be AI
+        return;
+    }
+
+    VERIFY(ph_shell);
+
+    if (ph_shell->HasTracedGeoms())
+        return;
+
+    do_collide = false;
+}
+
+void CPhysicObject::set_door_ignore_dynamics()
+{
+    R_ASSERT(PPhysicsShell());
+    PPhysicsShell()->remove_ObjectContactCallback(door_ignore);
+    PPhysicsShell()->add_ObjectContactCallback(door_ignore);
+}
+
+void CPhysicObject::unset_door_ignore_dynamics()
+{
+    R_ASSERT(PPhysicsShell());
+    PPhysicsShell()->remove_ObjectContactCallback(door_ignore);
 }
 
 void CPhysicObject::SpawnInitPhysics(CSE_Abstract* D)
@@ -231,7 +285,6 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
             // для SimpleShell нет привязки к костям и вообще не работают параметры из секцции collide
             // но объекты с таким type есть в all.spawn например визуалы сталкеров на Арене. я так и не нашел как оно раньше могло работать
             // пока сделаем фикс прямо тут
-
             if (*po->fixed_bones)
             {
                 m_pPhysicsShell->get_ElementByStoreOrder(0)->Fix();

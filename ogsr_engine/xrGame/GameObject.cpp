@@ -973,7 +973,8 @@ void CGameObject::removeFeelTouch(const luabind::object& lua_object, const luabi
     else
     {
         feel_touch_addons.erase(std::remove_if(feel_touch_addons.begin(), feel_touch_addons.end(),
-                                               [&](auto& ft) {
+                                               [&](auto& ft) 
+											   {
                                                    if (ft->feel_touch_new_delete == feel_touch_new_delete && (!contact || ft->feel_touch_contact == feel_touch_contact))
                                                    {
                                                        xr_delete(ft);

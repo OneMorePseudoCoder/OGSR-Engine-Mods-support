@@ -40,6 +40,7 @@ CPHShell::~CPHShell()
     if (m_spliter_holder)
         xr_delete(m_spliter_holder);
 }
+
 CPHShell::CPHShell()
 {
     // bActive=false;
@@ -1395,6 +1396,7 @@ void CPHShell::AddTracedGeom(u16 element /*=0*/, u16 geom /*=0*/)
     g->set_ph_object(this);
     m_traced_geoms.add(g);
 }
+
 void CPHShell::SetAllGeomTraced()
 {
     ELEMENT_I i, e;
@@ -1412,6 +1414,21 @@ void CPHShell::SetAllGeomTraced()
     }
     CPHObject::SetRayMotions();
 }
+
+void CPHShell::DisableGeomTrace() { CPHObject::UnsetRayMotions(); }
+
+void CPHShell::ClearTracedGeoms()
+{
+    m_traced_geoms.clear();
+    DisableGeomTrace();
+}
+
+void CPHShell::EnableGeomTrace()
+{
+    if (!m_traced_geoms.empty())
+        CPHObject::SetRayMotions();
+}
+
 void CPHShell::SetPrefereExactIntegration() { CPHObject::SetPrefereExactIntegration(); }
 
 void CPHShell::add_Element(CPhysicsElement* E)

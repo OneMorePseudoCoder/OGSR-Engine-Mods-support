@@ -2,6 +2,7 @@
 
 class CPHShell;
 class CPHShellSplitterHolder;
+
 #include "PHJoint.h"
 #include "PHElement.h"
 #include "PHDefs.h"
@@ -130,7 +131,6 @@ public:
             (*i)->SetForce(force);
             (*i)->SetVelocity();
         }
-        //(*i)->SetForceAndVelocity(force);
     }
     virtual void set_DynamicLimits(float l_limit = default_l_limit, float w_limit = default_w_limit);
     virtual void set_DynamicScales(float l_scale = default_l_scale, float w_scale = default_w_scale);
@@ -234,6 +234,10 @@ public:
     virtual void SetTransform(const Fmatrix& m0);
     virtual void AddTracedGeom(u16 element = 0, u16 geom = 0);
     virtual void SetAllGeomTraced();
+    virtual void ClearTracedGeoms();
+    virtual void DisableGeomTrace();
+    virtual void EnableGeomTrace();
+    virtual bool HasTracedGeoms() { return !m_traced_geoms.empty(); }
     virtual void SetPrefereExactIntegration();
     virtual void CutVelocity(float l_limit, float a_limit);
     ///////////	//////////////////////////////////////////////////////////////////////////////////////////

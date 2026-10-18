@@ -22,6 +22,11 @@ private:
     void CreateBody(CSE_ALifeObjectPhysic* po);
     void CreateSkeleton(CSE_ALifeObjectPhysic* po);
     void AddElement(CPhysicsElement* root_e, int id);
+    void create_collision_model();
+
+public:
+    void set_door_ignore_dynamics();
+    void unset_door_ignore_dynamics();
 
 public:
 	bool get_door_vectors(Fvector& closed, Fvector& open) const;
@@ -41,6 +46,7 @@ public:
     virtual BOOL UsedAI_Locations();
     virtual ICollisionHitCallback* get_collision_hit_callback();
     virtual void set_collision_hit_callback(ICollisionHitCallback* cc);
+
     virtual bool is_ai_obstacle() const;
     void set_ai_obstacle(bool flag) { m_is_ai_obstacle = flag; }
 

@@ -100,9 +100,6 @@ CCF_Skeleton::CCF_Skeleton(CObject* O) : ICollisionForm(O, cftObject)
     // getVisData
     IRenderVisual* pVisual = O->Visual();
     ASSERT_FMT(pVisual, "pVisual is null! section [%s]", O->cNameSect().c_str());
-    // IKinematics* K	= PKinematics(pVisual); VERIFY(K,"Can't create skeleton without Kinematics.",*O->cNameVisual());
-    // IKinematics* K	= PKinematics(pVisual); VERIFY(K,"Can't create skeleton without Kinematics.",*O->cNameVisual());
-    // bv_box.set		(K->vis.box);
     bv_box.set(pVisual->getVisData().box);
     bv_box.getsphere(bv_sphere.P, bv_sphere.R);
     vis_mask.zero();
@@ -303,7 +300,8 @@ BOOL CCF_Shape::_RayQuery(const collide::ray_defs& Q, collide::rq_results& R)
         float range = Q.range;
         switch (shape.type)
         {
-        case 0: { // sphere
+        case 0: 
+		{
             Fsphere::ERP_Result rp_res = shape.data.sphere.intersect(dS, dD, range);
             if ((rp_res == Fsphere::rpOriginOutside) || (!(Q.flags & CDB::OPT_CULL) && (rp_res == Fsphere::rpOriginInside)))
             {
