@@ -154,20 +154,16 @@ void CStalkerMovementManager::init_velocity_masks()
     add_velocity(eVelocityStandingPanicCrouch, 0.f, PI_MUL_2);
     add_velocity(eVelocityStandingDangerCrouch, 0.f, PI_MUL_2);
 
-    add_velocity(eVelocityWalkFreePositive, m_velocities->velocity(eMentalStateFree, eBodyStateStand, eMovementTypeWalk, eMovementDirectionForward), PI_DIV_8 / 1,
-                 cf * PI_DIV_8 / 1);
+    add_velocity(eVelocityWalkFreePositive, m_velocities->velocity(eMentalStateFree, eBodyStateStand, eMovementTypeWalk, eMovementDirectionForward), PI_DIV_8 / 1, cf * PI_DIV_8 / 1);
     add_velocity(eVelocityRunFreePositive, m_velocities->velocity(eMentalStateFree, eBodyStateStand, eMovementTypeRun, eMovementDirectionForward), PI_DIV_8 / 2, cf * PI_DIV_8 / 2);
     add_velocity(eVelocityWalkDangerStandPositive, m_velocities->velocity(eMentalStateDanger, eBodyStateStand, eMovementTypeWalk, eMovementDirectionForward), 100 * PI, cf * PI);
-    add_velocity(eVelocityWalkDangerCrouchPositive, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeWalk, eMovementDirectionForward), 100 * PI,
-                 cf * PI_DIV_2);
+    add_velocity(eVelocityWalkDangerCrouchPositive, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeWalk, eMovementDirectionForward), 100 * PI, cf * PI_DIV_2);
     add_velocity(eVelocityRunDangerStandPositive, m_velocities->velocity(eMentalStateDanger, eBodyStateStand, eMovementTypeRun, eMovementDirectionForward), 100 * PI, cf * PI);
     add_velocity(eVelocityRunDangerCrouchPositive, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeRun, eMovementDirectionForward), 100 * PI, cf * PI);
-    add_velocity(eVelocityRunPanicStandPositive, m_velocities->velocity(eMentalStatePanic, eBodyStateStand, eMovementTypeRun, eMovementDirectionForward), PI_DIV_8 / 2,
-                 cf * PI_DIV_8 / 2);
+    add_velocity(eVelocityRunPanicStandPositive, m_velocities->velocity(eMentalStatePanic, eBodyStateStand, eMovementTypeRun, eMovementDirectionForward), PI_DIV_8 / 2, cf * PI_DIV_8 / 2);
 
     add_velocity(eVelocityWalkDangerStandNegative, m_velocities->velocity(eMentalStateDanger, eBodyStateStand, eMovementTypeWalk, eMovementDirectionForward), 100 * PI, cf * PI);
-    add_velocity(eVelocityWalkDangerCrouchNegative, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeWalk, eMovementDirectionForward), 100 * PI,
-                 cf * PI_DIV_2);
+    add_velocity(eVelocityWalkDangerCrouchNegative, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeWalk, eMovementDirectionForward), 100 * PI, cf * PI_DIV_2);
     add_velocity(eVelocityRunDangerStandNegative, m_velocities->velocity(eMentalStateDanger, eBodyStateStand, eMovementTypeRun, eMovementDirectionForward), 100 * PI, cf * PI);
     add_velocity(eVelocityRunDangerCrouchNegative, m_velocities->velocity(eMentalStateDanger, eBodyStateCrouch, eMovementTypeRun, eMovementDirectionForward), 100 * PI, cf * PI);
 }
@@ -218,7 +214,8 @@ void CStalkerMovementManager::setup_movement_params()
     switch (path_type())
     {
     case MovementManager::ePathTypeGamePath:
-    case MovementManager::ePathTypePatrolPath: {
+    case MovementManager::ePathTypePatrolPath: 
+	{
         set_desired_position(0);
         break;
     }
@@ -253,8 +250,7 @@ void CStalkerMovementManager::setup_movement_params()
             {
                 u32 vertex_id = level_path().dest_vertex_id();
                 Fvector vertex_position = ai().level_graph().vertex_position(vertex_id);
-                VERIFY2(restrictions().accessible(vertex_position) || show_restrictions(&restrictions()),
-                        make_string("vertex_id[%d],position[%f][%f][%f],object[%s]", vertex_id, VPUSH(vertex_position), *object().cName()));
+                VERIFY2(restrictions().accessible(vertex_position) || show_restrictions(&restrictions()), make_string("vertex_id[%d],position[%f][%f][%f],object[%s]", vertex_id, VPUSH(vertex_position), *object().cName()));
                 detail().set_dest_position(vertex_position);
             }
         }
@@ -280,11 +276,13 @@ void CStalkerMovementManager::setup_velocities()
     // setup body state
     switch (body_state())
     {
-    case eBodyStateCrouch: {
+    case eBodyStateCrouch: 
+	{
         velocity_mask |= eVelocityCrouch;
         break;
     }
-    case eBodyStateStand: {
+    case eBodyStateStand: 
+	{
         velocity_mask |= eVelocityStand;
         break;
     }
@@ -294,15 +292,18 @@ void CStalkerMovementManager::setup_velocities()
     // setup mental state
     switch (mental_state())
     {
-    case eMentalStateDanger: {
+    case eMentalStateDanger: 
+	{
         velocity_mask |= eVelocityDanger;
         break;
     }
-    case eMentalStateFree: {
+    case eMentalStateFree: 
+	{
         velocity_mask |= eVelocityFree;
         break;
     }
-    case eMentalStatePanic: {
+    case eMentalStatePanic: 
+	{
         velocity_mask |= eVelocityPanic;
         break;
     }
@@ -311,15 +312,18 @@ void CStalkerMovementManager::setup_velocities()
     // setup_movement_type
     switch (movement_type())
     {
-    case eMovementTypeWalk: {
+    case eMovementTypeWalk: 
+	{
         velocity_mask |= eVelocityWalk;
         break;
     }
-    case eMovementTypeRun: {
+    case eMovementTypeRun: 
+	{
         velocity_mask |= eVelocityRun;
         break;
     }
-    default: {
+    default: 
+	{
         velocity_mask |= eVelocityStanding;
         velocity_mask &= u32(-1) ^ (eVelocityNegativeVelocity | eVelocityPositiveVelocity);
     }
@@ -368,15 +372,12 @@ void CStalkerMovementManager::parse_velocity_mask()
         {
             setup_body_orientation();
             object().sight().enable(false);
-            //			Msg						("%d FALSE",Device.dwTimeGlobal);
         }
-        if ((mental_state() != eMentalStateFree) ||
-            //				(object().sight().current_action().sight_type() != SightManager::eSightTypePathDirection) ||
-            fis_zero(path_direction_angle(), EPS_L) || (m_last_turn_index == detail().curr_travel_point_index()))
+        if ((mental_state() != eMentalStateFree) || fis_zero(path_direction_angle(), EPS_L) || (m_last_turn_index == detail().curr_travel_point_index()))
         {
             m_last_turn_index = detail().curr_travel_point_index();
             object().sight().enable(true);
-            //			Msg						("%d TRUE",Device.dwTimeGlobal);
+
             if (detail().curr_travel_point_index() + 1 < path().size())
             {
                 point = path()[detail().curr_travel_point_index() + 1];
@@ -423,11 +424,13 @@ void CStalkerMovementManager::parse_velocity_mask()
 
     switch (point.velocity & eVelocityBodyState)
     {
-    case eVelocityStand: {
+    case eVelocityStand: 
+	{
         m_current.m_body_state = eBodyStateStand;
         break;
     }
-    case eVelocityCrouch: {
+    case eVelocityCrouch: 
+	{
         m_current.m_body_state = eBodyStateCrouch;
         break;
     }
@@ -436,7 +439,8 @@ void CStalkerMovementManager::parse_velocity_mask()
 
     switch (point.velocity & eVelocityMentalState)
     {
-    case eVelocityFree: {
+    case eVelocityFree: 
+	{
 #ifdef DEBUG
         if (m_object->brain().current_action_id() == StalkerDecisionSpace::eWorldOperatorCombatPlanner)
         {
@@ -448,11 +452,13 @@ void CStalkerMovementManager::parse_velocity_mask()
         m_current.m_mental_state = eMentalStateFree;
         break;
     }
-    case eVelocityDanger: {
+    case eVelocityDanger: 
+	{
         m_current.m_mental_state = eMentalStateDanger;
         break;
     }
-    case eVelocityPanic: {
+    case eVelocityPanic: 
+	{
         m_current.m_mental_state = eMentalStatePanic;
         break;
     }
@@ -463,15 +469,18 @@ void CStalkerMovementManager::parse_velocity_mask()
 
     switch (point.velocity & eVelocityMovementType)
     {
-    case eVelocityStanding: {
+    case eVelocityStanding: 
+	{
         m_current.m_movement_type = eMovementTypeStand;
         break;
     }
-    case eVelocityWalk: {
+    case eVelocityWalk: 
+	{
         m_current.m_movement_type = eMovementTypeWalk;
         break;
     }
-    case eVelocityRun: {
+    case eVelocityRun: 
+	{
         m_current.m_movement_type = eMovementTypeRun;
         break;
     }

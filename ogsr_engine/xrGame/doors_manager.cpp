@@ -27,7 +27,7 @@ door* manager::register_door(CPhysicObject& object)
 		return nullptr;
     }
 
-    door* const result = new door(&object);
+    door* const result = xr_new<door>(&object);
 
     m_doors.insert(result);
     return result;

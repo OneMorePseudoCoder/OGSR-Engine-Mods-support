@@ -88,7 +88,6 @@ void CInventoryItem::Load(LPCSTR section)
     m_name = CStringTable().translate(pSettings->r_string(section, "inv_name"));
     m_nameShort = CStringTable().translate(pSettings->r_string(section, "inv_name_short"));
 
-    //.	NameComplex			();
     m_weight = pSettings->r_float(section, "inv_weight");
     R_ASSERT(m_weight >= 0.f);
 
@@ -308,6 +307,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
         D->s_name = item_section_name;
         D->set_name_replace("");
         D->s_gameid = u8(GameID());
+        D->s_RP = 0xff;
         D->ID = 0xffff;
         D->ID_Parent = object().H_Parent()->ID();
         D->ID_Phantom = 0xffff;

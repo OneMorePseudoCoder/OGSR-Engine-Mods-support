@@ -29,13 +29,11 @@ CInput::CInput(bool bExclusive, int deviceForInit)
 
     // KEYBOARD
     if (deviceForInit & keyboard_device_key)
-        CHK_DX(CreateInputDevice(&pKeyboard, GUID_SysKeyboard, &c_dfDIKeyboard
-            , (is_exclusive_mode ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE) | DISCL_FOREGROUND, KEYBOARDBUFFERSIZE));
+        CHK_DX(CreateInputDevice(&pKeyboard, GUID_SysKeyboard, &c_dfDIKeyboard, (is_exclusive_mode ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE) | DISCL_FOREGROUND, KEYBOARDBUFFERSIZE));
 
     // MOUSE
     if (deviceForInit & mouse_device_key)
-        CHK_DX(CreateInputDevice(&pMouse, GUID_SysMouse, &c_dfDIMouse2
-            , (is_exclusive_mode ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE) | DISCL_FOREGROUND | DISCL_NOWINKEY, MOUSEBUFFERSIZE));
+        CHK_DX(CreateInputDevice(&pMouse, GUID_SysMouse, &c_dfDIMouse2, (is_exclusive_mode ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE) | DISCL_FOREGROUND | DISCL_NOWINKEY, MOUSEBUFFERSIZE));
 
     Device.seqAppActivate.Add(this);
     Device.seqAppDeactivate.Add(this);
@@ -72,8 +70,7 @@ CInput::~CInput(void)
 HRESULT CInput::CreateInputDevice(LPDIRECTINPUTDEVICE8* device, GUID guidDevice, const DIDATAFORMAT* pdidDataFormat, u32 dwFlags, u32 buf_size) const
 {
     // Obtain an interface to the input device
-    //.	CHK_DX( pDI->CreateDeviceEx( guidDevice, IID_IDirectInputDevice8, (void**)device, NULL ) );
-    CHK_DX(pDI->CreateDevice(guidDevice, /*IID_IDirectInputDevice8,*/ device, NULL));
+    CHK_DX(pDI->CreateDevice(guidDevice, device, NULL));
 
     // Set the device data format. Note: a data format specifies which
     // controls on a device we are interested in, and how they should be
@@ -206,7 +203,8 @@ BOOL CInput::iGetAsyncKeyState(int dik, bool hold) const
     case DIK_LCONTROL: return GetAsyncKeyState(VK_LCONTROL) & 0x8000;
     case DIK_RCONTROL: return GetAsyncKeyState(VK_RCONTROL) & 0x8000;
     case DIK_DELETE: return GetAsyncKeyState(VK_DELETE) & 0x8000;
-    default: {
+    default: 
+    {
         if (dik < COUNT_KB_BUTTONS)
         {
             return KBState[dik];
@@ -261,7 +259,8 @@ void CInput::MouseUpdate()
     for (int i = 0; i < COUNT_MOUSE_BUTTONS; i++)
         mouse_prev[i] = mouseState[i];
 
-    auto processMouseButton = [&](int i, bool state) {
+    auto processMouseButton = [&](int i, bool state) 
+    {
         if (state)
         {
             mouseState[i] = TRUE;
@@ -303,7 +302,8 @@ void CInput::MouseUpdate()
         case DIMOFS_BUTTON4:
         case DIMOFS_BUTTON5:
         case DIMOFS_BUTTON6:
-        case DIMOFS_BUTTON7: {
+        case DIMOFS_BUTTON7: 
+        {
             int btn = od[i].dwOfs - DIMOFS_BUTTON0;
 
             if (swapped)
@@ -315,7 +315,8 @@ void CInput::MouseUpdate()
             }
 
             processMouseButton(btn, od[i].dwData & 0x80);
-        }break;
+        }
+        break;
         }
     }
 
@@ -323,8 +324,8 @@ void CInput::MouseUpdate()
     DIMOUSESTATE2 MouseState;
     hr = pMouse->GetDeviceState(sizeof(MouseState), &MouseState);
 
-    auto RecheckMouseButtonFunc = [&](int i) {
-
+    auto RecheckMouseButtonFunc = [&](int i) 
+    {
         int btn = i;
 
         if (swapped)
@@ -350,7 +351,8 @@ void CInput::MouseUpdate()
 
     const u32 dwCurTime = Device.dwTimeGlobal;
 
-    auto isButtonOnHold = [&](int i) {
+    auto isButtonOnHold = [&](int i) 
+    {
         if (mouseState[i] && mouse_prev[i] && dwCurTime - mouseTime[i] >= MOUSE_HOLD_TIME)
             cbStack.back()->IR_OnMouseHold(i);
     };
@@ -486,7 +488,6 @@ u16 CInput::DikToChar(const int dik, const bool utf) const
     case DIK_NUMPAD9: return '9';
     case DIK_NUMPADSLASH: return '/';
     case DIK_NUMPADPERIOD: return '.';
-    //
     default:
         u8 State[256]{};
         if (this->is_exclusive_mode)

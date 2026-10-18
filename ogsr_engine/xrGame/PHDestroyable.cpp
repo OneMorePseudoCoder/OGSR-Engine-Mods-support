@@ -63,6 +63,7 @@ void CPHDestroyable::InitServerObject(CSE_Abstract* D)
 
     D->set_name_replace("");
     D->s_gameid = u8(GameID());
+    D->s_RP = 0xff;
     D->ID = 0xffff;
     D->ID_Phantom = 0xffff;
     D->o_Position = obj->Position();

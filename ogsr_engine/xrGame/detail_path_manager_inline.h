@@ -206,20 +206,11 @@ IC const float& CDetailPathManager::distance_to_target()
     return (m_distance_to_target);
 }
 
-IC const u32 &CDetailPathManager::dest_vertex_id() const
-{
-	return (m_dest_vertex_id);
-}
+IC const u32 &CDetailPathManager::dest_vertex_id() const { return (m_dest_vertex_id); }
 
-IC const u32 &CDetailPathManager::last_patrol_point() const
-{
-	return (m_last_patrol_point);
-}
+IC const u32 &CDetailPathManager::last_patrol_point() const { return (m_last_patrol_point); }
 
-IC void CDetailPathManager::last_patrol_point(const u32 &last_patrol_point)
-{
-	m_last_patrol_point = last_patrol_point;
-}
+IC void CDetailPathManager::last_patrol_point(const u32& last_patrol_point) { m_last_patrol_point = last_patrol_point; }
 
 #ifdef DEBUG
 IC xr_vector<CDetailPathManager::STravelPoint> &CDetailPathManager::key_points()

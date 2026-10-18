@@ -35,9 +35,6 @@ void CRenderDevice::Destroy(void)
     // real destroy
     m_pRender->Destroy();
 
-    // xr_delete					(Resources);
-    // HW.DestroyDevice			();
-
     seqRender.R.clear();
     seqAppActivate.R.clear();
     seqAppDeactivate.R.clear();

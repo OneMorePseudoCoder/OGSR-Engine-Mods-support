@@ -56,6 +56,7 @@ CSE_Abstract::CSE_Abstract(LPCSTR caSection)
     ID_Phantom = 0xffff;
     owner = 0;
     s_gameid = 0;
+    s_RP = 0xFE; // Use supplied coords
     s_flags.assign(0);
     s_name = caSection;
     s_name_replace = 0;
@@ -125,6 +126,7 @@ void CSE_Abstract::Spawn_Write(NET_Packet& tNetPacket, BOOL bLocal)
     tNetPacket.w_stringZ(s_name);
     tNetPacket.w_stringZ(s_name_replace ? s_name_replace : "");
     tNetPacket.w_u8(s_gameid);
+    tNetPacket.w_u8(s_RP);
     tNetPacket.w_vec3(o_Position);
     tNetPacket.w_vec3(o_Angle);
     tNetPacket.w_u16(RespawnTime);
@@ -174,6 +176,7 @@ BOOL CSE_Abstract::Spawn_Read(NET_Packet& tNetPacket)
     tNetPacket.r_stringZ(temp);
     set_name_replace(temp);
     tNetPacket.r_u8(s_gameid);
+    tNetPacket.r_u8(s_RP);
     tNetPacket.r_vec3(o_Position);
     tNetPacket.r_vec3(o_Angle);
     tNetPacket.r_u16(RespawnTime);
@@ -219,9 +222,6 @@ void CSE_Abstract::load(NET_Packet& tNetPacket)
     u16 client_data_size = (m_wVersion > 93) ? tNetPacket.r_u16() : tNetPacket.r_u8();
     if (client_data_size > 0)
     {
-#ifdef DEBUG
-//		Msg						("SERVER:loading:load:%d bytes:%d:%s",client_data_size,ID,s_name_replace ? s_name_replace : "");
-#endif // DEBUG
         client_data.resize(client_data_size);
         tNetPacket.r(&*client_data.begin(), client_data_size);
     }
@@ -251,30 +251,6 @@ Fvector& CSE_Abstract::angle() { return (o_Angle); }
 
 Flags16& CSE_Abstract::flags() { return (s_flags); }
 
-xr_token game_types[] = {{"any game", GAME_ANY},
-                         {"single", GAME_SINGLE},
-                         //{ "deathmatch",		GAME_DEATHMATCH },
-                         //	{ "CTF",			GAME_CTF		},
-                         //	{ "assault",		GAME_ASSAULT	},
-                         //{ "counterstrike",	GAME_CS			},
-                         //{ "teamdeathmatch",	GAME_TEAMDEATHMATCH },
-                         //{ "artefacthunt",	GAME_ARTEFACTHUNT },
-                         {0, 0}};
+xr_token game_types[] = {{"any game", GAME_ANY}, {"single", GAME_SINGLE}, {0, 0}};
 
 bool CSE_Abstract::validate() { return (true); }
-
-/**
-void CSE_Abstract::save_update				(NET_Packet &tNetPacket)
-{
-    tNetPacket.w				(&m_spawn_count,sizeof(m_spawn_count));
-    tNetPacket.w				(&m_last_spawn_time,sizeof(m_last_spawn_time));
-    tNetPacket.w				(&m_next_spawn_time,sizeof(m_next_spawn_time));
-}
-
-void CSE_Abstract::load_update				(NET_Packet &tNetPacket)
-{
-    tNetPacket.r				(&m_spawn_count,sizeof(m_spawn_count));
-    tNetPacket.r				(&m_last_spawn_time,sizeof(m_last_spawn_time));
-    tNetPacket.r				(&m_next_spawn_time,sizeof(m_next_spawn_time));
-}
-/**/

@@ -16,8 +16,7 @@ u32 Collector::VPack(const Fvector& V, float eps)
     return verts.size() - 1;
 }
 
-void Collector::add_face_packed_D(const Fvector& v0, const Fvector& v1, const Fvector& v2, // vertices
-                                  u32 dummy, float eps)
+void Collector::add_face_packed_D(const Fvector& v0, const Fvector& v1, const Fvector& v2, u32 dummy, float eps)
 {
     TRI T;
     T.verts[0] = VPack(v0, eps);
@@ -82,7 +81,8 @@ void Collector::calc_adjacency(xr_vector<u32>& dest) const
         ++i;
     }
 
-    std::sort(_edges.begin(), _edges.end(), [](const edge& edge0, const edge& edge1) {
+    std::sort(_edges.begin(), _edges.end(), [](const edge& edge0, const edge& edge1) 
+    {
         if (edge0.vertex_id0 < edge1.vertex_id0)
             return true;
 

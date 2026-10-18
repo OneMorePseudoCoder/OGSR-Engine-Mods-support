@@ -84,6 +84,7 @@ CSE_Abstract* CALifeSimulatorBase::spawn_item(LPCSTR section, const Fvector& pos
 
     abstract->s_name = section;
     abstract->s_gameid = u8(GAME_SINGLE);
+    abstract->s_RP = 0xff;
     abstract->ID = server().PerformIDgen(0xffff);
     abstract->ID_Parent = parent_id;
     abstract->ID_Phantom = 0xffff;
