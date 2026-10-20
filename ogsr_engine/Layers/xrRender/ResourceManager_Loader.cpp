@@ -18,6 +18,7 @@ void CResourceManager::OnDeviceDestroy(BOOL)
         xr_free((char*&)m_blender.first);
         IBlenderXr::Destroy(m_blender.second);
     }
+
     m_blenders.clear();
 
     // scripting
@@ -157,8 +158,6 @@ void CResourceManager::LoadShaderLtxFile(LPCSTR fname)
             }
 
             B->LoadIni(&ini, name.c_str());
-
-            // Msg("Loading shader: [%s]", desc.cName);
 
             const std::pair<map_BlenderIt, bool> I = m_blenders.insert_or_assign(xr_strdup(name.c_str()), B);
             ASSERT_FMT(I.second, "CResourceManager::LoadSharedFile - found shader name [%s]", name.c_str());

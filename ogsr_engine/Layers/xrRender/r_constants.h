@@ -15,6 +15,7 @@ enum
     RC_dx10texture = 100, //	For DX10 sampler and texture are different resources
     RC_dx11UAV = 101
 };
+
 enum
 {
     RC_1x1 = 0, // vector1, or scalar
@@ -28,6 +29,7 @@ enum
     RC_3x4a, // array: 4x3 matrix, transpose
     RC_4x4a // array: 4x4 matrix, transpose
 };
+
 enum
 {
     //	Don't change this since some code relies on magic numbers
@@ -174,8 +176,6 @@ public:
     BOOL equal(const R_constant_table& C) const;
     BOOL equal(const R_constant_table* C) const { return equal(*C); }
     BOOL empty() const { return 0 == table.size(); }
-
-private:
 };
 typedef resptr_core<R_constant_table, resptr_base<R_constant_table>> ref_ctable;
 

@@ -20,7 +20,8 @@ void CRenderTarget::phase_rain_drops(CBackend& cmd_list)
         return;
 
     // Функция рассчитывает интенсивность эффекта капель на худе. В шейдере нормально рассчитать слишком муторно, проще посчитать здесь и получить в шейдере через c_timers.w
-    auto update_rain_drops_factor = [](bool act_on_rain) {
+    auto update_rain_drops_factor = [](bool act_on_rain) 
+	{
         const float rain_factor = g_pGamePersistent->Environment().CurrentEnv->rain_density;
         if (!fis_zero(rain_factor))
         {

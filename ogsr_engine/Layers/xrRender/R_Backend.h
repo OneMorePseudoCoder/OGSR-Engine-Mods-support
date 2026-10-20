@@ -27,7 +27,6 @@ constexpr u32 CULL_CCW = D3DCULL_CCW;
 constexpr u32 CULL_CW = D3DCULL_CW;
 constexpr u32 CULL_NONE = D3DCULL_NONE;
 
-///		detailed statistic
 struct R_statistics_element
 {
     u32 verts{}, draw_calls{};
@@ -170,7 +169,8 @@ public:
         u32 target_zb;
 
         R_statistics r;
-    } stat{};
+    } 
+	stat{};
 
     u32 context_id{CHW::INVALID_CONTEXT_ID};
 
@@ -302,6 +302,7 @@ public:
             return ctable->get(n);
         return nullptr;
     }
+
     ICF ref_constant get_c(const shared_str& n)
     {
         if (ctable)
@@ -315,76 +316,91 @@ public:
         if (C)
             constants.set(C, A);
     }
+
     ICF void set_c(R_constant* C, const Fvector2& A)
     {
         if (C)
             constants.set(C, A);
     }
+	
     ICF void set_c(R_constant* C, const Fvector3& A)
     {
         if (C)
             constants.set(C, A);
     }
+
     ICF void set_c(R_constant* C, const Fvector4& A)
     {
         if (C)
             constants.set(C, A);
     }
+
     ICF void set_c(R_constant* C, float x, float y)
     {
         if (C)
             constants.set(C, x, y);
     }
+
     ICF void set_c(R_constant* C, float x, float y, float z)
     {
         if (C)
             constants.set(C, x, y, z);
     }
+
     ICF void set_c(R_constant* C, float x, float y, float z, float w)
     {
         if (C)
             constants.set(C, x, y, z, w);
     }
+
     ICF void set_ca(R_constant* C, u32 e, const Fmatrix& A)
     {
         if (C)
             constants.seta(C, e, A);
     }
+
     ICF void set_ca(R_constant* C, u32 e, const Fvector2& A)
     {
         if (C)
             constants.seta(C, e, A);
     }
+
     ICF void set_ca(R_constant* C, u32 e, const Fvector3& A)
     {
         if (C)
             constants.seta(C, e, A);
     }
+
     ICF void set_ca(R_constant* C, u32 e, const Fvector4& A)
     {
         if (C)
             constants.seta(C, e, A);
     }
+
     ICF void set_ca(R_constant* C, u32 e, float x, float y)
     {
         if (C)
             constants.seta(C, e, x, y);
     }
+
     ICF void set_ca(R_constant* C, u32 e, float x, float y, float z)
     {
         if (C)
             constants.seta(C, e, x, y, z);
     }
+
     ICF void set_ca(R_constant* C, u32 e, float x, float y, float z, float w)
     {
         if (C)
             constants.seta(C, e, x, y, z, w);
     }
+
     ICF void set_c(R_constant* C, float A)
     {
         if (C)
             constants.set(C, A);
     }
+
     ICF void set_c(R_constant* C, int A)
     {
         if (C)
@@ -397,76 +413,91 @@ public:
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(LPCSTR n, const Fvector2& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(LPCSTR n, const Fvector3& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(LPCSTR n, const Fvector4& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(LPCSTR n, float x, float y)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y);
     }
+
     ICF void set_c(LPCSTR n, float x, float y, float z)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y, z);
     }
+
     ICF void set_c(LPCSTR n, float x, float y, float z, float w)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y, z, w);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, const Fmatrix& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, const Fvector2& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, const Fvector3& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, const Fvector4& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, float x, float y)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, float x, float y, float z)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y, z);
     }
+
     ICF void set_ca(LPCSTR n, u32 e, float x, float y, float z, float w)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y, z, w);
     }
+
     ICF void set_c(LPCSTR n, float A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(LPCSTR n, int A)
     {
         if (ctable)
@@ -479,76 +510,91 @@ public:
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(shared_str& n, const Fvector2& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(shared_str& n, const Fvector3& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(shared_str& n, const Fvector4& A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(shared_str& n, float x, float y)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y);
     }
+
     ICF void set_c(shared_str& n, float x, float y, float z)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y, z);
     }
+
     ICF void set_c(shared_str& n, float x, float y, float z, float w)
     {
         if (ctable)
             set_c(&*ctable->get(n), x, y, z, w);
     }
+
     ICF void set_ca(shared_str& n, u32 e, const Fmatrix& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(shared_str& n, u32 e, const Fvector2& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(shared_str& n, u32 e, const Fvector3& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(shared_str& n, u32 e, const Fvector4& A)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, A);
     }
+
     ICF void set_ca(shared_str& n, u32 e, float x, float y)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y);
     }
+
     ICF void set_ca(shared_str& n, u32 e, float x, float y, float z)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y, z);
     }
+
     ICF void set_ca(shared_str& n, u32 e, float x, float y, float z, float w)
     {
         if (ctable)
             set_ca(&*ctable->get(n), e, x, y, z, w);
     }
+
     ICF void set_c(shared_str& n, float A)
     {
         if (ctable)
             set_c(&*ctable->get(n), A);
     }
+
     ICF void set_c(shared_str& n, int A)
     {
         if (ctable)
@@ -572,8 +618,7 @@ public:
         else
         {
             const auto hr2 = HW.pDevice->GetDeviceRemovedReason();
-            FATAL("!!FAILED HW.get_context(%u)->FinishCommandList! Error: [%s]; GetDeviceRemovedReason returns: [%s]", context_id, _com_error{hr}.ErrorMessage(),
-                FAILED(hr2) ? _com_error{hr2}.ErrorMessage() : "No device removal error detected");
+            FATAL("!!FAILED HW.get_context(%u)->FinishCommandList! Error: [%s]; GetDeviceRemovedReason returns: [%s]", context_id, _com_error{hr}.ErrorMessage(), FAILED(hr2) ? _com_error{hr2}.ErrorMessage() : "No device removal error detected");
         }
 
         _RELEASE(pCommandList);
@@ -617,26 +662,6 @@ public:
 
     CBackend();
 
-    // debug
-
-    //BOOL m_bNearer{};
-
-    //void SetNearer(BOOL enabled)
-    //{
-    //    Fmatrix mProject = Device.mProject;
-    //    if (enabled && !m_bNearer)
-    //    {
-    //        m_bNearer = TRUE;
-    //        mProject._43 -= EPS_L;
-    //    }
-    //    else if (!enabled && m_bNearer)
-    //    {
-    //        m_bNearer = FALSE;
-    //        mProject._43 += EPS_L;
-    //    }
-    //    set_xform_project(mProject);
-    //}
-    
 private:
     // Debug Draw
     void InitializeDebugDraw();

@@ -30,7 +30,6 @@ void CRenderTarget::RenderScreenQuad(CBackend& cmd_list, const u32 w, const u32 
     cmd_list.set_Stencil(FALSE);
 
     // Half-pixel offset (DX9 only)
-
     constexpr Fvector2 p0{0.0f, 0.0f}, p1{1.0f, 1.0f};
 
     FVF::TL* pv = (FVF::TL*)RImplementation.Vertex.Lock(4, g_combine->vb_stride, Offset);

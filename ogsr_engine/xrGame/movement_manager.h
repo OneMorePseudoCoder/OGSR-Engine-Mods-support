@@ -132,7 +132,6 @@ private:
     bool m_build_at_once;
 
     bool m_wait_for_distributed_computation;
-    bool m_wait_for_distributed_computation_2;
 
 public:
     CGameVertexParams* m_base_game_selector;

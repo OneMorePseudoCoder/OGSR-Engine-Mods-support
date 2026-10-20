@@ -426,7 +426,6 @@ void CParticleGroup::SItem::OnFrame(u32 u_dt, const CPGDef::SEffect& def, Fbox& 
             _children_free.erase(new_end, _children_free.end());
         }
     }
-    //	Msg("C: %d CS: %d",_children.size(),_children_stopped.size());
 }
 
 void CParticleGroup::SItem::OnDeviceCreate()
@@ -466,7 +465,6 @@ CParticleGroup::CParticleGroup()
 
 CParticleGroup::~CParticleGroup()
 {
-    // Msg ("!!! destoy PG");
     for (auto& item : items)
         item.Clear();
     items.clear();

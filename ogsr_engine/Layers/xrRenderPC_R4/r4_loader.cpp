@@ -152,15 +152,12 @@ void CRender::level_Load(IReader* fs)
 
             puddle.height = max_height;
             puddle.radius = size_xz.magnitude();
-
-            // Msg("~~Loaded puddle with center: [%f,%f,%f], size: [%f,%f]", position.x, position.y, position.z, size_xz.x, size_xz.y);
         }
     }
 
     // End
     pApp->LoadEnd();
 
-    //u32 m_base, c_base, m_lmaps, c_lmaps;
     Device.m_pRender->ResourcesGetMemoryUsage(m_base, c_base, m_lmaps, c_lmaps);
 
     Msg("~ LevelResources load completed!");
@@ -228,14 +225,19 @@ void CRender::level_Unload()
     //*** VB/IB
     for (I = 0; I < nVB.size(); I++)
         _RELEASE(nVB[I]);
+
     for (I = 0; I < xVB.size(); I++)
         _RELEASE(xVB[I]);
+
     nVB.clear();
     xVB.clear();
+
     for (I = 0; I < nIB.size(); I++)
         _RELEASE(nIB[I]);
+
     for (I = 0; I < xIB.size(); I++)
         _RELEASE(xIB[I]);
+
     nIB.clear();
     xIB.clear();
     nDC.clear();
@@ -300,8 +302,6 @@ void CRender::LoadBuffers(CStreamReader* base_fs, BOOL _alternative)
             R_CHK(dx10BufferUtils::CreateVertexBuffer(&_VB[i], pData, vCount * vSize));
             DXUT_SetDebugName(_VB[i], "fsL_VB");
             xr_free(pData);
-
-            //			fs->advance			(vCount*vSize);
         }
         fs->close();
     }
@@ -323,8 +323,6 @@ void CRender::LoadBuffers(CStreamReader* base_fs, BOOL _alternative)
             R_CHK(dx10BufferUtils::CreateIndexBuffer(&_IB[i], pData, iCount * 2));
             DXUT_SetDebugName(_IB[i], "fsL_IB");
             xr_free(pData);
-
-            //			fs().advance		(iCount*2);
         }
         fs->close();
     }
@@ -407,7 +405,7 @@ void CRender::LoadSectors(IReader* fs)
             if (vol > largest_sector_vol)
             {
                 largest_sector_vol = vol;
-                largest_sector_id = /*static_cast<IRender_Sector::sector_id_t>*/(i);
+                largest_sector_id = (i);
             }
         }
 
@@ -462,10 +460,6 @@ void CRender::LoadSectors(IReader* fs)
         Msg("root_id=[%d] volume=[%f]", sector_data.root_id, vol);
     }
 
-    // debug
-    //	for (int d=0; d<Sectors.size(); d++)
-    //		Sectors[d]->DebugDump	();
-
     for (auto& dsgraph : contexts_pool)
     {
         dsgraph.reset();
@@ -517,7 +511,6 @@ void CRender::Load3DFluid()
         return;
 
 #ifdef DX10_FLUID_ENABLE
-
     string_path fn_game;
     if (FS.exist(fn_game, fsgame::level, fsgame::level_files::level_fog_vol))
     {
@@ -544,9 +537,7 @@ void CRender::Load3DFluid()
                 if (!pSector)
                 {
                     Msg("Cannot find sector for fog volume. Position x=[%f] y=[%f] z=[%f]!", v.x, v.y, v.z);
-
                     xr_delete(pVolume);
-
                     continue;
                 }
 
@@ -564,6 +555,5 @@ void CRender::Load3DFluid()
 
         FS.r_close(F);
     }
-
 #endif
 }

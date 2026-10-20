@@ -2,12 +2,7 @@
 
 #include "../xrRenderDX10/dx10BufferUtils.h"
 
-CBackend::CBackend()
-    : xforms(*this)
-    , hemi(*this)
-    , lod(*this)
-    , constants(*this)
-    , StateManager(*this)
+CBackend::CBackend() : xforms(*this), hemi(*this), lod(*this), constants(*this), StateManager(*this)
 {
     Invalidate();
 }
@@ -38,7 +33,8 @@ public:
             Cnt += 4;
         }
     }
-} IndexBuffer{};
+} 
+IndexBuffer{};
 
 // Create Quad-IB
 void CRender::CreateQuadIB()

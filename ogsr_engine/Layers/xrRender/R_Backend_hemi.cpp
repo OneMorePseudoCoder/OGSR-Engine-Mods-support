@@ -1,6 +1,4 @@
 #include "stdafx.h"
-
-
 #include "r_backend_hemi.h"
 
 R_hemi::R_hemi(CBackend& cmd_list_in) : cmd_list(cmd_list_in) { unmap(); }
@@ -19,6 +17,7 @@ void R_hemi::set_pos_faces(float posx, float posy, float posz) const
     if (c_pos_faces)
         cmd_list.set_c(c_pos_faces, posx, posy, posz, 0);
 }
+
 void R_hemi::set_neg_faces(float negx, float negy, float negz)
 {
     if (c_neg_faces)

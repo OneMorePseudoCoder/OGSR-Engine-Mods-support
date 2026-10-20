@@ -14,14 +14,14 @@ extern float r_ssaLOD_B;
 extern float r_ssaGLOD_start, r_ssaGLOD_end;
 
 void render_main::init()
-{
-}
+{}
 
 void render_main::calculate_static()
 {
     static_calc_frame = Device.dwFrame;
 
-    static_waiter = TTAPI->submit([] {
+    static_waiter = TTAPI->submit([] 
+	{
         ZoneScoped;
 
         RImplementation.HOM.DispatchRender();
@@ -49,7 +49,8 @@ void render_main::ensure_calculate_static()
 
 void render_main::calculate_dynamic()
 {
-    dynamic_waiter = TTAPI->submit([] {
+    dynamic_waiter = TTAPI->submit([] 
+	{
         ZoneScoped;
 
         // ждем партиклы тут
@@ -81,12 +82,9 @@ void render_main::wait_dynamic() const
 void render_main::sync() const
 {
     // just to be safe
-
     wait_static();
-
     wait_dynamic();
 }
-
 
 // IC bool pred_sp_sort(ISpatial* _1, ISpatial* _2)
 //{
@@ -108,7 +106,8 @@ void CRender::calculate_particles_async()
 
         //Msg("Particles calculation: %d objects", lstParticlesCalculation.size());
 
-        auto calculate_particles = [this] {
+        auto calculate_particles = [this] 
+		{
             ZoneScoped;
 
             CTimer t_total;
@@ -143,7 +142,8 @@ void CRender::calculate_particles_async()
 
                         batch.clear();
 
-                        particles_pool.submit_detach([](const xr_vector<CPS_Instance*>& l) {
+                        particles_pool.submit_detach([](const xr_vector<CPS_Instance*>& l) 
+						{
                             for (CPS_Instance* instance : l)
                             {
                                 instance->PerformFrame();   
@@ -160,7 +160,8 @@ void CRender::calculate_particles_async()
                 batch.clear();
 
                 particles_pool.submit_detach(
-                    [](const xr_vector<CPS_Instance*>& l) {
+                    [](const xr_vector<CPS_Instance*>& l) 
+					{
                         for (CPS_Instance* instance : l)
                         {
                             instance->PerformFrame();
@@ -412,7 +413,6 @@ void CRender::Calculate()
     std::copy(std::begin(grass_shader_data.pos), std::end(grass_shader_data.pos), std::begin(grass_shader_data_old.pos));
     std::copy(std::begin(grass_shader_data.dir), std::end(grass_shader_data.dir), std::begin(grass_shader_data_old.dir));
 
-    //
     Lights.UpdateSun();
 
     // Clear selection
@@ -440,7 +440,6 @@ void CRender::Calculate()
     r_rain.run();
     r_sun.run();
 }
-
 
 IRender_Sector::sector_id_t CRender::detect_sector(xrXRC& Sectors_xrc, const Fvector& P) const
 {

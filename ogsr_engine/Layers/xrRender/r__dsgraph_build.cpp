@@ -13,9 +13,6 @@
 
 using namespace R_dsgraph;
 
-//u32 mapNormalItems::instance_cnt = 0;
-//u32 mapMatrixItems::instance_cnt = 0;
-
 // Static geometry optimization
 #define O_S_L1_S_LOW 10.f // geometry 3d volume size
 #define O_S_L1_D_LOW 150.f // distance, after which it is not rendered
@@ -60,7 +57,6 @@ using namespace R_dsgraph;
 #define O_S_L4_D_ULT 250.f
 #define O_S_L5_S_ULT 25000.f
 #define O_S_L5_D_ULT 300.f
-
 
 constexpr Fvector4 o_optimize_static_l1_dist{O_S_L1_D_LOW, O_S_L1_D_MED, O_S_L1_D_HII, O_S_L1_D_ULT};
 constexpr Fvector4 o_optimize_static_l1_size{O_S_L1_S_LOW, O_S_L1_S_MED, O_S_L1_S_HII, O_S_L1_S_ULT};
@@ -107,8 +103,8 @@ IC bool IsValuableToRender(dxRender_Visual* pVisual, const bool sm, const bool i
 
         if (sm && opt_shadow_geom) // Highest cut off for shadow map
         {
+			// don't need geometry behind the farest sun shadow cascade
             if (sphere_volume < 50000.f && adjusted_distance > ps_ssfx_shadow_cascades.z)
-                // don't need geometry behind the farest sun shadow cascade
                 return false;
 
             if ((sphere_volume < o_optimize_static_l1_size.z) && (adjusted_distance > o_optimize_static_l1_dist.z))
@@ -192,6 +188,7 @@ ICF float CalcSSA(float& dist_sqr, const Fvector& C, const float R)
     dist_sqr = Device.vCameraPosition.distance_to_sqr(C) + EPS;
     return R / dist_sqr;
 }
+
 ICF float CalcHudSSA(float& dist_sqr, const Fvector& C, dxRender_Visual* V)
 {
     const float R = V->getVisData().sphere.R /* + 0*/;
@@ -204,9 +201,8 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(IRenderable* root, dxRender_V
 {
     if (pVisual->getVisData().marker[context_id] == marker)
         return;
-    pVisual->getVisData().marker[context_id] = marker;
 
-    //ZoneScoped;
+    pVisual->getVisData().marker[context_id] = marker;
 
     float dist_sqr;
     float SSA;
@@ -233,6 +229,7 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(IRenderable* root, dxRender_V
     ShaderElement* sh = RImplementation.rimp_select_sh_dynamic(pVisual, dist_sqr, root ? root->renderable_HUD() : false, phase);
     if (nullptr == sh)
         return;
+
     if (!pmask[sh->flags.iPriority / 2])
         return;
 
@@ -280,7 +277,6 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(IRenderable* root, dxRender_V
     }
 
     // Shadows registering
-
     if (root && root->renderable_Invisible())
         return;
 
@@ -300,6 +296,7 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(IRenderable* root, dxRender_V
     {
         mapEmissive.insert_anyway(dist_sqr, _MatrixItemS({.ssa= SSA, .pObject= root, .pVisual= pVisual, .Matrix= xform, .se= sh_d}));
     }
+
     if (sh->flags.bWmark && pmask_wmark)
     {
         mapWmark.insert_anyway(dist_sqr, _MatrixItemS({.ssa= SSA, .pObject= root, .pVisual= pVisual, .Matrix= xform, .se= sh}));
@@ -315,7 +312,6 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(IRenderable* root, dxRender_V
         mapMatrix_T& map = mapMatrixPasses[sh->flags.iPriority / 2][iPass];
         SPass* pass = sh->passes[iPass]._get();
         mapMatrixItems& matrixItems = map[pass];
-
         matrixItems.items->emplace_back(_MatrixItem{.ssa= SSA, .pObject= root, .pVisual= pVisual, .Matrix= xform});
     }
 }
@@ -324,9 +320,8 @@ void R_dsgraph_structure::r_dsgraph_insert_static(dxRender_Visual* pVisual)
 {
     if (pVisual->getVisData().marker[context_id] == marker)
         return;
-    pVisual->getVisData().marker[context_id] = marker;
 
-    //ZoneScoped;
+    pVisual->getVisData().marker[context_id] = marker;
 
     float dist_sqr;
     const float SSA = CalcSSA(dist_sqr, pVisual->getVisData().sphere.P, pVisual->getVisData().sphere.R /*+ 0*/);
@@ -349,6 +344,7 @@ void R_dsgraph_structure::r_dsgraph_insert_static(dxRender_Visual* pVisual)
     ShaderElement* sh = RImplementation.rimp_select_sh_static(pVisual, dist_sqr, phase);
     if (nullptr == sh)
         return;
+
     if (!pmask[sh->flags.iPriority / 2])
         return;
 
@@ -380,8 +376,6 @@ void R_dsgraph_structure::r_dsgraph_insert_static(dxRender_Visual* pVisual)
     counter_S++;
 
     {
-        //ZoneScopedN("mapNormalPasses");
-
         ASSERT_FMT(sh->passes.size() <= SHADER_PASSES_MAX, "max pass should be <= 2! shader [%s]", pVisual->shader->dbg_shader_name.c_str());
         ASSERT_FMT(sh->flags.iPriority / 2 <= 1, "sh->flags.iPriority / 2 <= 1! shader [%s]", pVisual->shader->dbg_shader_name.c_str());
 
@@ -426,7 +420,8 @@ void R_dsgraph_structure::add_leafs_dynamic(IRenderable* root, dxRender_Visual* 
 
     switch (pVisual->Type)
     {
-    case MT_PARTICLE_GROUP: {
+    case MT_PARTICLE_GROUP: 
+	{
         if (phase == CRender::PHASE_NORMAL)
         {
             // Add all children, doesn't perform any tests
@@ -442,15 +437,17 @@ void R_dsgraph_structure::add_leafs_dynamic(IRenderable* root, dxRender_Visual* 
             }
         }
     }
-        return;
-    case MT_HIERRARHY: {
+	return;
+    case MT_HIERRARHY: 
+	{
         for (dxRender_Visual* Vis : smart_cast<FHierrarhyVisual*>(pVisual)->children)
             if (Vis->getRZFlag())
                 add_leafs_dynamic(root, Vis, xform);
     }
-        return;
+	return;
     case MT_SKELETON_ANIM:
-    case MT_SKELETON_RIGID: {
+    case MT_SKELETON_RIGID: 
+	{
         const auto pV = smart_cast<CKinematics*>(pVisual);
         BOOL _use_lod = FALSE;
         if (pV->m_lod)
@@ -479,15 +476,16 @@ void R_dsgraph_structure::add_leafs_dynamic(IRenderable* root, dxRender_Visual* 
                     add_leafs_dynamic(root, Vis, xform);
         }
     }
-        return;
-    default: {
+	return;
+    default: 
+	{
         // General type of visual
         // Calculate distance to it's center
         Fvector Tpos;
         xform.transform_tiny(Tpos, pVisual->getVisData().sphere.P);
         r_dsgraph_insert_dynamic(root, pVisual, xform, Tpos);
     }
-        return;
+	return;
     }
 }
 
@@ -499,11 +497,8 @@ void R_dsgraph_structure::add_leafs_static(dxRender_Visual* pVisual)
         return;
 
     {
-        // ZoneScopedN("add_leafs_static/HOM+IsValuableToRender");
-
         if (phase == CRender::PHASE_NORMAL && !RImplementation.HOM.visible(pVisual->getVisData()))
         {
-            // Msg("add_leafs_static skip static model");
             return;
         }
 
@@ -513,25 +508,29 @@ void R_dsgraph_structure::add_leafs_static(dxRender_Visual* pVisual)
 
     switch (pVisual->Type)
     {
-    case MT_PARTICLE_GROUP: {
+    case MT_PARTICLE_GROUP: 
+	{
         // Xottab_DUTY: for dynamic objects we need matrix,
         // which is nullptr, when we use add_leafs_static
         Log("Dynamic particles added via static procedure.");
         NODEFAULT;
     }
-        return;
-    case MT_HIERRARHY: {
+	return;
+    case MT_HIERRARHY: 
+	{
         for (dxRender_Visual* Vis : smart_cast<FHierrarhyVisual*>(pVisual)->children)
             if (Vis->getRZFlag())
                 add_leafs_static(Vis);
     }
-        return;
+	return;
     case MT_SKELETON_ANIM:
-    case MT_SKELETON_RIGID: {
+    case MT_SKELETON_RIGID: 
+	{
         R_ASSERT(false, "SKELETON in static !");
     }
-        return;
-    case MT_LOD: {
+	return;
+    case MT_LOD: 
+	{
         if (ps_r2_ls_flags_ext.test(R2FLAGEXT_DISABLE_STATIC_LOD))
         {
             return;
@@ -539,7 +538,7 @@ void R_dsgraph_structure::add_leafs_static(dxRender_Visual* pVisual)
 
         const auto pV = smart_cast<FLOD*>(pVisual);
         float D;
-        float ssa = CalcSSA(D, pV->getVisData().sphere.P, pV->getVisData().sphere.R /*+ 0*/) * pV->lod_factor;
+        float ssa = CalcSSA(D, pV->getVisData().sphere.P, pV->getVisData().sphere.R) * pV->lod_factor;
 
         if (ssa < r_ssaLOD_A && phase == CRender::PHASE_NORMAL)
         {
@@ -556,11 +555,11 @@ void R_dsgraph_structure::add_leafs_static(dxRender_Visual* pVisual)
                 add_leafs_static(Vis);
         }
     }
-        return;
-    default: {
+	return;
+    default: 
+	{
         if (max_render_distance > 0.f) // check used only for light render
         {
-
             if (render_position.distance_to(pVisual->getVisData().sphere.P) - pVisual->getVisData().sphere.R / 2 > max_render_distance)
                 return;
         }
@@ -602,11 +601,8 @@ void R_dsgraph_structure::add_static(dxRender_Visual* pVisual, const CFrustum& v
         return;
 
     {
-        // ZoneScopedN("add_leafs_static/HOM+IsValuableToRender");
-
         if (phase == CRender::PHASE_NORMAL && !RImplementation.HOM.visible(pVisual->getVisData()))
         {
-            // Msg("add_leafs_static skip static model");
             return;
         }
 
@@ -620,10 +616,10 @@ void R_dsgraph_structure::add_static(dxRender_Visual* pVisual, const CFrustum& v
         return;
 
     // If we get here visual is visible or partially visible
-
     switch (pVisual->Type)
     {
-    case MT_HIERRARHY: {
+    case MT_HIERRARHY: 
+	{
         for (dxRender_Visual* Vis : smart_cast<FHierrarhyVisual*>(pVisual)->children)
         {
             if (Vis->getRZFlag())
@@ -640,7 +636,8 @@ void R_dsgraph_structure::add_static(dxRender_Visual* pVisual, const CFrustum& v
         }
     }
     break;
-    default: {
+    default: 
+	{
         add_leafs_static(pVisual);
     }
     break;
@@ -648,8 +645,7 @@ void R_dsgraph_structure::add_static(dxRender_Visual* pVisual, const CFrustum& v
 }
 
 // sub-space rendering - main procedure
-void R_dsgraph_structure::build_subspace(const IRender_Sector::sector_id_t& start_sector_id, CFrustum& frustum, const Fmatrix& xform, const Fvector& camera_position,
-                                         const BOOL add_dynamic)
+void R_dsgraph_structure::build_subspace(const IRender_Sector::sector_id_t& start_sector_id, CFrustum& frustum, const Fmatrix& xform, const Fvector& camera_position, const BOOL add_dynamic)
 {
     ZoneScoped;
 

@@ -7,9 +7,7 @@
 
 void CBackend::OnFrameEnd()
 {
-    // if (context_id == CHW::IMM_CTX_ID)
-        HW.get_context(context_id)->ClearState();
-
+	HW.get_context(context_id)->ClearState();
     Invalidate();
 }
 
@@ -75,6 +73,7 @@ void CBackend::Invalidate()
         m_aDomainConstants[i] = nullptr;
         m_aComputeConstants[i] = nullptr;
     }
+
     StateManager.Reset();
     //	Redundant call. Just no note that we need to unmap const
     //	if we create dedicated class.
@@ -100,8 +99,6 @@ void CBackend::Invalidate()
 
 void CBackend::set_Textures(STextureList* _T)
 {
-    // TODO: expose T invalidation method
-
     if (T == _T)
     {
         if (_T)
@@ -287,6 +284,7 @@ void CBackend::set_Textures(STextureList* _T)
         ID3DShaderResourceView* pRes = nullptr;
         SRVSManager.SetPSResource(_last_ps, pRes);
     }
+
     // clear remaining stages (VS)
     for (++_last_vs; _last_vs < CTexture::mtMaxVertexShaderTextures; _last_vs++)
     {
@@ -311,6 +309,7 @@ void CBackend::set_Textures(STextureList* _T)
         ID3DShaderResourceView* pRes = nullptr;
         SRVSManager.SetGSResource(_last_gs, pRes);
     }
+
     for (++_last_hs; _last_hs < CTexture::mtMaxHullShaderTextures; _last_hs++)
     {
         if (!textures_hs[_last_hs])
@@ -322,6 +321,7 @@ void CBackend::set_Textures(STextureList* _T)
         ID3DShaderResourceView* pRes = nullptr;
         SRVSManager.SetHSResource(_last_hs, pRes);
     }
+
     for (++_last_ds; _last_ds < CTexture::mtMaxDomainShaderTextures; _last_ds++)
     {
         if (!textures_ds[_last_ds])
@@ -333,6 +333,7 @@ void CBackend::set_Textures(STextureList* _T)
         ID3DShaderResourceView* pRes = nullptr;
         SRVSManager.SetDSResource(_last_ds, pRes);
     }
+
     for (++_last_cs; _last_cs < CTexture::mtMaxComputeShaderTextures; _last_cs++)
     {
         if (!textures_cs[_last_cs])

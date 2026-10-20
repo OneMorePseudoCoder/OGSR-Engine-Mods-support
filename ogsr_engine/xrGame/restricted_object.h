@@ -19,8 +19,7 @@ namespace RestrictionSpace
 enum ERestrictorTypes;
 };
 
-template <bool add>
-struct CRestrictionPredicate;
+template <bool add> struct CRestrictionPredicate;
 
 class CRestrictedObject
 {
@@ -35,6 +34,7 @@ private:
     bool m_actual;
 
 protected:
+    template <typename P, bool value>
     IC void add_object_restriction(ALife::_OBJECT_ID id, const RestrictionSpace::ERestrictorTypes& restrictor_type);
     IC void remove_object_restriction(ALife::_OBJECT_ID id, const RestrictionSpace::ERestrictorTypes& restrictor_type);
 

@@ -33,23 +33,21 @@ BOOL CRenderDevice::Begin()
 {
     switch (m_pRender->GetDeviceState())
     {
-    case IRenderDeviceRender::dsOK: break;
-
+    case IRenderDeviceRender::dsOK:
+		break;
     case IRenderDeviceRender::dsLost:
         // If the device was lost, do not render until we get it back
         Sleep(33);
         return FALSE;
         break;
-
     case IRenderDeviceRender::dsNeedReset:
         // Check if the device is ready to be reset
         Reset();
         break;
-
-    default: R_ASSERT(0);
+    default:
+		R_ASSERT(0);
     }
 
-    
     ::Render->Begin();
 
     R_ASSERT(g_bRendering == FALSE, "Something Strange");
@@ -82,8 +80,6 @@ void CRenderDevice::End()
         if (0 == dwPrecacheFrame)
         {
             ::Sound->set_master_volume(1.f);
-
-            //Memory.mem_compact();
 
             Msg("* MEMORY USAGE: %d K", Memory.mem_usage() / 1024);
             Msg("* End of synchronization A[%d] R[%d]", b_is_Active, b_is_Ready);
@@ -171,13 +167,11 @@ void CRenderDevice::OnCameraUpdated(bool from_actor)
     ::Render->SetCacheXformOld(mView_old, mProject_old);
 
     mView_hud.build_camera_dir(Fvector{}, vCameraDirection, vCameraTop);
-    mProject_hud.build_projection(deg2rad(psHUD_FOV <= 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), fASPECT, HUD_VIEWPORT_NEAR,
-                                  g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    mProject_hud.build_projection(deg2rad(psHUD_FOV <= 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), fASPECT, HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
     mFullTransform_hud.mul(mProject_hud, mView_hud);
 
     mView_hud2.set(mView);
-    mProject_hud2.build_projection(deg2rad(psHUD_FOV <= 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), fASPECT, HUD_VIEWPORT_NEAR,
-                                   g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    mProject_hud2.build_projection(deg2rad(psHUD_FOV <= 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), fASPECT, HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
     mFullTransform_hud2.mul(mProject_hud2, mView_hud2);
 }
 
@@ -191,7 +185,8 @@ struct _SoundProcessor : public pureFrame
         ::Sound->update(Device.vCameraPosition, Device.vCameraDirection, Device.vCameraTop /*, Device.Paused()*/);
         Device.Statistic->Sound.End();
     }
-} g_sound_update;
+} 
+g_sound_update;
 
 #pragma todo("SIMP: для этого кода нужны переделки в xrSound")
 /*
@@ -206,7 +201,8 @@ struct _SoundRender : public pureFrame
         ::Sound->render();
         Device.Statistic->Sound.End();
     }
-} g_sound_render;
+} 
+g_sound_render;
 */
 
 void CRenderDevice::on_idle()
@@ -372,8 +368,7 @@ void CRenderDevice::on_idle()
 #ifdef LOG_SECOND_THREAD_STATS
             if (show_stats && dwPrecacheFrame == 0)
             {
-                Msg("##[%s] Second thread work time is too long! Avail: [%f]ms, used: [%f]ms, free: [%f]ms", __FUNCTION__, SecondThreadElapsedTime.count(),
-                    SecondThreadTasksElapsedTime.count(), SecondThreadFreeTimeLast.count());
+                Msg("##[%s] Second thread work time is too long! Avail: [%f]ms, used: [%f]ms, free: [%f]ms", __FUNCTION__, SecondThreadElapsedTime.count(), SecondThreadTasksElapsedTime.count(), SecondThreadFreeTimeLast.count());
             }
 #endif
         }
@@ -416,7 +411,6 @@ void CRenderDevice::ShowMainWindow() const
 
 void CRenderDevice::Run()
 {
-    //	DUMP_PHASE;
     g_bLoaded = FALSE;
 
     Log("Starting engine...");
@@ -508,11 +502,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 {
     static int snd_emitters_ = -1;
 
-#ifdef DEBUG
-//	Msg("pause [%s] timer=[%s] sound=[%s] reason=%s",bOn?"ON":"OFF", bTimer?"ON":"OFF", bSound?"ON":"OFF", reason);
-#endif // DEBUG
-
-
     if (bOn)
     {
         if (!Paused())
@@ -534,9 +523,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
         if (bSound && ::Sound)
         {
             snd_emitters_ = ::Sound->pause_emitters(true);
-#ifdef DEBUG
-//			Log("snd_emitters_[true]",snd_emitters_);
-#endif // DEBUG
         }
     }
     else
@@ -553,9 +539,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
             if (snd_emitters_ > 0) // avoid crash
             {
                 snd_emitters_ = ::Sound->pause_emitters(false);
-#ifdef DEBUG
-//				Log("snd_emitters_[false]",snd_emitters_);
-#endif // DEBUG
             }
             else
             {
@@ -565,7 +548,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
             }
         }
     }
-
 }
 
 BOOL CRenderDevice::Paused() { return g_pauseMngr->Paused(); }

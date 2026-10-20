@@ -63,13 +63,13 @@ public:
         if (Device.dwTimeGlobal < m_last_fail_time + time_to_wait_after_fail)
             return;
 
-        m_object->m_wait_for_distributed_computation_2 = true;
+        m_object->m_wait_for_distributed_computation = true;
         Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this, &CLevelPathBuilder::process));
     }
 
     void process_impl()
     {
-        m_object->m_wait_for_distributed_computation_2 = false;
+        m_object->m_wait_for_distributed_computation = false;
         m_object->level_path().build_path(m_start_vertex_id, m_dest_vertex_id);
 
         if (m_object->level_path().failed())
@@ -106,8 +106,8 @@ public:
 
     IC void remove()
     {
-        if (m_object->m_wait_for_distributed_computation_2)
-            m_object->m_wait_for_distributed_computation_2 = false;
+        if (m_object->m_wait_for_distributed_computation)
+            m_object->m_wait_for_distributed_computation = false;
 
         Device.remove_from_seq_parallel(fastdelegate::MakeDelegate(this, &CLevelPathBuilder::process));
     }

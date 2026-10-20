@@ -37,7 +37,8 @@ void CRender::DrawRTTextures()
         R_CHK(HW.pDevice->CreateBlendState(&desc, &RTdbgBS));
     }
 
-    auto DrawTexture = [&](const ref_rt& rt) {
+    auto DrawTexture = [&](const ref_rt& rt) 
+	{
         auto& tex{rt->pTexture};
 
         ImGui::Text("RT [%s][%u x %u]", tex->cName.c_str(), rt->dwWidth, rt->dwHeight);
@@ -45,7 +46,8 @@ void CRender::DrawRTTextures()
         auto* DL{ImGui::GetWindowDrawList()};
 
         DL->AddCallback(
-            [](auto, const ImDrawCmd* cmd) {
+            [](auto, const ImDrawCmd* cmd) 
+			{
                 if (auto* bs = static_cast<ID3D11BlendState*>(cmd->UserCallbackData))
                 {
                     constexpr FLOAT bf[4]{};
@@ -59,7 +61,8 @@ void CRender::DrawRTTextures()
         ImGui::Image(tex->get_SRView(), ImVec2{cra_w, static_cast<float>(rt->dwHeight) * scl});
 
         DL->AddCallback(
-            [](auto, auto) {
+            [](auto, auto) 
+			{
                 if (auto* bs = ImGui_ImplDX11_GetBlendState())
                 {
                     constexpr FLOAT bf[4]{};

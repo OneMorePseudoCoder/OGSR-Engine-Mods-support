@@ -13,13 +13,16 @@ constexpr float tweak_rain_ortho_xform_initial_offs = 1000.f; //. ?
 // note: D3D uses [0..1] range for Z
 namespace rain
 {
-constexpr Fvector3 corners[8]{
+constexpr Fvector3 corners[8]
+{
     {-1, -1, 0}, {-1, -1, +1},
     {-1, +1, +1}, {-1, +1, 0},
     {+1, +1, +1}, {+1, +1, 0},
     {+1, -1, +1}, {+1, -1, 0}
 };
-constexpr int facetable[6][4]{
+
+constexpr int facetable[6][4]
+{
     {0, 3, 5, 7}, {1, 2, 3, 0},
     {6, 7, 5, 4}, {4, 2, 1, 6},
     {3, 2, 4, 5}, {1, 0, 7, 6},
@@ -145,7 +148,6 @@ void render_rain::calculate()
         frustum_bb.invalidate();
         for (int it = 0; it < 8; it++)
         {
-            // for (int it=0; it<9; it++)	{
             Fvector xf = wform(mdir_View, hull.points[it]);
             frustum_bb.modify(xf);
         }
@@ -167,8 +169,7 @@ void render_rain::calculate()
         bb.min.y = -fBoundingSphereRadius + vRectOffset.z;
         bb.max.y = fBoundingSphereRadius + vRectOffset.z;
 
-        XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&mdir_Project),
-                        XMMatrixOrthographicOffCenterLH(bb.min.x, bb.max.x, bb.min.y, bb.max.y, bb.min.z - tweak_rain_ortho_xform_initial_offs, bb.min.z + 2 * tweak_rain_ortho_xform_initial_offs));
+        XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&mdir_Project), XMMatrixOrthographicOffCenterLH(bb.min.x, bb.max.x, bb.min.y, bb.max.y, bb.min.z - tweak_rain_ortho_xform_initial_offs, bb.min.z + 2 * tweak_rain_ortho_xform_initial_offs));
 
         cull_xform.mul(mdir_Project, mdir_View);
 
@@ -206,11 +207,6 @@ void render_rain::calculate()
     {
         dsgraph.phase = CRender::PHASE_SMAP;
         dsgraph.r_pmask(true, false);
-
-        //dsgraph.o.sector_id = RImplementation.get_largest_sector();
-        //dsgraph.o.xform = cull_xform;
-        //dsgraph.o.view_frustum = cull_frustum;
-        //dsgraph.o.view_pos = cull_COP;
 
         IRender_Sector::sector_id_t id = RImplementation.get_largest_sector();
 
@@ -270,14 +266,7 @@ void render_rain::flush()
     if (o.active)
     {
         PIX_EVENT_CTX(cmd_list_imm, RainApply);
-
-        cmd_list_imm.set_pass_targets(
-            RImplementation.Target->rt_Color, /*rt_Normal*/
-            nullptr,
-            nullptr, 
-            nullptr, 
-            RImplementation.Target->rt_Base_Depth);
-
+        cmd_list_imm.set_pass_targets(RImplementation.Target->rt_Color, nullptr, nullptr, nullptr, RImplementation.Target->rt_Base_Depth);
         RImplementation.Target->draw_rain(cmd_list_imm, RainLight);
     }
 }

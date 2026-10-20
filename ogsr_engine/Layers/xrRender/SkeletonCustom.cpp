@@ -114,7 +114,6 @@ CKinematics::~CKinematics()
     }
 }
 
-
 void CKinematics::StoreVisualMatrix(const Fmatrix& world_matrix)
 {
     if (dwFirstRenderFrame != Device.dwFrame)
@@ -135,7 +134,6 @@ void CKinematics::StoreVisualMatrix(const Fmatrix& world_matrix)
 
 void CKinematics::IBoneInstances_Create()
 {
-    // VERIFY				(bones->size() < 64, "More than 64 bones is a crazy thing!");
     const u32 size = bones->size();
     bone_instances = xr_alloc<CBoneInstance>(size);
     for (u32 i = 0; i < size; i++)
@@ -160,13 +158,12 @@ CSkeletonX* CKinematics::LL_GetChild(const u32 idx) const
 
 void CKinematics::Load(const char* N, IReader* data, const u32 dwFlags)
 {
-    // Msg				("skeleton: %s",N);
     inherited::Load(N, data, dwFlags);
 
     pUserData = nullptr;
     m_lod = nullptr;
-    // loading lods
 
+    // loading lods
     IReader* LD = data->open_chunk(OGF_S_LODS);
     if (LD)
     {
@@ -282,7 +279,6 @@ void CKinematics::Load(const char* N, IReader* data, const u32 dwFlags)
         visimask.set(ID, true);
     }
 
-    
     if (has_bones)
     {
         for (const auto& it : bone_override_ini->r_section(N).Ordered_Data)
@@ -824,7 +820,8 @@ void CKinematics::CalculateWallmarks(const bool hud) // called on render
 
     if (!wallmarks.empty())
     {
-        std::erase_if(wallmarks, [&](const auto& wm) {
+        std::erase_if(wallmarks, [&](const auto& wm) 
+		{
             if ((Device.fTimeGlobal - wm->TimeStart()) / ps_r__WallmarkTTL >= 1.f)
             {
                 return true; // remove wallmark

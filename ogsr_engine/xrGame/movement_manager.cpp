@@ -71,7 +71,6 @@ void CMovementManager::Load(LPCSTR section)
     extrapolate_path(false);
 
     m_wait_for_distributed_computation = false;
-    m_wait_for_distributed_computation_2 = false;
 	
 	locations().Load(section); 
 }

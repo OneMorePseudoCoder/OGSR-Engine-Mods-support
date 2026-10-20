@@ -54,7 +54,8 @@ void CPortalTraverser::fade_render(CBackend& cmd_list)
     PIX_EVENT_CTX(cmd_list, PortalTraverser_fade_render);
 
     // re-sort, back to front
-    std::sort(f_portals.begin(), f_portals.end(), [this](const auto& p1, const auto& p2) {
+    std::sort(f_portals.begin(), f_portals.end(), [this](const auto& p1, const auto& p2) 
+	{
         const float d1 = i_vBase.distance_to_sqr(p1.first->S.P);
         const float d2 = i_vBase.distance_to_sqr(p2.first->S.P);
         return d2 > d1; // descending, back to front
@@ -93,6 +94,7 @@ void CPortalTraverser::fade_render(CBackend& cmd_list)
             _v++;
         }
     }
+
     RImplementation.Vertex.Unlock(_pcount * 3, dxRenderDeviceRender::Instance().m_PortalFadeGeom.stride());
 
     // render
@@ -117,6 +119,7 @@ void CPortalTraverser::traverse_sector(CSector* sector, CFrustum& F, _scissor& R
         sector->r_frustums.clear();
         sector->r_scissors.clear();
     }
+
     sector->r_frustums.push_back(F);
     sector->r_scissors.push_back(R_scissor);
 
@@ -193,7 +196,6 @@ void CPortalTraverser::traverse_sector(CSector* sector, CFrustum& F, _scissor& R
         traverse_sector(pSector, Clip, scissor);
     }
 }
-
 
 #ifdef DEBUG
 void CPortalTraverser::dbg_draw()

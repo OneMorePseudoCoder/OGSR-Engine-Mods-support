@@ -23,7 +23,8 @@ struct light_ctx
 
 void CRender::render_lights_shadowed_one(light_ctx& task)
 {
-    auto build = [this, &task] {
+    auto build = [this, &task] 
+	{
         auto& dsgraph = get_context(task.context_id);
         light* L = task.lights[task.curr];
 
@@ -46,7 +47,8 @@ void CRender::render_lights_shadowed_one(light_ctx& task)
         const bool bNormal = dsgraph.mapNormalCount > 0 || dsgraph.mapMatrixCount > 0;
         if (bNormal)
         {
-            auto render = [this, &task] {
+            auto render = [this, &task] 
+			{
                 auto& dsgraph = get_context(task.context_id);
                 light* L = task.lights[task.curr];
 
@@ -142,7 +144,8 @@ void CRender::render_lights_shadowed(light_Package& LP)
 
     //////////////////////////////////////////////////////////////////////////
     // sort lights by importance???
-    // while (has_any_lights_that_cast_shadows) {
+    // while (has_any_lights_that_cast_shadows) 
+	//  {
     //		if (has_point_shadowed)		->	generate point shadowmap
     //		if (has_spot_shadowed)		->	generate spot shadowmap
     //		switch-to-accumulator
@@ -178,7 +181,8 @@ void CRender::render_lights_shadowed(light_Package& LP)
         const size_t num_tasks = light_tasks.size();
 
         // 2. refactor - infact we could go from the backside and sort in ascending order
-        const auto light_cmp = [](const light* l1, const light* l2) {
+        const auto light_cmp = [](const light* l1, const light* l2) 
+		{
             const u32 a0 = l1->X.S.size;
             const u32 a1 = l2->X.S.size;
             return a0 > a1; // reverse -> descending
