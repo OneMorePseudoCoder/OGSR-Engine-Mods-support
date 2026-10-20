@@ -66,8 +66,8 @@ public:
 	IC LPCSTR get_war_state_hint5() const;
 	IC void set_war_state_hint5(LPCSTR icon);
 
-		void update_info();
-		void ResetStates();
+	void update_info();
+	void ResetStates();
 
 public:
 	enum

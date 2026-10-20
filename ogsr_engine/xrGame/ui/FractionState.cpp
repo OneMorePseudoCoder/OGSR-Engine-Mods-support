@@ -40,22 +40,24 @@ FractionState::~FractionState() {}
 #pragma optimize("s", on)
 void FractionState::script_register(lua_State* L)
 {
-    module(L)[class_<FractionState>("FractionState")
-                  .def_readwrite("member_count", &FractionState::member_count)
-                  .def_readwrite("resource", &FractionState::resource)
-                  .def_readwrite("power", &FractionState::power)
-                  .def_readwrite("state_vs", &FractionState::state_vs)
-                  .def_readwrite("bonus", &FractionState::bonus)
+    module(L)
+	[
+		class_<FractionState>("FractionState")
+        .def_readwrite("member_count", &FractionState::member_count)
+        .def_readwrite("resource", &FractionState::resource)
+        .def_readwrite("power", &FractionState::power)
+        .def_readwrite("state_vs", &FractionState::state_vs)
+        .def_readwrite("bonus", &FractionState::bonus)
 
-                  .property("fraction_id", &FractionState::get_fraction_id, &FractionState::set_fraction_id)
-                  .property("actor_goodwill", &FractionState::get_actor_goodwill, &FractionState::set_actor_goodwill)
+        .property("fraction_id", &FractionState::get_fraction_id, &FractionState::set_fraction_id)
+        .property("actor_goodwill", &FractionState::get_actor_goodwill, &FractionState::set_actor_goodwill)
 
-                  .property("name", &FractionState::get_name, &FractionState::set_name)
-                  .property("icon", &FractionState::get_icon, &FractionState::set_icon)
-                  .property("icon_big", &FractionState::get_icon_big, &FractionState::set_icon_big)
-                  .property("target", &FractionState::get_target, &FractionState::set_target)
-                  .property("target_desc", &FractionState::get_target_desc, &FractionState::set_target_desc)
-                  .property("location", &FractionState::get_location, &FractionState::set_location)
+        .property("name", &FractionState::get_name, &FractionState::set_name)
+        .property("icon", &FractionState::get_icon, &FractionState::set_icon)
+        .property("icon_big", &FractionState::get_icon_big, &FractionState::set_icon_big)
+        .property("target", &FractionState::get_target, &FractionState::set_target)
+        .property("target_desc", &FractionState::get_target_desc, &FractionState::set_target_desc)
+        .property("location", &FractionState::get_location, &FractionState::set_location)
 
     ];
 }
@@ -66,6 +68,7 @@ void FractionState::update_info()
     {
         return;
     }
+
     m_actor_goodwill = 0;
     CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
     if (pActor)
