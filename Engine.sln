@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.6.11806.211 stable
+VisualStudioVersion = 18.6.11806.211
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvorbis_static", "3rd_party\Src\Xiph\libvorbis\win32\VS2010\libvorbis\libvorbis_static.vcxproj", "{0F3163C6-FAE6-4FBD-BF88-037EB0420DAF}"
 EndProject
@@ -52,6 +52,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XR_3DA", "ogsr_engine\xr_3d
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8} = {AC9B12ED-A2D7-4337-A981-5BD8430E96D8}
 		{CCD4AFAE-AA10-42C6-A452-FDEE497CCDF1} = {CCD4AFAE-AA10-42C6-A452-FDEE497CCDF1}
 		{D6AEA327-48BC-45C8-B0E9-BF775E451904} = {D6AEA327-48BC-45C8-B0E9-BF775E451904}
+		{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2} = {3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrGame", "ogsr_engine\xrGame\xrGame.vcxproj", "{200652A6-043E-4634-8837-87983B3BD5E0}"
@@ -93,11 +94,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mimalloc-lib", "3rd_party\S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiscordRPC", "3rd_party\Src\DiscordRPC\DiscordRPC.vcxproj", "{9531CFEA-3446-31AB-8BF9-1711171811D7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrPhysics", "ogsr_engine\xrPhysics\xrPhysics.vcxproj", "{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FidelityFX-SDK", "FidelityFX-SDK", "{1724B883-80C8-4A17-A702-1056764F02A0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffx_backend_dx11_x64", "3rd_party\Src\FidelityFX-SDK\ffx_backend_dx11_x64.vcxproj", "{2573F943-895F-3EB6-B3A2-EC66C5BD3507}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffx_fsr3upscaler_x64", "3rd_party\Src\FidelityFX-SDK\ffx_fsr3upscaler_x64.vcxproj", "{900D55FB-392E-3485-AC4A-5F66868F6252}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrGameCoP", "ogsr_engine\xrGameCoP\xrGameCoP.vcxproj", "{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1BF75FEB-87DD-486C-880B-227987D191C2} = {1BF75FEB-87DD-486C-880B-227987D191C2}
+		{CCD4AFAE-AA10-42C6-A452-FDEE497CCDF1} = {CCD4AFAE-AA10-42C6-A452-FDEE497CCDF1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -193,6 +202,10 @@ Global
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Debug|x64.Build.0 = Debug|x64
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Release|x64.ActiveCfg = Release|x64
 		{9531CFEA-3446-31AB-8BF9-1711171811D7}.Release|x64.Build.0 = Release|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Debug|x64.ActiveCfg = Debug|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Debug|x64.Build.0 = Debug|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Release|x64.ActiveCfg = Release|x64
+		{98D24A3D-7666-4C11-9D6E-B10393CE8CBA}.Release|x64.Build.0 = Release|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Debug|x64.ActiveCfg = Debug|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Debug|x64.Build.0 = Debug|x64
 		{2573F943-895F-3EB6-B3A2-EC66C5BD3507}.Release|x64.ActiveCfg = Release|x64
@@ -201,6 +214,10 @@ Global
 		{900D55FB-392E-3485-AC4A-5F66868F6252}.Debug|x64.Build.0 = Debug|x64
 		{900D55FB-392E-3485-AC4A-5F66868F6252}.Release|x64.ActiveCfg = Release|x64
 		{900D55FB-392E-3485-AC4A-5F66868F6252}.Release|x64.Build.0 = Release|x64
+		{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}.Debug|x64.ActiveCfg = Debug|x64
+		{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}.Debug|x64.Build.0 = Debug|x64
+		{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}.Release|x64.ActiveCfg = Release|x64
+		{3DD1C0AD-FC3F-443D-B3E1-31DB8011A1D2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

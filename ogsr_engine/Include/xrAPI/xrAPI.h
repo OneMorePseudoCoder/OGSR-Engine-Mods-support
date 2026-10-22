@@ -20,10 +20,8 @@ extern XRCORE_API IUIRender* UIRender;
 class CGameMtlLibrary;
 extern XRCORE_API CGameMtlLibrary* PGMLib;
 
-//#ifdef DEBUG
 class IDebugRender;
 extern XRCORE_API IDebugRender* DRender;
-//#endif // DEBUG
 
 IC CGameMtlLibrary& GMLibrary()
 {

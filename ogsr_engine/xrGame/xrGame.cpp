@@ -11,8 +11,8 @@
 #include "ui/xrUIXmlParser.h"
 #include "xr_level_controller.h"
 
-
-extern "C" {
+extern "C" 
+{
 DLL_API DLL_Pure* __cdecl xrFactory_Create(CLASS_ID clsid)
 {
     DLL_Pure* object = object_factory().client_object(clsid);
@@ -32,8 +32,7 @@ extern float g_fTimeFactor;
 extern shared_str g_active_task_id;
 
 #ifdef XRGAME_STATIC
-
-void AttachGame()
+void AttachGame_SoC()
 {
     g_fTimeFactor = pSettings->r_float("alife", "time_factor");
     g_active_task_id = "";
@@ -46,14 +45,13 @@ void AttachGame()
     g_profiler = xr_new<CProfiler>();
 #endif
 }
-
 #else
-
 BOOL APIENTRY DllMain(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
     {
-    case DLL_PROCESS_ATTACH: {
+    case DLL_PROCESS_ATTACH: 
+	{
         g_fTimeFactor = pSettings->r_float("alife", "time_factor");
         g_active_task_id = "";
 
@@ -67,11 +65,11 @@ BOOL APIENTRY DllMain(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved)
         break;
     }
 
-    case DLL_PROCESS_DETACH: {
+    case DLL_PROCESS_DETACH: 
+	{
         break;
     }
     }
     return (TRUE);
 }
-
 #endif
