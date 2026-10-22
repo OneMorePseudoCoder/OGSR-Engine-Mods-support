@@ -8,6 +8,7 @@ class CLevel;
 #include "hit_immunity.h"
 #include "Hit.h"
 #include "Level.h"
+
 enum EBoostParams
 {
     eBoostHpRestore = 0,
@@ -33,11 +34,30 @@ enum EBoostParams
     eBoostMaxCount,
 };
 
-inline constexpr const char* ef_boosters_section_names[]{"boost_health_restore",       "boost_power_restore",      "boost_radiation_restore",   "boost_bleeding_restore",
-                                                         "boost_satiety_restore",      "boost_thirst_restore",     "boost_alcohol_restore",     "boost_max_weight",
-                                                         "boost_radiation_protection", "boost_telepat_protection", "boost_chemburn_protection", "boost_burn_immunity",
-                                                         "boost_shock_immunity",       "boost_radiation_immunity", "boost_telepat_immunity",    "boost_chemburn_immunity",
-                                                         "boost_explosion_immunity",   "boost_strike_immunity",    "boost_fire_wound_immunity", "boost_wound_immunity"};
+inline constexpr const char* ef_boosters_section_names[]
+{
+	"boost_health_restore",
+	"boost_power_restore",
+	"boost_radiation_restore",
+	"boost_bleeding_restore",
+	"boost_satiety_restore",
+	"boost_thirst_restore",
+	"boost_alcohol_restore",
+	"boost_max_weight",
+	"boost_radiation_protection",
+	"boost_telepat_protection",
+	"boost_chemburn_protection",
+	"boost_burn_immunity",
+	"boost_shock_immunity",
+	"boost_radiation_immunity",
+	"boost_telepat_immunity",
+    "boost_chemburn_immunity",
+	"boost_explosion_immunity",
+	"boost_strike_immunity",
+    "boost_fire_wound_immunity",
+	"boost_wound_immunity"
+};
+
 static_assert(std::size(ef_boosters_section_names) == eBoostMaxCount);
 
 struct SBooster
@@ -125,6 +145,8 @@ public:
     {
         m_fPowerMax = val;
         clamp(m_fPowerMax, 0.1f, 1.0f);
+        if (m_fPowerMax < m_fPower) 
+            m_fPower = m_fPowerMax;
     };
     IC float GetMaxPower() const { return m_fPowerMax; };
 
