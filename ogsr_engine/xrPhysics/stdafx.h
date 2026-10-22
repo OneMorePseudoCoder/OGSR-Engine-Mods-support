@@ -17,4 +17,4 @@
 #include "../Include/xrAPI/xrAPI.h"
 #include "../xr_3da/Engine.h"
 #include "../xr_3da/Device.h"
-#include "../xrNetServer/NET_Utils.h"
+#include "../xr_3da/NET_Server_Trash/NET_Utils.h"

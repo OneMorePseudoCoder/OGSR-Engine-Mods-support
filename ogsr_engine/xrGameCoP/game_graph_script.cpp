@@ -69,7 +69,7 @@ float CGameGraph__distance(const CGameGraph* self, u32 left_id, u32 right_id)
 
 void CGameGraph::script_register(lua_State* L)
 {
-    module(L)[class_<GameGraph::LEVEL_MAP::value_type>("GameGraph__LEVEL_MAP__value_type")
+    module(L)[(class_<GameGraph::LEVEL_MAP::value_type>("GameGraph__LEVEL_MAP__value_type")
                   .def_readonly("id", &GameGraph::LEVEL_MAP::value_type::first)
                   .def_readonly("level", &GameGraph::LEVEL_MAP::value_type::second),
 
@@ -92,20 +92,17 @@ void CGameGraph::script_register(lua_State* L)
                   .def("game_point", &CVertex__game_point)
                   .def("level_id", &CVertex::level_id)
                   .def("level_vertex_id", &CVertex::level_vertex_id),
-              def(
-                  "gg_vertex_level_id", +[](u32 vertex_id) { return ai().game_graph().vertex(vertex_id)->level_id(); }),
+              def("gg_vertex_level_id", +[](u32 vertex_id) { return ai().game_graph().vertex(vertex_id)->level_id(); }),
               def("gg_level_id",
                   [](_LEVEL_ID idx) {
                       const GameGraph::LEVEL_MAP& levels = ai().game_graph().header().levels();
                       return (levels.begin() + idx)->second.id();
                   }),
-              def(
-                  "gg_levels_count", +[]() { return ai().game_graph().header().level_count(); }),
-              def(
-                  "gg_distance", +[](u32 vid1, u32 vid2) {
+              def("gg_levels_count", +[]() { return ai().game_graph().header().level_count(); }),
+              def("gg_distance", +[](u32 vid1, u32 vid2) {
                       const auto& game_graph = ai().game_graph();
                       const auto p1 = game_graph.vertex(vid1)->game_point();
                       const auto p2 = game_graph.vertex(vid2)->game_point();
                       return p1.distance_to(p2);
-                  })];
+                  }))];
 }

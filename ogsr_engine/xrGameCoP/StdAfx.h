@@ -21,5 +21,7 @@
 
 #include "../xrCore/buffer_vector.h"
 
+#include "../xr_3da/NET_Server_Trash/NET_Shared.h"
+
 #define D3DCOLOR_RGBA(r, g, b, a) (color_argb(a, r, g, b))
 #define D3DCOLOR_XRGB(r, g, b) (color_argb(0xff, r, g, b))
